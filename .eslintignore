@@ -1,0 +1,7 @@
+.eslintrc.js
+jest.config.unit.js
+build/
+coverage/
+node_modules/
+src/**/__tests__/
+src/**/__mocks__/

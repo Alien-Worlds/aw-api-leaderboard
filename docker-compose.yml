@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  api:
+    build:
+      context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    restart: on-failure
+    command: [ 'sh', '-c', 'yarn start' ]
+    depends_on:
+      - redis
+      - db
+    networks:
+      - common_network
+    volumes:
+      - ./:/var/
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '6379:6379'
+
+  db:
+    image: mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    expose:
+      - 27017
+    networks:
+      - common_network
+    volumes:
+      - database:/data/db
+
+volumes:
+  database:
+networks:
+  common_network:
+
+
