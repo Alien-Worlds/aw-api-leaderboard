@@ -3,7 +3,9 @@ import {
   MongoDB,
   parseToBigInt,
 } from '@alien-worlds/api-core';
+import e from 'express';
 import { LeaderboardDocument, LeaderboardStruct } from '../../data/leaderboard.dtos';
+import { UpdateLeaderboardInput, UsedTool } from '../models/update-leaderboard.input';
 
 /**
  * @class
@@ -18,6 +20,8 @@ export class Leaderboard {
   public static fromDocument(document: LeaderboardDocument): Leaderboard {
     const {
       _id,
+      block_number,
+      block_timesamp,
       last_update_timestamp,
       start_timestamp,
       end_timestamp,
@@ -42,9 +46,13 @@ export class Leaderboard {
       ...rest
     } = document;
 
+    const now = new Date();
+
     return new Leaderboard(
-      new Date(start_timestamp),
-      new Date(end_timestamp),
+      parseToBigInt(block_number),
+      block_timesamp,
+      start_timestamp ? new Date(start_timestamp) : now,
+      end_timestamp ? new Date(end_timestamp) : now,
       wallet_id,
       username,
       tlm_gains_total,
@@ -63,7 +71,7 @@ export class Leaderboard {
       planets_mined_on,
       mine_rating,
       position,
-      new Date(last_update_timestamp),
+      last_update_timestamp ? new Date(last_update_timestamp) : now,
       _id instanceof MongoDB.ObjectId ? _id.toString() : '',
       rest
     );
@@ -71,6 +79,8 @@ export class Leaderboard {
 
   public static fromStruct(struct: LeaderboardStruct): Leaderboard {
     const {
+      block_number,
+      block_timesamp,
       start_timestamp,
       end_timestamp,
       wallet_id,
@@ -93,9 +103,14 @@ export class Leaderboard {
       last_update_timestamp,
       ...rest
     } = struct;
+
+    const now = new Date();
+
     return new Leaderboard(
-      new Date(start_timestamp),
-      new Date(end_timestamp),
+      parseToBigInt(block_number),
+      new Date(block_timesamp),
+      start_timestamp ? new Date(start_timestamp) : now,
+      end_timestamp ? new Date(end_timestamp) : now,
       wallet_id,
       username,
       tlm_gains_total,
@@ -114,9 +129,151 @@ export class Leaderboard {
       planets_mined_on,
       mine_rating,
       -1,
-      new Date(last_update_timestamp),
+      last_update_timestamp ? new Date(last_update_timestamp) : now,
       '',
       rest
+    );
+  }
+
+  public static cloneAndUpdate(
+    leaderboard: Leaderboard,
+    updates: UpdateLeaderboardInput
+  ): Leaderboard {
+    const {
+      startTimestamp,
+      endTimestamp,
+      walletId,
+      username,
+      tlmGainsTotal,
+      tlmGainsHighest,
+      totalNftPoints,
+      toolsUsed,
+      id,
+      rest,
+    } = leaderboard;
+
+    const { tools, bounty, points, landId, planetName } = updates;
+
+    let totalChargeTime = leaderboard.totalChargeTime;
+    let totalMiningPower = leaderboard.totalMiningPower;
+    let totalNftPower = leaderboard.totalNftPower;
+
+    tools.forEach(tool => {
+      const { assetId, ease, delay, difficulty } = tool;
+
+      if (toolsUsed.indexOf(assetId) === -1) {
+        toolsUsed.push(assetId);
+        totalChargeTime += delay;
+        totalMiningPower += ease;
+        totalNftPower += difficulty;
+      }
+    });
+
+    const toolsCount = toolsUsed.length;
+    const avgChargeTime = totalChargeTime / toolsCount;
+    const avgMiningPower = totalMiningPower / toolsCount;
+    const avgNftPower = totalNftPower / toolsCount;
+
+    const lands = leaderboard.lands;
+    let landsMinedOn = leaderboard.landsMinedOn;
+    const planets = leaderboard.planets;
+    let planetsMinedOn = leaderboard.planetsMinedOn;
+
+    if (lands.indexOf(landId) === -1) {
+      lands.push(landId);
+      landsMinedOn += 1;
+    }
+
+    if (planets.indexOf(planetName) === -1) {
+      planets.push(planetName);
+      planetsMinedOn += 1;
+    }
+
+    return new Leaderboard(
+      updates.blockNumber,
+      updates.blockTimestamp,
+      startTimestamp,
+      endTimestamp,
+      walletId,
+      username,
+      tlmGainsTotal + bounty,
+      tlmGainsHighest < bounty ? bounty : tlmGainsHighest,
+      totalNftPoints + points,
+      toolsUsed,
+      totalChargeTime,
+      avgChargeTime,
+      totalMiningPower,
+      avgMiningPower,
+      totalNftPower,
+      avgNftPower,
+      lands,
+      landsMinedOn,
+      planets,
+      planetsMinedOn,
+      0,
+      -1,
+      new Date(),
+      id,
+      rest
+    );
+  }
+
+  public static create(
+    fromDate: Date,
+    toDate: Date,
+    walletId: string,
+    username: string,
+    bounty: number,
+    blockNumber: bigint,
+    blockTimestamp: Date,
+    points: number,
+    landId: bigint,
+    planetName: string,
+    tools: UsedTool[]
+  ): Leaderboard {
+    const toolsUsed = [];
+    let totalChargeTime = 0;
+    let totalMiningPower = 0;
+    let totalNftPower = 0;
+
+    tools.forEach(tool => {
+      const { assetId, ease, delay, difficulty } = tool;
+      toolsUsed.push(assetId);
+      totalChargeTime += delay;
+      totalMiningPower += ease;
+      totalNftPower += difficulty;
+    });
+    const toolsCount = toolsUsed.length;
+    const avgChargeTime = totalChargeTime / toolsCount;
+    const avgMiningPower = totalMiningPower / toolsCount;
+    const avgNftPower = totalNftPower / toolsCount;
+
+    return new Leaderboard(
+      blockNumber,
+      blockTimestamp,
+      fromDate,
+      toDate,
+      walletId,
+      username,
+      Number(bounty),
+      Number(bounty),
+      Number(points),
+      toolsUsed,
+      totalChargeTime,
+      avgChargeTime,
+      totalMiningPower,
+      avgMiningPower,
+      totalNftPower,
+      avgNftPower,
+      [landId],
+      1,
+      [planetName],
+      1,
+      0,
+      -1,
+      new Date(),
+      '',
+      {}
     );
   }
 
@@ -124,6 +281,8 @@ export class Leaderboard {
    * @constructor
    */
   protected constructor(
+    public readonly blockNumber: bigint,
+    public readonly blockTimestamp: Date,
     public readonly startTimestamp: Date,
     public readonly endTimestamp: Date,
     public readonly walletId: string,
@@ -156,6 +315,8 @@ export class Leaderboard {
   public toDocument(): LeaderboardDocument {
     const {
       id,
+      blockNumber,
+      blockTimestamp,
       lastUpdateTimestamp,
       startTimestamp,
       endTimestamp,
@@ -179,6 +340,8 @@ export class Leaderboard {
     } = this;
 
     const document: LeaderboardDocument = {
+      block_number: MongoDB.Long.fromBigInt(blockNumber),
+      block_timesamp: blockTimestamp,
       last_update_timestamp: lastUpdateTimestamp,
       start_timestamp: startTimestamp,
       end_timestamp: endTimestamp,
@@ -234,9 +397,13 @@ export class Leaderboard {
       landsMinedOn,
       planetsMinedOn,
       mineRating,
+      blockNumber,
+      blockTimestamp,
     } = this;
 
     const struct: LeaderboardStruct = {
+      block_number: blockNumber.toString(),
+      block_timesamp: blockTimestamp.toUTCString(),
       last_update_timestamp: lastUpdateTimestamp.toUTCString(),
       start_timestamp: startTimestamp.toUTCString(),
       end_timestamp: endTimestamp.toUTCString(),

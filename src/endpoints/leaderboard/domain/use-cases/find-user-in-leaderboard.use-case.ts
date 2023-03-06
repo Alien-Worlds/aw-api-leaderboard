@@ -1,4 +1,4 @@
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.input';
@@ -28,17 +28,35 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
    * @returns {Promise<Result<Leaderboard>>}
    */
   public async execute(input: FindUserInLeaderboardInput): Promise<Result<Leaderboard>> {
-    if (input.timeframe === MiningLeaderboardTimeframe.Daily) {
-      return Result.withContent(null);
+    const { username, walletId, fromDate, toDate, timeframe } = input;
+    if (timeframe === MiningLeaderboardTimeframe.Daily) {
+      return this.dailyLeaderboardRepository.findUser(
+        username,
+        walletId,
+        fromDate,
+        toDate
+      );
     }
 
-    if (input.timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return Result.withContent(null);
+    if (timeframe === MiningLeaderboardTimeframe.Weekly) {
+      return this.weeklyLeaderboardRepository.findUser(
+        username,
+        walletId,
+        fromDate,
+        toDate
+      );
     }
 
-    if (input.timeframe === MiningLeaderboardTimeframe.Monthly) {
-      return Result.withContent(null);
+    if (timeframe === MiningLeaderboardTimeframe.Monthly) {
+      return this.monthlyLeaderboardRepository.findUser(
+        username,
+        walletId,
+        fromDate,
+        toDate
+      );
     }
+
+    return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));
   }
 
   /*methods*/

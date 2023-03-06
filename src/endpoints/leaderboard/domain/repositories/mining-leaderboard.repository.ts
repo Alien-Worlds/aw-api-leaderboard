@@ -1,6 +1,5 @@
 import { injectable, Result } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
-import { MiningLeaderboardSort } from '../mining-leaderboard.enums';
 
 /**
  * @abstract
@@ -8,11 +7,13 @@ import { MiningLeaderboardSort } from '../mining-leaderboard.enums';
  */
 @injectable()
 export abstract class MiningLeaderboardRepository {
-  public abstract add(leaderboard: Leaderboard): Promise<Result<void>>;
+  public abstract update(leaderboard: Leaderboard): Promise<Result<void>>;
   public abstract list(
-    sort: MiningLeaderboardSort,
+    sort: string,
     offset: number,
-    limit: number
+    limit: number,
+    fromDate: Date,
+    toDate: Date
   ): Promise<Result<Leaderboard[]>>;
   public abstract findUser(
     username: string,

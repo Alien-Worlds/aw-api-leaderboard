@@ -20,13 +20,10 @@ export type FindUserInLeaderboardRequest = {
   date?: string;
 };
 
-export type UpdateLeaderboardRequest = LeaderboardStruct;
-
-/**
- * @type
- */
 export type LeaderboardDocument = {
   _id?: MongoDB.ObjectId;
+  block_number: MongoDB.Long;
+  block_timesamp: Date;
   start_timestamp?: Date;
   end_timestamp?: Date;
   last_update_timestamp?: Date;
@@ -51,10 +48,29 @@ export type LeaderboardDocument = {
   [key: string]: unknown;
 };
 
-/**
- * @type
- */
+export type UsedToolRequestData = {
+  asset_id: string;
+  delay: number;
+  ease: number;
+  difficulty: number;
+};
+
+export type UpdateLeaderboardRequest = {
+  wallet_id: string;
+  username: string;
+  bounty: string | number;
+  block_number: string;
+  block_timestamp: string;
+  points: number | string;
+  land_id: string;
+  planet_name: string;
+  tools: UsedToolRequestData[];
+  [key: string]: unknown;
+};
+
 export type LeaderboardStruct = {
+  block_number: string;
+  block_timesamp: string;
   start_timestamp?: string;
   end_timestamp?: string;
   wallet_id?: string;

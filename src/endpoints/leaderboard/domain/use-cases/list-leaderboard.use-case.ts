@@ -1,5 +1,6 @@
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
+import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { ListLeaderboardInput } from '../models/list-leaderboard.input';
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
@@ -28,7 +29,27 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
    */
   public async execute(input: ListLeaderboardInput): Promise<Result<Leaderboard[]>> {
     //
-    return Result.withContent(null);
+    const { timeframe, sort, fromDate, toDate, offset, limit } = input;
+
+    if (timeframe === MiningLeaderboardTimeframe.Daily) {
+      return this.dailyLeaderboardRepository.list(sort, offset, limit, fromDate, toDate);
+    }
+
+    if (timeframe === MiningLeaderboardTimeframe.Weekly) {
+      return this.weeklyLeaderboardRepository.list(sort, offset, limit, fromDate, toDate);
+    }
+
+    if (timeframe === MiningLeaderboardTimeframe.Monthly) {
+      return this.monthlyLeaderboardRepository.list(
+        sort,
+        offset,
+        limit,
+        fromDate,
+        toDate
+      );
+    }
+
+    return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));
   }
 
   /*methods*/

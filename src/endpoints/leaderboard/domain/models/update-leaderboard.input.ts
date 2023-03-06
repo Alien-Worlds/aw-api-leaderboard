@@ -1,5 +1,24 @@
 import { Request, parseToBigInt } from '@alien-worlds/api-core';
-import { UpdateLeaderboardRequest } from '../../data/leaderboard.dtos';
+import {
+  UsedToolRequestData,
+  UpdateLeaderboardRequest,
+} from '../../data/leaderboard.dtos';
+import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
+
+export class UsedTool {
+  public static create(data: UsedToolRequestData): UsedTool {
+    const { asset_id, delay, ease, difficulty } = data;
+    return new UsedTool(parseToBigInt(asset_id), delay, ease, difficulty);
+  }
+
+  private constructor(
+    public readonly assetId: bigint,
+    public readonly delay: number,
+    public readonly ease: number,
+    public readonly difficulty: number
+  ) {}
+}
 
 export class UpdateLeaderboardInput {
   public static fromRequest(
@@ -7,70 +26,63 @@ export class UpdateLeaderboardInput {
   ): UpdateLeaderboardInput {
     const {
       body: {
-        start_timestamp,
-        end_timestamp,
         wallet_id,
         username,
-        tlm_gains_total,
-        tlm_gains_highest,
-        total_nft_points,
-        total_charge_time,
-        avg_charge_time,
-        total_mining_power,
-        avg_mining_power,
-        total_nft_power,
-        avg_nft_power,
-        lands_mined_on,
-        planets_mined_on,
-        mine_rating,
-        planets,
-        lands,
-        tools_used,
+        bounty,
+        block_number,
+        block_timestamp,
+        points,
+        land_id,
+        planet_name,
+        tools,
       },
     } = request;
 
+    const now = new Date();
+    const fromDayStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
+    const toDayEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
+    const fromWeekStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Weekly);
+    const toWeekEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Weekly);
+    const fromMonthStart = getStartDateByTimeframe(
+      now,
+      MiningLeaderboardTimeframe.Monthly
+    );
+    const toMonthEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Monthly);
+
     return new UpdateLeaderboardInput(
-      new Date(start_timestamp),
-      new Date(end_timestamp),
+      fromDayStart,
+      toDayEnd,
+      fromWeekStart,
+      toWeekEnd,
+      fromMonthStart,
+      toMonthEnd,
       wallet_id,
       username,
-      tlm_gains_total,
-      tlm_gains_highest,
-      total_nft_points,
-      total_charge_time,
-      avg_charge_time,
-      total_mining_power,
-      avg_mining_power,
-      total_nft_power,
-      avg_nft_power,
-      lands_mined_on,
-      planets_mined_on,
-      mine_rating,
-      planets,
-      lands.map(land => parseToBigInt(land)),
-      tools_used.map(tool => parseToBigInt(tool))
+      Number(bounty),
+      parseToBigInt(block_number),
+      new Date(block_timestamp),
+      Number(points),
+      parseToBigInt(land_id),
+      planet_name,
+      tools.map(land => UsedTool.create(land))
     );
   }
 
   private constructor(
-    public readonly startTimestamp: Date,
-    public readonly endTimestamp: Date,
+    public readonly fromDayStart: Date,
+    public readonly toDayEnd: Date,
+    public readonly fromWeekStart: Date,
+    public readonly toWeekEnd: Date,
+    public readonly fromMonthStart: Date,
+    public readonly toMonthEnd: Date,
     public readonly walletId: string,
     public readonly username: string,
-    public readonly tlmGainsTotal: number,
-    public readonly tlmGainsHighest: number,
-    public readonly totalNftPoints: number,
-    public readonly totalChargeTime: number,
-    public readonly avgChargeTime: number,
-    public readonly totalMiningPower: number,
-    public readonly avgMiningPower: number,
-    public readonly totalNftPower: number,
-    public readonly avgNftPower: number,
-    public readonly landsMinedOn: number,
-    public readonly planetsMinedOn: number,
-    public readonly mineRating: number,
-    public readonly planets: string[],
-    public readonly lands: bigint[],
-    public readonly toolsUsed: bigint[]
+    public readonly bounty: number,
+    public readonly blockNumber: bigint,
+    public readonly blockTimestamp: Date,
+    public readonly points: number,
+    public readonly landId: bigint,
+    public readonly planetName: string,
+    public readonly tools: UsedTool[]
   ) {}
 }
