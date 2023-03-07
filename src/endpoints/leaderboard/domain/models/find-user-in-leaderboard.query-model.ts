@@ -44,7 +44,7 @@ export class FindUserInLeaderboardQueryModel extends QueryModel<MongoAggregatePa
                   start_timestamp: { $gte: fromDate },
                 },
                 {
-                  end_timestamp: { $lt: toDate },
+                  end_timestamp: { $lte: toDate },
                 },
               ],
             },
@@ -94,7 +94,7 @@ export class FindUserInLeaderboardQueryModel extends QueryModel<MongoAggregatePa
                   start_timestamp: { $gte: fromDate },
                 },
                 {
-                  end_timestamp: { $lt: toDate },
+                  end_timestamp: { $lte: toDate },
                 },
                 {
                   wallet_id: walletId,

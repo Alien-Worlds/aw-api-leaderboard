@@ -403,10 +403,10 @@ export class Leaderboard {
 
     const struct: LeaderboardStruct = {
       block_number: blockNumber.toString(),
-      block_timesamp: blockTimestamp.toUTCString(),
-      last_update_timestamp: lastUpdateTimestamp.toUTCString(),
-      start_timestamp: startTimestamp.toUTCString(),
-      end_timestamp: endTimestamp.toUTCString(),
+      block_timesamp: blockTimestamp.toISOString(),
+      last_update_timestamp: lastUpdateTimestamp.toISOString(),
+      start_timestamp: startTimestamp.toISOString(),
+      end_timestamp: endTimestamp.toISOString(),
       username,
       wallet_id: walletId,
       tlm_gains_total: tlmGainsTotal,

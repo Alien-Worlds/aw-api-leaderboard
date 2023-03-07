@@ -24,10 +24,10 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
         filter: {
           $and: [
             {
-              start_timestamp: { $gte: fromDate },
+              start_timestamp: { $gte: new Date(fromDate.toISOString()) },
             },
             {
-              end_timestamp: { $lt: toDate },
+              end_timestamp: { $lte: new Date(toDate.toISOString()) },
             },
             {
               $or: [
@@ -84,17 +84,17 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
         filter: {
           $and: [
             {
-              start_timestamp: { $gte: fromDate },
+              start_timestamp: { $gte: new Date(fromDate.toISOString()) },
             },
             {
-              end_timestamp: { $lt: toDate },
+              end_timestamp: { $lte: new Date(toDate.toISOString()) },
             },
           ],
         },
         options: {
-          sort: JSON.parse(`{ ${sort}: -1 }`),
-          skip: offset,
-          limit,
+          sort: JSON.parse(`{ "${sort}": -1 }`),
+          skip: Number(offset),
+          limit: Number(limit),
         },
       });
       return Result.withContent(documents.map(Leaderboard.fromDocument));

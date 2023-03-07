@@ -13,7 +13,7 @@ export class FindUserInLeaderboardRoute extends GetRoute {
   }
 
   private constructor(handler: RouteHandler) {
-    super('leaderboard/:timeframe', handler, {
+    super('/v1/leaderboard/:timeframe', handler, {
       hooks: {
         pre: FindUserInLeaderboardInput.fromRequest,
         post: FindUserInLeaderboardOutput.create,

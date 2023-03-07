@@ -13,7 +13,7 @@ export class UpdateLeaderboardRoute extends PostRoute {
   }
 
   private constructor(handler: RouteHandler) {
-    super('leaderboard', handler, {
+    super('/v1/leaderboard', handler, {
       hooks: {
         pre: UpdateLeaderboardInput.fromRequest,
         post: UpdateLeaderboardOutput.create,

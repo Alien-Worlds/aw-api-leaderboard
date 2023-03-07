@@ -9,6 +9,7 @@ export class ListLeaderboardOutput {
         failure: { error },
       } = result;
       if (error) {
+        console.log(error);
         return {
           status: 500,
           body: [],

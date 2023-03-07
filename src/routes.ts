@@ -13,17 +13,17 @@ export const mountRoutes = (api: LeaderboardApi, container: Container) => {
   );
 
   Route.mount(
-    api,
+    api.framework,
     ListLeaderboardRoute.create(leaderboardController.list.bind(leaderboardController))
   );
   Route.mount(
-    api,
+    api.framework,
     UpdateLeaderboardRoute.create(
       leaderboardController.update.bind(leaderboardController)
     )
   );
   Route.mount(
-    api,
+    api.framework,
     FindUserInLeaderboardRoute.create(
       leaderboardController.findUser.bind(leaderboardController)
     )

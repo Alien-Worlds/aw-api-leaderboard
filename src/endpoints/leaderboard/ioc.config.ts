@@ -33,7 +33,7 @@ export const setupDependencies = async (
     new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Weekly)
   );
   container
-    .bind<MiningWeeklyLeaderboardRepository>(MiningDailyLeaderboardRepository.Token)
+    .bind<MiningWeeklyLeaderboardRepository>(MiningWeeklyLeaderboardRepository.Token)
     .toConstantValue(weeklyLeaderboardRepository);
 
   const monthlyLeaderboardRepository = new LeaderboardRepositoryImpl(
@@ -41,7 +41,7 @@ export const setupDependencies = async (
     new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Monthly)
   );
   container
-    .bind<MiningMonthlyLeaderboardRepository>(MiningDailyLeaderboardRepository.Token)
+    .bind<MiningMonthlyLeaderboardRepository>(MiningMonthlyLeaderboardRepository.Token)
     .toConstantValue(monthlyLeaderboardRepository);
 
   container

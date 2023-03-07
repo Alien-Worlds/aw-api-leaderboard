@@ -29,6 +29,7 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
    */
   public async execute(input: FindUserInLeaderboardInput): Promise<Result<Leaderboard>> {
     const { username, walletId, fromDate, toDate, timeframe } = input;
+
     if (timeframe === MiningLeaderboardTimeframe.Daily) {
       return this.dailyLeaderboardRepository.findUser(
         username,

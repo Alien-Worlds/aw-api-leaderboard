@@ -11,19 +11,16 @@ export class ListLeaderboardInput {
   public static fromRequest(
     request: Request<ListLeaderboardRequest>
   ): ListLeaderboardInput {
-    const {
-      query: { timeframe, sort, offset, limit },
-      body,
-    } = request;
-
+    const { query } = request;
+    const { timeframe, sort, offset, limit } = request.params as ListLeaderboardRequest;
     const now = new Date();
     const selectedTimeframe = timeframe || MiningLeaderboardTimeframe.Daily;
     const fromDate = getStartDateByTimeframe(
-      body.fromDate || body.date || now,
+      query.fromDate || query.date || now,
       selectedTimeframe
     );
     const toDate = getEndDateByTimeframe(
-      body.toDate || body.date || now,
+      query.toDate || query.date || now,
       selectedTimeframe
     );
 

@@ -1,13 +1,11 @@
-import { ListLeaderboardOutput } from './models/list-leaderboard.output';
 import { inject, injectable, Result } from '@alien-worlds/api-core';
 import { ListLeaderboardInput } from './models/list-leaderboard.input';
 import { FindUserInLeaderboardUseCase } from './use-cases/find-user-in-leaderboard.use-case';
 import { ListLeaderboardUseCase } from './use-cases/list-leaderboard.use-case';
 import { UpdateLeaderboardUseCase } from './use-cases/update-leaderboard.use-case';
 import { FindUserInLeaderboardInput } from './models/find-user-in-leaderboard.input';
-import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
 import { UpdateLeaderboardInput } from './models/update-leaderboard.input';
-import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
+import { Leaderboard } from './entities/leaderboard';
 
 /*imports*/
 
@@ -30,34 +28,25 @@ export class LeaderboardController {
 
   /**
    *
-   * @returns {Promise<Result<ListLeaderboardOutput, Error>>}
+   * @returns {Promise<Result<Leaderboard[], Error>>}
    */
-  public async list(
-    input: ListLeaderboardInput
-  ): Promise<Result<ListLeaderboardOutput, Error>> {
-    const result = await this.listLeaderboardUseCase.execute(input);
-    return Result.withContent(ListLeaderboardOutput.create(result));
+  public async list(input: ListLeaderboardInput): Promise<Result<Leaderboard[], Error>> {
+    return this.listLeaderboardUseCase.execute(input);
   }
   /**
    *
-   * @returns {Promise<Result<FindUserInLeaderboardOutput, Error>>}
+   * @returns {Promise<Result<Leaderboard, Error>>}
    */
   public async findUser(
     input: FindUserInLeaderboardInput
-  ): Promise<Result<FindUserInLeaderboardOutput, Error>> {
-    const result = await this.findUserInLeaderboardUseCase.execute(input);
-
-    return Result.withContent(FindUserInLeaderboardOutput.create(result));
+  ): Promise<Result<Leaderboard, Error>> {
+    return this.findUserInLeaderboardUseCase.execute(input);
   }
   /**
    *
-   * @returns {Promise<Result<UpdateLeaderboardOutput, Error>>}
+   * @returns {Promise<Result<void, Error>>}
    */
-  public async update(
-    input: UpdateLeaderboardInput
-  ): Promise<Result<UpdateLeaderboardOutput, Error>> {
-    const result = await this.updateLeaderboardUseCase.execute(input);
-
-    return Result.withContent(UpdateLeaderboardOutput.create(result));
+  public async update(input: UpdateLeaderboardInput): Promise<Result<void, Error>> {
+    return this.updateLeaderboardUseCase.execute(input);
   }
 }

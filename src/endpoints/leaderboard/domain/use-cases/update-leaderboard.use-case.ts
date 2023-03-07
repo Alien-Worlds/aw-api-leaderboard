@@ -156,6 +156,8 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
     if (monthlyUpdate.isFailure) {
       return Result.withFailure(monthlyUpdate.failure);
     }
+
+    return Result.withoutContent();
   }
 
   /*methods*/

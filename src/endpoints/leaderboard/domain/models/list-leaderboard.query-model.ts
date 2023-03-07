@@ -41,14 +41,14 @@ export class ListLeaderboardQueryModel extends QueryModel<
           start_timestamp: { $gte: fromDate },
         },
         {
-          end_timestamp: { $lt: toDate },
+          end_timestamp: { $lte: toDate },
         },
       ],
     };
 
     const options: MongoDB.FindOptions = {
       skip,
-      sort: JSON.parse(`{ ${sort}: ${order} }`),
+      sort: JSON.parse(`{ "${sort}": ${order} }`),
       limit,
     };
 

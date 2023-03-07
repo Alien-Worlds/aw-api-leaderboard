@@ -7,25 +7,23 @@ export class FindUserInLeaderboardInput {
   public static fromRequest(
     request: Request<FindUserInLeaderboardRequest>
   ): FindUserInLeaderboardInput {
-    const {
-      query: { timeframe },
-      body,
-    } = request;
+    const { query } = request;
+    const { timeframe } = request.params as FindUserInLeaderboardRequest;
 
     const now = new Date();
     const selectedTimeframe = timeframe || MiningLeaderboardTimeframe.Daily;
     const fromDate = getStartDateByTimeframe(
-      body.fromDate || body.date || now,
+      query.fromDate || query.date || now,
       selectedTimeframe
     );
     const toDate = getEndDateByTimeframe(
-      body.toDate || body.date || now,
+      query.toDate || query.date || now,
       selectedTimeframe
     );
 
     return new FindUserInLeaderboardInput(
-      body.walletId,
-      body.username,
+      query.walletId,
+      query.username,
       timeframe || MiningLeaderboardTimeframe.Daily,
       fromDate,
       toDate
