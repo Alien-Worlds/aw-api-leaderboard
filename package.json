@@ -13,6 +13,7 @@
     "clean": "rm -rf ./build",
     "build": "yarn clean && tsc -b",
     "start": "node build/index.js",
+    "start:local": "yarn build && node build/index.js",
     "prepublish": "yarn clean && tsc --project tsconfig.build.json",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",

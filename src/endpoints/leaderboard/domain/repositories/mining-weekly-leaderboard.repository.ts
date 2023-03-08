@@ -7,5 +7,5 @@ import { MiningLeaderboardRepository } from './mining-leaderboard.repository';
  */
 @injectable()
 export abstract class MiningWeeklyLeaderboardRepository extends MiningLeaderboardRepository {
-  public static Token = 'MINING_WEEKKLY_LEADERBOARD_REPOSITORY';
+  public static Token = 'MINING_WEEKLY_LEADERBOARD_REPOSITORY';
 }

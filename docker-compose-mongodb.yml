@@ -1,0 +1,14 @@
+version: "3.2"
+services:
+  mongo:
+    image: mongo
+    container_name: 'mongo'
+    restart: always
+    ports:
+      - '27017:27017'
+    networks:
+      - mongo_net
+
+networks:
+  mongo_net:
+    driver: bridge
