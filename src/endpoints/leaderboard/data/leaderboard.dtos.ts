@@ -68,6 +68,13 @@ export type UpdateLeaderboardRequest = {
   [key: string]: unknown;
 };
 
+export type PatchLeaderboardRequest = {
+  wallet_id: string;
+  [key: string]: unknown;
+}
+
+export type PatchLeaderboardControllerInput = Partial<LeaderboardDocument> & Pick<LeaderboardDocument, 'wallet_id'>;
+
 export type LeaderboardStruct = {
   block_number: string;
   block_timesamp: string;

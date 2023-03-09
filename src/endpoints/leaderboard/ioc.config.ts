@@ -1,17 +1,19 @@
-import { LeaderboardController } from './domain/leaderboard.controller';
-import { ListLeaderboardUseCase } from './domain/use-cases/list-leaderboard.use-case';
-import { LeaderboardRepositoryImpl } from './data/repositories/leaderboard.repository-impl';
-import { MongoSource, Container } from '@alien-worlds/api-core';
-import { RedisSource } from './data/data-sources/redis.source';
-import { LeaderboardMongoSource } from './data/data-sources/leaderboard.mongo.source';
-import { MiningLeaderboardTimeframe } from './domain/mining-leaderboard.enums';
-import { LeaderboardRedisSource } from './data/data-sources/leaderboard.redis.source';
-import { MiningDailyLeaderboardRepository } from './domain/repositories/mining-daily-leaderboard.repository';
-import { MiningMonthlyLeaderboardRepository } from './domain/repositories/mining-monthly-leaderboard.repository';
-import { MiningWeeklyLeaderboardRepository } from './domain/repositories/mining-weekly-leaderboard.repository';
-import { UpdateLeaderboardUseCase } from './domain/use-cases/update-leaderboard.use-case';
+import { Container, MongoSource } from '@alien-worlds/api-core';
+
 import { FindUserInLeaderboardUseCase } from './domain/use-cases/find-user-in-leaderboard.use-case';
 import { LeaderboardApiConfig } from '../../config/config.types';
+import { LeaderboardController } from './domain/leaderboard.controller';
+import { LeaderboardMongoSource } from './data/data-sources/leaderboard.mongo.source';
+import { LeaderboardRedisSource } from './data/data-sources/leaderboard.redis.source';
+import { LeaderboardRepositoryImpl } from './data/repositories/leaderboard.repository-impl';
+import { ListLeaderboardUseCase } from './domain/use-cases/list-leaderboard.use-case';
+import { MiningDailyLeaderboardRepository } from './domain/repositories/mining-daily-leaderboard.repository';
+import { MiningLeaderboardTimeframe } from './domain/mining-leaderboard.enums';
+import { MiningMonthlyLeaderboardRepository } from './domain/repositories/mining-monthly-leaderboard.repository';
+import { MiningWeeklyLeaderboardRepository } from './domain/repositories/mining-weekly-leaderboard.repository';
+import { PatchLeaderboardUseCase } from './domain/use-cases/patch-leaderboard.use-case';
+import { RedisSource } from './data/data-sources/redis.source';
+import { UpdateLeaderboardUseCase } from './domain/use-cases/update-leaderboard.use-case';
 
 export const setupDependencies = async (
   config: LeaderboardApiConfig,
@@ -50,6 +52,9 @@ export const setupDependencies = async (
   container
     .bind<UpdateLeaderboardUseCase>(UpdateLeaderboardUseCase.Token)
     .to(UpdateLeaderboardUseCase);
+  container
+    .bind<PatchLeaderboardUseCase>(PatchLeaderboardUseCase.Token)
+    .to(PatchLeaderboardUseCase);
   container
     .bind<FindUserInLeaderboardUseCase>(FindUserInLeaderboardUseCase.Token)
     .to(FindUserInLeaderboardUseCase);
