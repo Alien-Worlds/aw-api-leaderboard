@@ -1,13 +1,10 @@
 # BUILDER
 
-FROM node:17-alpine3.12 AS leaderboard-api-builder
+FROM node:17-alpine3.15 AS leaderboard-api-builder
 
 ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
-RUN apk add --no-cache --virtual build-dependencies python2 g++ make
-
-RUN apk add curl
+RUN apk add --no-cache --virtual build-dependencies g++ make curl
 
 RUN mkdir -p /var/leaderboard-api
 
@@ -23,14 +20,13 @@ RUN yarn build:prod
 
 # PRODUCTION
 
-FROM node:17-alpine3.12 AS leaderboard-api
+FROM node:17-alpine3.15 AS leaderboard-api
 
 ARG GITHUB_TOKEN
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
 WORKDIR /var/leaderboard-api
 
-COPY package.json .npmrc .env ./
+COPY package.json .npmrc ./
 COPY --from=leaderboard-api-builder /var/leaderboard-api/build ./build
 
 RUN yarn --production
