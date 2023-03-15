@@ -1,6 +1,9 @@
 import { UserLeaderboardNotFoundError } from './../../domain/errors/user-leaderboard-not-found.error';
 import { Failure, Result } from '@alien-worlds/api-core';
-import { MiningLeaderboardSort } from '../../domain/mining-leaderboard.enums';
+import {
+  MiningLeaderboardOrder,
+  MiningLeaderboardSort,
+} from '../../domain/mining-leaderboard.enums';
 import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
@@ -33,9 +36,6 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
               $or: [
                 {
                   wallet_id: walletId,
-                },
-                {
-                  username,
                 },
               ],
             },
@@ -75,6 +75,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     sort: MiningLeaderboardSort,
     offset: number,
     limit: number,
+    order: MiningLeaderboardOrder,
     fromDate: Date,
     toDate: Date
   ): Promise<Result<Leaderboard[]>> {
@@ -92,12 +93,18 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           ],
         },
         options: {
-          sort: JSON.parse(`{ "${sort}": -1 }`),
+          sort: JSON.parse(`{ "${sort}": ${order} }`),
           skip: Number(offset),
           limit: Number(limit),
         },
       });
-      return Result.withContent(documents.map(Leaderboard.fromDocument));
+
+      const docsres = documents.map((document, index) => {
+        const position = Number(offset) + Number(index) + 1;
+        return Leaderboard.fromDocument(document, position);
+      });
+
+      return Result.withContent(docsres);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

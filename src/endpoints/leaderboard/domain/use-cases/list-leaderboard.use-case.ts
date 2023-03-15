@@ -28,15 +28,28 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
    * @returns {Promise<Result<Leaderboard[]>>}
    */
   public async execute(input: ListLeaderboardInput): Promise<Result<Leaderboard[]>> {
-    //
-    const { timeframe, sort, fromDate, toDate, offset, limit } = input;
+    const { timeframe, sort, fromDate, toDate, offset, limit, order } = input;
 
     if (timeframe === MiningLeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.list(sort, offset, limit, fromDate, toDate);
+      return this.dailyLeaderboardRepository.list(
+        sort,
+        offset,
+        limit,
+        order,
+        fromDate,
+        toDate
+      );
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.list(sort, offset, limit, fromDate, toDate);
+      return this.weeklyLeaderboardRepository.list(
+        sort,
+        offset,
+        limit,
+        order,
+        fromDate,
+        toDate
+      );
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Monthly) {
@@ -44,6 +57,7 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
         sort,
         offset,
         limit,
+        order,
         fromDate,
         toDate
       );

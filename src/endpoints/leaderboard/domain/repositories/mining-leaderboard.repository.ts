@@ -1,5 +1,6 @@
 import { injectable, Result } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
+import { MiningLeaderboardOrder } from '../mining-leaderboard.enums';
 
 /**
  * @abstract
@@ -12,6 +13,7 @@ export abstract class MiningLeaderboardRepository {
     sort: string,
     offset: number,
     limit: number,
+    order: MiningLeaderboardOrder,
     fromDate: Date,
     toDate: Date
   ): Promise<Result<Leaderboard[]>>;

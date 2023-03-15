@@ -27,7 +27,7 @@ export class ListLeaderboardInput {
     return new ListLeaderboardInput(
       timeframe || MiningLeaderboardTimeframe.Daily,
       sort || MiningLeaderboardSort.TlmGainsTotal,
-      MiningLeaderboardOrder.Desc,
+      query.order || MiningLeaderboardOrder.Desc,
       offset || 0,
       limit || 10,
       fromDate,
@@ -42,6 +42,6 @@ export class ListLeaderboardInput {
     public readonly offset: number,
     public readonly limit: number,
     public readonly fromDate: Date,
-    public readonly toDate: Date
+    public readonly toDate: Date,
   ) {}
 }
