@@ -37,7 +37,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@alien-worlds/api-core": "^0.0.72",
+    "@alien-worlds/api-core": "0.0.73",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@alien-worlds/api-core@^0.0.72":
-  version "0.0.72"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.72/c3199e5665c631a7bb93ed0905312a6a32fba124#c3199e5665c631a7bb93ed0905312a6a32fba124"
-  integrity sha512-gYBMzKCxv8f4ullcaU6DW5ANr7Yp5k5ox9J60ki7NgR9lI8007cl9XGiPu3Co35IgEjOAeoQclRW142d7T28Jw==
+"@alien-worlds/api-core@0.0.73":
+  version "0.0.73"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.73/767eb98128e9b3d3a074a7ef537d964a294e6419#767eb98128e9b3d3a074a7ef537d964a294e6419"
+  integrity sha512-VUg20FIQm2+MsKN/q4c55o9QzNBHdT3+yRnEpciS9ue5sYivJBZShW+e2s9siIeABhAFuzXjZTu1TZKvBqkl1A==
   dependencies:
     "@google-cloud/bigquery" "^6.0.3"
     eosjs "^22.1.0"
