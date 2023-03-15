@@ -19,7 +19,7 @@ ADD src /var/leaderboard-api/src
 COPY package.json .npmrc tsconfig.json tsconfig.build.json yarn.lock /var/leaderboard-api/
 
 RUN yarn
-RUN yarn build:prod
+RUN yarn build
 
 # PRODUCTION
 
