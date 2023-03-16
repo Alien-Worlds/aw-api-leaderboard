@@ -1,4 +1,4 @@
-import { MongoConfig } from "@alien-worlds/api-core";
+import { BroadcastConfig, MongoConfig, RedisConfig } from '@alien-worlds/api-core';
 
 export type Environment = {
   MONGO_HOSTS?: string;
@@ -18,19 +18,19 @@ export type Environment = {
   REDIS_IANA?: string;
   REDIS_DATABASE?: string;
   PORT?: string;
+  BROADCAST_URL?: string;
+  BROADCAST_HOST?: string;
+  BROADCAST_PORT?: string;
+  BROADCAST_DRIVER?: string;
 };
 
-export type RedisConfig = {
-  hosts: string[];
-  ports: string[];
-  iana?: boolean;
-  user?: string;
-  password?: string;
-  database?: string | number;
-};
-
-export type LeaderboardApiConfig = {
+export type ApiConfig = {
   port: number;
+};
+
+export type LeaderboardConfig = {
+  api: ApiConfig;
   mongo: MongoConfig;
   redis: RedisConfig;
+  broadcast: BroadcastConfig;
 };

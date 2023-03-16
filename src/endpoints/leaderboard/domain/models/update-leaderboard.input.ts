@@ -38,7 +38,7 @@ export class UpdateLeaderboardInput {
       },
     } = request;
 
-    const now = new Date();
+    const now = block_timestamp ? new Date(block_timestamp) : new Date();
     const fromDayStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
     const toDayEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
     const fromWeekStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Weekly);

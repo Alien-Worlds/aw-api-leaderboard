@@ -5,17 +5,20 @@ import { LeaderboardApi } from './api';
 import { setupDependencies } from './endpoints/leaderboard';
 import { mountRoutes } from './routes';
 import { buildConfig } from './config/config';
+import { LeaderboardBroadcast } from './broadcast';
 
-export const startApi = async () => {
+export const start = async () => {
   const config = buildConfig();
   const container = new Container();
   await setupDependencies(config, container);
 
   const api = new LeaderboardApi(config);
+  const broadcast = new LeaderboardBroadcast(config);
 
   mountRoutes(api, container);
 
-  return api.start();
+  api.start();
+  broadcast.start();
 };
 
-startApi();
+start();

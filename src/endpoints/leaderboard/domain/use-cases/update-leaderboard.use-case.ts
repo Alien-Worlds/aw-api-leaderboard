@@ -113,7 +113,7 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
         Leaderboard.cloneAndUpdate(weeklyUserLeaderboard, input)
       );
     }
-    // Should we reverse daily leaderboard update?
+    // TODO: Should we reverse daily leaderboard update?
     if (weeklyUpdate.isFailure) {
       return Result.withFailure(weeklyUpdate.failure);
     }
@@ -151,8 +151,8 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
       );
     }
 
-    // Should we reverse daily leaderboard update?
-    // Should we reverse weekly leaderboard update?
+    // TODO: Should we reverse daily leaderboard update?
+    // TODO: Should we reverse weekly leaderboard update?
     if (monthlyUpdate.isFailure) {
       return Result.withFailure(monthlyUpdate.failure);
     }

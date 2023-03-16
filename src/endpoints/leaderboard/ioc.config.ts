@@ -1,7 +1,7 @@
-import { Container, MongoSource } from '@alien-worlds/api-core';
+import { Container, MongoSource, RedisSource } from '@alien-worlds/api-core';
 
 import { FindUserInLeaderboardUseCase } from './domain/use-cases/find-user-in-leaderboard.use-case';
-import { LeaderboardApiConfig } from '../../config/config.types';
+import { LeaderboardConfig } from '../../config/config.types';
 import { LeaderboardController } from './domain/leaderboard.controller';
 import { LeaderboardMongoSource } from './data/data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from './data/data-sources/leaderboard.redis.source';
@@ -11,12 +11,10 @@ import { MiningDailyLeaderboardRepository } from './domain/repositories/mining-d
 import { MiningLeaderboardTimeframe } from './domain/mining-leaderboard.enums';
 import { MiningMonthlyLeaderboardRepository } from './domain/repositories/mining-monthly-leaderboard.repository';
 import { MiningWeeklyLeaderboardRepository } from './domain/repositories/mining-weekly-leaderboard.repository';
-import { PatchLeaderboardUseCase } from './domain/use-cases/patch-leaderboard.use-case';
-import { RedisSource } from './data/data-sources/redis.source';
 import { UpdateLeaderboardUseCase } from './domain/use-cases/update-leaderboard.use-case';
 
 export const setupDependencies = async (
-  config: LeaderboardApiConfig,
+  config: LeaderboardConfig,
   container: Container
 ) => {
   const mongoSource = await MongoSource.create(config.mongo);
@@ -52,9 +50,6 @@ export const setupDependencies = async (
   container
     .bind<UpdateLeaderboardUseCase>(UpdateLeaderboardUseCase.Token)
     .to(UpdateLeaderboardUseCase);
-  container
-    .bind<PatchLeaderboardUseCase>(PatchLeaderboardUseCase.Token)
-    .to(PatchLeaderboardUseCase);
   container
     .bind<FindUserInLeaderboardUseCase>(FindUserInLeaderboardUseCase.Token)
     .to(FindUserInLeaderboardUseCase);

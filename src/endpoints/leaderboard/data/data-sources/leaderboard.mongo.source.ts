@@ -1,4 +1,10 @@
-import { CollectionMongoSource, MongoSource } from '@alien-worlds/api-core';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  CollectionMongoSource,
+  MongoSource,
+  MongoDB,
+  DataSourceOperationError,
+} from '@alien-worlds/api-core';
 import { LeaderboardDocument } from '../leaderboard.dtos';
 
 /**
@@ -70,5 +76,27 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
         },
       ],
     });
+  }
+
+  public async updateManyByWalletId(documents: LeaderboardDocument[]) {
+    try {
+      const operations = documents.map(dto => {
+        const { _id, ...documentWithoutId } = dto;
+        const { wallet_id } = documentWithoutId;
+        return {
+          updateOne: {
+            filter: { wallet_id },
+            update: {
+              $set: documentWithoutId as MongoDB.MatchKeysAndValues<LeaderboardDocument>,
+            },
+          },
+        };
+      });
+      const { modifiedCount, upsertedCount, upsertedIds } =
+        await this.collection.bulkWrite(operations);
+      return { modifiedCount, upsertedCount, upsertedIds };
+    } catch (error) {
+      throw DataSourceOperationError.fromError(error);
+    }
   }
 }

@@ -33,6 +33,7 @@ export type LeaderboardDocument = {
   tlm_gains_highest?: number;
   total_nft_points?: number;
   tools_used?: MongoDB.Long[];
+  unique_tools_used?: number;
   total_charge_time?: number;
   avg_charge_time?: number;
   total_mining_power?: number;
@@ -57,23 +58,16 @@ export type UsedToolRequestData = {
 
 export type UpdateLeaderboardRequest = {
   wallet_id: string;
-  username: string;
-  bounty: string | number;
-  block_number: string;
-  block_timestamp: string;
-  points: number | string;
-  land_id: string;
-  planet_name: string;
-  tools: UsedToolRequestData[];
+  username?: string;
+  bounty?: string | number;
+  block_number?: string;
+  block_timestamp?: string;
+  points?: number | string;
+  land_id?: string;
+  planet_name?: string;
+  tools?: UsedToolRequestData[];
   [key: string]: unknown;
 };
-
-export type PatchLeaderboardRequest = {
-  wallet_id: string;
-  [key: string]: unknown;
-}
-
-export type PatchLeaderboardControllerInput = Partial<LeaderboardDocument> & Pick<LeaderboardDocument, 'wallet_id'>;
 
 export type LeaderboardStruct = {
   block_number: string;
@@ -93,6 +87,7 @@ export type LeaderboardStruct = {
   avg_nft_power?: number;
   lands_mined_on?: number;
   planets_mined_on?: number;
+  unique_tools_used?: number;
   mine_rating?: number;
   planets?: string[];
   lands?: string[];

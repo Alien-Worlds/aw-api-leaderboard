@@ -1,7 +1,6 @@
 export * from './data/mappers/leaderboard.mapper';
 export * from './data/data-sources/leaderboard.mongo.source';
 export * from './data/data-sources/leaderboard.redis.source';
-export * from './data/data-sources/redis.source';
 export * from './data/leaderboard.dtos';
 export * from './data/mappers/leaderboard.mapper';
 export * from './data/repositories/leaderboard.repository-impl';

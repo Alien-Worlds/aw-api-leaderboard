@@ -1,10 +1,15 @@
-import { MongoConfig } from '@alien-worlds/api-core';
+import { BroadcastConfig } from '@alien-worlds/api-core';
+import { MongoConfig, RedisConfig } from '@alien-worlds/api-core';
 import { readEnvFile } from './config.utils';
-import { Environment, LeaderboardApiConfig, RedisConfig } from './config.types';
+import { Environment, LeaderboardConfig, ApiConfig } from './config.types';
 
-export const buildConfig = (): LeaderboardApiConfig => {
+export const buildConfig = (): LeaderboardConfig => {
   const environment: Environment = { ...process.env } as Environment;
   const dotEnv = readEnvFile();
+
+  const api: ApiConfig = {
+    port: Number(environment.PORT || dotEnv.PORT),
+  };
 
   const mongo: MongoConfig = {
     hosts: (environment.MONGO_HOSTS || dotEnv.MONGO_HOSTS).split(/,\s*/),
@@ -28,9 +33,17 @@ export const buildConfig = (): LeaderboardApiConfig => {
     iana: Boolean(Number(environment.REDIS_IANA || dotEnv.REDIS_IANA)),
   };
 
+  const broadcast: BroadcastConfig = {
+    host: environment.BROADCAST_HOST || dotEnv.BROADCAST_HOST,
+    port: Number(environment.BROADCAST_PORT || dotEnv.BROADCAST_PORT),
+    url: environment.BROADCAST_URL || dotEnv.BROADCAST_URL,
+    driver: environment.BROADCAST_DRIVER || dotEnv.BROADCAST_DRIVER,
+  };
+
   return {
-    port: Number(environment.PORT || dotEnv.PORT),
+    api,
     mongo,
     redis,
+    broadcast,
   };
 };

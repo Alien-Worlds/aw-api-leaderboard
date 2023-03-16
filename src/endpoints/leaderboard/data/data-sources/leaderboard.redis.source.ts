@@ -1,23 +1,17 @@
-import { LeaderboardDocument, LeaderboardStruct } from './../leaderboard.dtos';
-import { RedisSource } from './redis.source';
+import { CollectionRedisSource, RedisSource } from '@alien-worlds/api-core';
+import { LeaderboardStruct } from './../leaderboard.dtos';
 
 /**
  * @class
  */
-export class LeaderboardRedisSource {
+export class LeaderboardRedisSource extends CollectionRedisSource<LeaderboardStruct> {
   public static Token = 'LEADERBOARD_REDIS_SOURCE';
 
   /**
    * @constructor
    * @param {RedisSource} redisSource
    */
-  constructor(private readonly redisSource: RedisSource, private readonly name: string) {}
-
-  public add(data: LeaderboardStruct) {
-    this.redisSource.client.zAdd(this.name, { score: 1, value: '' });
-  }
-
-  public list(data: LeaderboardStruct) {
-    this.redisSource.client.zAdd(this.name, { score: 1, value: '' });
+  constructor(redisSource: RedisSource, name: string) {
+    super(redisSource, name);
   }
 }

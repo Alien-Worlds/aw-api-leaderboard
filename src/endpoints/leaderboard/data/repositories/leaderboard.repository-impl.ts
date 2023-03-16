@@ -1,6 +1,6 @@
 import { Failure, Result } from '@alien-worlds/api-core';
 
-import { Leaderboard } from './../../domain/entities/leaderboard';
+import { Leaderboard } from '../../domain/entities/leaderboard';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
 import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
@@ -11,7 +11,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   constructor(
     protected readonly mongoSource: LeaderboardMongoSource,
     protected readonly redisSource: LeaderboardRedisSource
-  ) { }
+  ) {}
 
   public async findUser(
     username: string,
@@ -56,25 +56,12 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     }
   }
 
-  public async findAll(
-    walletId: string,
-  ): Promise<Result<Leaderboard[], Error>> {
+  public async updateMany(leaderboards: Leaderboard[]): Promise<Result<void>> {
     try {
-      const { mongoSource, redisSource } = this;
-
-      const documents = await mongoSource.find({
-        filter: {
-          wallet_id: walletId,
-        },
-      });
-
-      if (documents.length) {
-        return Result.withContent(documents.map(Leaderboard.fromDocument));
-      }
-
-      return Result.withFailure(
-        Failure.fromError(new UserLeaderboardNotFoundError(walletId))
+      await this.mongoSource.updateManyByWalletId(
+        leaderboards.map(leaderboard => leaderboard.toDocument())
       );
+      return Result.withoutContent();
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
