@@ -4,7 +4,10 @@ import { Leaderboard } from '../../domain/entities/leaderboard';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
 import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
-import { MiningLeaderboardSort } from '../../domain/mining-leaderboard.enums';
+import {
+  MiningLeaderboardSort,
+  MiningLeaderboardOrder,
+} from '../../domain/mining-leaderboard.enums';
 import { UserLeaderboardNotFoundError } from './../../domain/errors/user-leaderboard-not-found.error';
 
 export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
@@ -31,14 +34,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
               end_timestamp: { $lte: new Date(toDate.toISOString()) },
             },
             {
-              $or: [
-                {
-                  wallet_id: walletId,
-                },
-                {
-                  username,
-                },
-              ],
+              wallet_id: walletId,
             },
           ],
         },
@@ -87,6 +83,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     sort: MiningLeaderboardSort,
     offset: number,
     limit: number,
+    order: MiningLeaderboardOrder,
     fromDate: Date,
     toDate: Date
   ): Promise<Result<Leaderboard[]>> {
@@ -104,12 +101,17 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           ],
         },
         options: {
-          sort: JSON.parse(`{ "${sort}": -1 }`),
+          sort: JSON.parse(`{ "${sort}": ${order || -1} }`),
           skip: Number(offset),
           limit: Number(limit),
         },
       });
-      return Result.withContent(documents.map(Leaderboard.fromDocument));
+      return Result.withContent(
+        documents.map((document, index) => {
+          const position = Number(offset) + Number(index) + 1;
+          return Leaderboard.fromDocument(document, position);
+        })
+      );
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

@@ -15,6 +15,7 @@ export enum MiningLeaderboardSort {
   LandsMinedOn = 'lands_mined_on',
   PlanetsMinedOn = 'planets_mined_on',
   MineRating = 'mine_rating',
+  UniqueToolsUsed = 'unique_tools_used',
 }
 
 export enum MiningLeaderboardOrder {

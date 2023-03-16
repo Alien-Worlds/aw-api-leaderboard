@@ -8,6 +8,7 @@ export type ListLeaderboardRequest = {
   fromDate?: string;
   toDate?: string;
   date?: string;
+  order?: number;
 };
 
 export type FindUserInLeaderboardRequest = {

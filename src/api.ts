@@ -1,6 +1,7 @@
 import { log } from '@alien-worlds/api-core';
 import bodyParser from 'body-parser';
 import express, { Express } from 'express';
+import cors from 'cors';
 import { LeaderboardConfig } from './config/config.types';
 
 export class LeaderboardApi {
@@ -8,6 +9,11 @@ export class LeaderboardApi {
 
   constructor(private config: LeaderboardConfig) {
     this.app = express();
+    this.app.use(
+      cors({
+        origin: '*',
+      })
+    );
     this.app.use(bodyParser.json());
   }
 

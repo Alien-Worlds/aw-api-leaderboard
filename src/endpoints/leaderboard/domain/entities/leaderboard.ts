@@ -16,7 +16,7 @@ export class Leaderboard {
    * @param {LeaderboardDocument} document
    * @returns {Leaderboard}
    */
-  public static fromDocument(document: LeaderboardDocument): Leaderboard {
+  public static fromDocument(document: LeaderboardDocument, position?: number): Leaderboard {
     const {
       _id,
       block_number,
@@ -42,7 +42,6 @@ export class Leaderboard {
       planets,
       planets_mined_on,
       mine_rating,
-      position,
       ...rest
     } = document;
 
@@ -71,7 +70,7 @@ export class Leaderboard {
       planets,
       planets_mined_on,
       mine_rating,
-      position,
+      position || document.position,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
       _id instanceof MongoDB.ObjectId ? _id.toString() : '',
       rest
