@@ -12,6 +12,10 @@ import { MiningLeaderboardTimeframe } from './domain/mining-leaderboard.enums';
 import { MiningMonthlyLeaderboardRepository } from './domain/repositories/mining-monthly-leaderboard.repository';
 import { MiningWeeklyLeaderboardRepository } from './domain/repositories/mining-weekly-leaderboard.repository';
 import { UpdateLeaderboardUseCase } from './domain/use-cases/update-leaderboard.use-case';
+import { setupAtomicAssetRepository } from '@alien-worlds/alienworlds-api-common';
+import { UpdateDailyLeaderboardUseCase } from './domain/use-cases/update-daily-leaderboard.use-case';
+import { UpdateWeeklyLeaderboardUseCase } from './domain/use-cases/update-weekly-leaderboard.use-case';
+import { UpdateMonthlyLeaderboardUseCase } from './domain/use-cases/update-monthly-leaderboard.use-case';
 
 export const setupDependencies = async (
   config: LeaderboardConfig,
@@ -19,6 +23,8 @@ export const setupDependencies = async (
 ) => {
   const mongoSource = await MongoSource.create(config.mongo);
   const redisSource = await RedisSource.create(config.redis);
+
+  await setupAtomicAssetRepository(config.atomicassets, mongoSource, container);
 
   const dailyLeaderboardRepository = new LeaderboardRepositoryImpl(
     new LeaderboardMongoSource(mongoSource, MiningLeaderboardTimeframe.Daily),
@@ -47,6 +53,15 @@ export const setupDependencies = async (
   container
     .bind<ListLeaderboardUseCase>(ListLeaderboardUseCase.Token)
     .to(ListLeaderboardUseCase);
+  container
+    .bind<UpdateDailyLeaderboardUseCase>(UpdateDailyLeaderboardUseCase.Token)
+    .to(UpdateDailyLeaderboardUseCase);
+  container
+    .bind<UpdateWeeklyLeaderboardUseCase>(UpdateWeeklyLeaderboardUseCase.Token)
+    .to(UpdateWeeklyLeaderboardUseCase);
+  container
+    .bind<UpdateMonthlyLeaderboardUseCase>(UpdateMonthlyLeaderboardUseCase.Token)
+    .to(UpdateMonthlyLeaderboardUseCase);
   container
     .bind<UpdateLeaderboardUseCase>(UpdateLeaderboardUseCase.Token)
     .to(UpdateLeaderboardUseCase);

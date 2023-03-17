@@ -1,10 +1,15 @@
+import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
 import {
   removeUndefinedProperties,
   MongoDB,
   parseToBigInt,
 } from '@alien-worlds/api-core';
-import { LeaderboardDocument, LeaderboardStruct } from '../../data/leaderboard.dtos';
-import { UpdateLeaderboardInput, UsedTool } from '../models/update-leaderboard.input';
+import {
+  LeaderboardDocument,
+  LeaderboardStruct,
+  MinigToolData,
+} from '../../data/leaderboard.dtos';
+import { UpdateLeaderboardInput } from '../models/update-leaderboard.input';
 
 /**
  * @class
@@ -16,7 +21,10 @@ export class Leaderboard {
    * @param {LeaderboardDocument} document
    * @returns {Leaderboard}
    */
-  public static fromDocument(document: LeaderboardDocument, position?: number): Leaderboard {
+  public static fromDocument(
+    document: LeaderboardDocument,
+    position?: number
+  ): Leaderboard {
     const {
       _id,
       block_number,
@@ -139,7 +147,8 @@ export class Leaderboard {
 
   public static cloneAndUpdate(
     leaderboard: Leaderboard,
-    updates: UpdateLeaderboardInput
+    updates: UpdateLeaderboardInput,
+    assets: AtomicAsset<MinigToolData>[]
   ): Leaderboard {
     const {
       startTimestamp,
@@ -154,14 +163,17 @@ export class Leaderboard {
       rest,
     } = leaderboard;
 
-    const { tools, bounty, points, landId, planetName } = updates;
+    const { bounty, points, landId, planetName } = updates;
 
     let totalChargeTime = leaderboard.totalChargeTime;
     let totalMiningPower = leaderboard.totalMiningPower;
     let totalNftPower = leaderboard.totalNftPower;
 
-    tools.forEach(tool => {
-      const { assetId, ease, delay, difficulty } = tool;
+    assets.forEach(asset => {
+      const {
+        assetId,
+        data: { ease, delay, difficulty },
+      } = asset;
 
       if (toolsUsed.indexOf(assetId) === -1) {
         toolsUsed.push(assetId);
@@ -232,15 +244,18 @@ export class Leaderboard {
     points: number,
     landId: bigint,
     planetName: string,
-    tools: UsedTool[]
+    assets: AtomicAsset<MinigToolData>[]
   ): Leaderboard {
     const toolsUsed = [];
     let totalChargeTime = 0;
     let totalMiningPower = 0;
     let totalNftPower = 0;
 
-    tools.forEach(tool => {
-      const { assetId, ease, delay, difficulty } = tool;
+    assets.forEach(asset => {
+      const {
+        assetId,
+        data: { ease, delay, difficulty },
+      } = asset;
       toolsUsed.push(assetId);
       totalChargeTime += delay;
       totalMiningPower += ease;
@@ -264,7 +279,7 @@ export class Leaderboard {
       Number(bounty) || 0,
       Number(points) || 0,
       toolsUsed,
-      toolsUsed.length,
+      toolsCount,
       totalChargeTime,
       avgChargeTime,
       totalMiningPower,

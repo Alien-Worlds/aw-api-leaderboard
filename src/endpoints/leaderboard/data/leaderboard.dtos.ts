@@ -50,8 +50,7 @@ export type LeaderboardDocument = {
   [key: string]: unknown;
 };
 
-export type UsedToolRequestData = {
-  asset_id: string;
+export type MinigToolData = {
   delay: number;
   ease: number;
   difficulty: number;
@@ -66,9 +65,11 @@ export type UpdateLeaderboardRequest = {
   points?: number | string;
   land_id?: string;
   planet_name?: string;
-  tools?: UsedToolRequestData[];
+  tools?: string[];
   [key: string]: unknown;
 };
+
+export type UpdateLeaderboardStruct = UpdateLeaderboardRequest;
 
 export type LeaderboardStruct = {
   block_number: string;

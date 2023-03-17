@@ -2,6 +2,7 @@ import { BroadcastConfig } from '@alien-worlds/api-core';
 import { MongoConfig, RedisConfig } from '@alien-worlds/api-core';
 import { readEnvFile } from './config.utils';
 import { Environment, LeaderboardConfig, ApiConfig } from './config.types';
+import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
 
 export const buildConfig = (): LeaderboardConfig => {
   const environment: Environment = { ...process.env } as Environment;
@@ -33,17 +34,28 @@ export const buildConfig = (): LeaderboardConfig => {
     iana: Boolean(Number(environment.REDIS_IANA || dotEnv.REDIS_IANA)),
   };
 
-  const broadcast: BroadcastConfig = {
-    host: environment.BROADCAST_HOST || dotEnv.BROADCAST_HOST,
-    port: Number(environment.BROADCAST_PORT || dotEnv.BROADCAST_PORT),
-    url: environment.BROADCAST_URL || dotEnv.BROADCAST_URL,
-    driver: environment.BROADCAST_DRIVER || dotEnv.BROADCAST_DRIVER,
+  const historyToolsBroadcast: BroadcastConfig = {
+    host: environment.HISTORY_TOOLS_BROADCAST_HOST || dotEnv.HISTORY_TOOLS_BROADCAST_HOST,
+    port: Number(
+      environment.HISTORY_TOOLS_BROADCAST_PORT || dotEnv.HISTORY_TOOLS_BROADCAST_PORT
+    ),
+    driver:
+      environment.HISTORY_TOOLS_BROADCAST_DRIVER || dotEnv.HISTORY_TOOLS_BROADCAST_DRIVER,
+  };
+
+  const atomicassets: AtomicAssetsApiConfig = {
+    host: environment.ATOMICASSETS_API_HOST || dotEnv.ATOMICASSETS_API_HOST,
+    port: Number(environment.ATOMICASSETS_API_PORT || dotEnv.ATOMICASSETS_API_PORT),
+    secure: Boolean(
+      Number(environment.ATOMICASSETS_API_SECURE || dotEnv.ATOMICASSETS_API_SECURE)
+    ),
   };
 
   return {
     api,
     mongo,
     redis,
-    broadcast,
+    historyToolsBroadcast: historyToolsBroadcast.host ? historyToolsBroadcast : null,
+    atomicassets,
   };
 };

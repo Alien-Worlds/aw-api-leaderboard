@@ -1,3 +1,4 @@
+import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
 import { BroadcastConfig, MongoConfig, RedisConfig } from '@alien-worlds/api-core';
 
 export type Environment = {
@@ -18,10 +19,12 @@ export type Environment = {
   REDIS_IANA?: string;
   REDIS_DATABASE?: string;
   PORT?: string;
-  BROADCAST_URL?: string;
-  BROADCAST_HOST?: string;
-  BROADCAST_PORT?: string;
-  BROADCAST_DRIVER?: string;
+  HISTORY_TOOLS_BROADCAST_HOST?: string;
+  HISTORY_TOOLS_BROADCAST_PORT?: string;
+  HISTORY_TOOLS_BROADCAST_DRIVER?: string;
+  ATOMICASSETS_API_HOST?: string;
+  ATOMICASSETS_API_PORT?: string;
+  ATOMICASSETS_API_SECURE?: number;
 };
 
 export type ApiConfig = {
@@ -32,5 +35,6 @@ export type LeaderboardConfig = {
   api: ApiConfig;
   mongo: MongoConfig;
   redis: RedisConfig;
-  broadcast: BroadcastConfig;
+  historyToolsBroadcast: BroadcastConfig;
+  atomicassets: AtomicAssetsApiConfig;
 };
