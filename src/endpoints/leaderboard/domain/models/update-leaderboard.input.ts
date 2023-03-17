@@ -39,20 +39,20 @@ export class UpdateLeaderboardInput {
       toMonthEnd,
       wallet_id,
       username,
-      Number(bounty),
+      bounty ? Number(bounty) : null,
       parseToBigInt(block_number),
       new Date(block_timestamp),
       Number(points),
-      parseToBigInt(land_id),
+      land_id ? parseToBigInt(land_id) : null,
       planet_name,
-      tools.map(land => parseToBigInt(land))
+      tools ? tools.map(land => parseToBigInt(land)) : null
     );
   }
 
   public static fromRequest(
     request: Request<UpdateLeaderboardRequest>
   ): UpdateLeaderboardInput {
-    return this.fromStruct(request.body);
+    return UpdateLeaderboardInput.fromStruct(request.body);
   }
 
   private constructor(
