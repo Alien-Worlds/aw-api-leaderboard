@@ -17,7 +17,7 @@ export class UpdateLeaderboardInput {
       points,
       land_id,
       planet_name,
-      tools,
+      bag_items,
     } = struct;
     const now = block_timestamp ? new Date(block_timestamp) : new Date();
     const fromDayStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
@@ -39,13 +39,13 @@ export class UpdateLeaderboardInput {
       toMonthEnd,
       wallet_id,
       username,
-      bounty ? Number(bounty) : null,
+      bounty ? Number(bounty) : 0,
       parseToBigInt(block_number),
       new Date(block_timestamp),
       Number(points),
       land_id ? parseToBigInt(land_id) : null,
       planet_name,
-      tools ? tools.map(land => parseToBigInt(land)) : null
+      bag_items ? bag_items.map(item => parseToBigInt(item)) : []
     );
   }
 

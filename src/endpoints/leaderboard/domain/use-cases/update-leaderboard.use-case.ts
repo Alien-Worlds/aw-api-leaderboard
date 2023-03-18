@@ -31,6 +31,7 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
   public async execute(input: UpdateLeaderboardInput): Promise<Result<void>> {
     const { tools } = input;
     const assets = [];
+
     if (tools) {
       const { content, failure: atomicAssetsFailure } =
         await this.atomicAssetRepository.getAssets(tools);

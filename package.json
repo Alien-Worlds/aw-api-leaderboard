@@ -37,7 +37,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@alien-worlds/alienworlds-api-common": "^0.0.33",
+    "@alien-worlds/alienworlds-api-common": "^0.0.38",
     "@alien-worlds/api-core": "^0.0.75",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",

@@ -31,11 +31,11 @@ export const calculateEndOfMonth = (date: Date) => {
 };
 
 export const calculateStartOfDay = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 1, 0, 0);
 };
 
 export const calculateEndOfDay = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 24, 59, 59);
 };
 
 export const getStartDateByTimeframe = (dateRef: string | Date, timeframe: string) => {

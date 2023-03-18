@@ -184,21 +184,25 @@ export class Leaderboard {
     });
 
     const toolsCount = toolsUsed.length;
-    const avgChargeTime = totalChargeTime / toolsCount;
-    const avgMiningPower = totalMiningPower / toolsCount;
-    const avgNftPower = totalNftPower / toolsCount;
+    const avgChargeTime = toolsCount
+      ? totalChargeTime / toolsCount
+      : leaderboard.avgChargeTime;
+    const avgMiningPower = toolsCount
+      ? totalMiningPower / toolsCount
+      : leaderboard.avgMiningPower;
+    const avgNftPower = toolsCount ? totalNftPower / toolsCount : leaderboard.avgNftPower;
 
     const lands = leaderboard.lands;
     let landsMinedOn = leaderboard.landsMinedOn;
     const planets = leaderboard.planets;
     let planetsMinedOn = leaderboard.planetsMinedOn;
 
-    if (lands.indexOf(landId) === -1) {
+    if (landId && lands.indexOf(landId) === -1) {
       lands.push(landId);
       landsMinedOn += 1;
     }
 
-    if (planets.indexOf(planetName) === -1) {
+    if (planetName && planets.indexOf(planetName) === -1) {
       planets.push(planetName);
       planetsMinedOn += 1;
     }
@@ -250,6 +254,9 @@ export class Leaderboard {
     let totalChargeTime = 0;
     let totalMiningPower = 0;
     let totalNftPower = 0;
+    let avgChargeTime = 0;
+    let avgMiningPower = 0;
+    let avgNftPower = 0;
 
     assets.forEach(asset => {
       const {
@@ -262,9 +269,13 @@ export class Leaderboard {
       totalNftPower += difficulty;
     });
     const toolsCount = toolsUsed.length;
-    const avgChargeTime = totalChargeTime / toolsCount;
-    const avgMiningPower = totalMiningPower / toolsCount;
-    const avgNftPower = totalNftPower / toolsCount;
+
+    if (toolsCount > 0) {
+      avgChargeTime = totalChargeTime / toolsCount;
+      avgMiningPower = totalMiningPower / toolsCount;
+      avgNftPower = totalNftPower / toolsCount;
+    }
+
     const lands = landId ? [landId] : [];
     const planets = planetName ? [planetName] : [];
 
@@ -383,19 +394,10 @@ export class Leaderboard {
       planets_mined_on: planetsMinedOn,
       mine_rating: mineRating,
       unique_tools_used: uniqueToolsUsed,
+      tools_used: toolsUsed.map(id => MongoDB.Long.fromBigInt(id)),
+      lands: lands.map(land => MongoDB.Long.fromBigInt(land)),
+      planets,
     };
-
-    if (toolsUsed.length > 0) {
-      document.tools_used = toolsUsed.map(id => MongoDB.Long.fromBigInt(id));
-    }
-
-    if (lands.length > 0) {
-      document.lands = lands.map(land => MongoDB.Long.fromBigInt(land));
-    }
-
-    if (planets.length > 0) {
-      document.planets = planets;
-    }
 
     /**
      * Do not add "position" to the document!

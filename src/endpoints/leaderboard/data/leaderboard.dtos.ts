@@ -65,7 +65,7 @@ export type UpdateLeaderboardRequest = {
   points?: number | string;
   land_id?: string;
   planet_name?: string;
-  tools?: string[];
+  bag_items?: string[];
   [key: string]: unknown;
 };
 
