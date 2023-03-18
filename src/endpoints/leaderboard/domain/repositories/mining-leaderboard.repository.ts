@@ -27,5 +27,11 @@ export abstract class MiningLeaderboardRepository {
     toDate: Date
   ): Promise<Result<Leaderboard>>;
 
+  public abstract findUsers(
+    walletIds: string[],
+    fromDate: Date,
+    toDate: Date
+  ): Promise<Result<Leaderboard[], Error>>;
+
   public abstract updateMany(leaderboards: Leaderboard[]): Promise<Result<void>>;
 }

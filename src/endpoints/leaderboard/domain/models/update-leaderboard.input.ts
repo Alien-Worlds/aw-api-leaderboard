@@ -1,13 +1,10 @@
 import { Request, parseToBigInt } from '@alien-worlds/api-core';
-import {
-  UpdateLeaderboardRequest,
-  UpdateLeaderboardStruct,
-} from '../../data/leaderboard.dtos';
+import { UpdateLeaderboardStruct } from '../../data/leaderboard.dtos';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
-export class UpdateLeaderboardInput {
-  public static fromStruct(struct: UpdateLeaderboardStruct): UpdateLeaderboardInput {
+export class LeaderboardEntry {
+  public static fromStruct(struct: UpdateLeaderboardStruct): LeaderboardEntry {
     const {
       wallet_id,
       username,
@@ -30,7 +27,7 @@ export class UpdateLeaderboardInput {
     );
     const toMonthEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Monthly);
 
-    return new UpdateLeaderboardInput(
+    return new LeaderboardEntry(
       fromDayStart,
       toDayEnd,
       fromWeekStart,
@@ -49,12 +46,6 @@ export class UpdateLeaderboardInput {
     );
   }
 
-  public static fromRequest(
-    request: Request<UpdateLeaderboardRequest>
-  ): UpdateLeaderboardInput {
-    return UpdateLeaderboardInput.fromStruct(request.body);
-  }
-
   private constructor(
     public readonly fromDayStart: Date,
     public readonly toDayEnd: Date,
@@ -70,6 +61,24 @@ export class UpdateLeaderboardInput {
     public readonly points: number,
     public readonly landId: bigint,
     public readonly planetName: string,
-    public readonly tools: bigint[]
+    public readonly bagItems: bigint[]
   ) {}
+}
+
+export class UpdateLeaderboardInput {
+  public static create(items: UpdateLeaderboardStruct[]): UpdateLeaderboardInput {
+    return new UpdateLeaderboardInput(items.map(LeaderboardEntry.fromStruct));
+  }
+
+  public static fromRequest(
+    request: Request<UpdateLeaderboardStruct[]>
+  ): UpdateLeaderboardInput {
+    if (Array.isArray(request.body)) {
+      return UpdateLeaderboardInput.create(request.body);
+    }
+
+    return new UpdateLeaderboardInput([LeaderboardEntry.fromStruct(request.body)]);
+  }
+
+  private constructor(public readonly items: LeaderboardEntry[]) {}
 }

@@ -8,8 +8,9 @@ import {
 import { LeaderboardConfig } from '../config/config.types';
 import {
   LeaderboardController,
+  LeaderboardEntry,
   UpdateLeaderboardInput,
-  UpdateLeaderboardRequest,
+  UpdateLeaderboardStruct,
 } from '../endpoints/leaderboard';
 
 export class LeaderboardBroadcast {
@@ -37,8 +38,8 @@ export class LeaderboardBroadcast {
 
     this.broadcast.onMessage(
       'update',
-      async (message: BroadcastMessage<UpdateLeaderboardRequest>) => {
-        const input = UpdateLeaderboardInput.fromStruct(message.content);
+      async (message: BroadcastMessage<UpdateLeaderboardStruct[]>) => {
+        const input = UpdateLeaderboardInput.create(message.content);
         const updateResult = await this.leaderboardController.update(input);
 
         if (updateResult.isFailure) {

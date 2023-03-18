@@ -16,6 +16,35 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     protected readonly redisSource: LeaderboardRedisSource
   ) {}
 
+  public async findUsers(
+    walletIds: string[],
+    fromDate: Date,
+    toDate: Date
+  ): Promise<Result<Leaderboard[], Error>> {
+    try {
+      const { mongoSource } = this;
+      const documents = await mongoSource.find({
+        filter: {
+          $and: [
+            {
+              start_timestamp: { $gte: new Date(fromDate.toISOString()) },
+            },
+            {
+              end_timestamp: { $lte: new Date(toDate.toISOString()) },
+            },
+            {
+              wallet_id: { $in: walletIds },
+            },
+          ],
+        },
+      });
+
+      return Result.withContent(documents.map(Leaderboard.fromDocument));
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
+
   public async findUser(
     username: string,
     walletId: string,

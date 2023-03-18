@@ -16,6 +16,10 @@ import { setupAtomicAssetRepository } from '@alien-worlds/alienworlds-api-common
 import { UpdateDailyLeaderboardUseCase } from './domain/use-cases/update-daily-leaderboard.use-case';
 import { UpdateWeeklyLeaderboardUseCase } from './domain/use-cases/update-weekly-leaderboard.use-case';
 import { UpdateMonthlyLeaderboardUseCase } from './domain/use-cases/update-monthly-leaderboard.use-case';
+import { LeaderboardInputRepositoryImpl } from './data/repositories/leaderboard-input.repository-impl';
+import { LeaderboardInputRepository } from './domain/repositories/leaderboard-input.repository';
+import { CacheOrSendLeaderboardUseCase } from './domain/use-cases/cache-or-send-leaderboard.use-case';
+import { SendCachedLeaderboardUseCase } from './domain/use-cases/send-cached-leaderboard.use-case';
 
 export const setupDependencies = async (
   config: LeaderboardConfig,
@@ -25,6 +29,11 @@ export const setupDependencies = async (
   const redisSource = await RedisSource.create(config.redis);
 
   await setupAtomicAssetRepository(config.atomicassets, mongoSource, container);
+
+  const leaderboardInputRepository = new LeaderboardInputRepositoryImpl();
+  container
+    .bind<LeaderboardInputRepository>(LeaderboardInputRepository.Token)
+    .toConstantValue(leaderboardInputRepository);
 
   const dailyLeaderboardRepository = new LeaderboardRepositoryImpl(
     new LeaderboardMongoSource(mongoSource, MiningLeaderboardTimeframe.Daily),
@@ -65,6 +74,12 @@ export const setupDependencies = async (
   container
     .bind<UpdateLeaderboardUseCase>(UpdateLeaderboardUseCase.Token)
     .to(UpdateLeaderboardUseCase);
+  container
+    .bind<SendCachedLeaderboardUseCase>(SendCachedLeaderboardUseCase.Token)
+    .to(SendCachedLeaderboardUseCase);
+  container
+    .bind<CacheOrSendLeaderboardUseCase>(CacheOrSendLeaderboardUseCase.Token)
+    .to(CacheOrSendLeaderboardUseCase);
   container
     .bind<FindUserInLeaderboardUseCase>(FindUserInLeaderboardUseCase.Token)
     .to(FindUserInLeaderboardUseCase);

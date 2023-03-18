@@ -24,7 +24,9 @@ export type Environment = {
   HISTORY_TOOLS_BROADCAST_DRIVER?: string;
   ATOMICASSETS_API_HOST?: string;
   ATOMICASSETS_API_PORT?: string;
-  ATOMICASSETS_API_SECURE?: number;
+  ATOMICASSETS_API_SECURE?: string;
+  CRON_TIME?: string;
+  UPDATE_BATCH_SIZE?: string;
 };
 
 export type ApiConfig = {
@@ -37,4 +39,6 @@ export type LeaderboardConfig = {
   redis: RedisConfig;
   historyToolsBroadcast: BroadcastConfig;
   atomicassets: AtomicAssetsApiConfig;
+  cronTime?: string;
+  updatesBatchSize?: number;
 };

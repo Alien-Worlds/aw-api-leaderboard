@@ -4,7 +4,7 @@ export const calculateStartOfWeek = (date: Date) => {
   const startOfWeek = new Date();
   const day = date.getDay();
   startOfWeek.setDate(date.getDate() - ((day < 1 ? 7 : 0) + day - 1));
-  startOfWeek.setHours(0, 0, 0, 0);
+  startOfWeek.setHours(1, 0, 0, 0);
 
   return startOfWeek;
 };
@@ -15,7 +15,7 @@ export const calculateEndOfWeek = (date: Date) => {
     startOfWeek.getFullYear(),
     startOfWeek.getMonth(),
     startOfWeek.getDate() + 6,
-    23,
+    24,
     59,
     59
   );
@@ -23,11 +23,11 @@ export const calculateEndOfWeek = (date: Date) => {
 };
 
 export const calculateStartOfMonth = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0, 0);
+  return new Date(date.getFullYear(), date.getMonth(), 1, 1, 0, 0, 0);
 };
 
 export const calculateEndOfMonth = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 24, 59, 59);
 };
 
 export const calculateStartOfDay = (date: Date) => {

@@ -2,7 +2,7 @@ import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
 import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
 import { Leaderboard } from '../entities/leaderboard';
-import { UpdateLeaderboardInput } from '../models/update-leaderboard.input';
+import { LeaderboardEntry } from '../models/update-leaderboard.input';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
 
 /*imports*/
@@ -22,53 +22,58 @@ export class UpdateMonthlyLeaderboardUseCase implements UseCase<void> {
    * @async
    */
   public async execute(
-    input: UpdateLeaderboardInput,
+    items: LeaderboardEntry[],
     assets: AtomicAsset<MinigToolData>[]
   ): Promise<Result<void>> {
-    const {
-      username,
-      walletId,
-      fromMonthStart,
-      toMonthEnd,
-      bounty,
-      blockNumber,
-      blockTimestamp,
-      points,
-      landId,
-      planetName,
-    } = input;
-
-    let monthlyUpdate: Result;
-    const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
-      username,
-      walletId,
-      fromMonthStart,
-      toMonthEnd
-    );
-
-    if (userMonthlySearch.isFailure) {
-      monthlyUpdate = await this.monthlyLeaderboardRepository.update(
-        Leaderboard.create(
-          fromMonthStart,
-          toMonthEnd,
-          walletId,
-          username,
-          bounty,
-          blockNumber,
-          blockTimestamp,
-          points,
-          landId,
-          planetName,
-          assets
-        )
+    const updates = [];
+    // We can't fetch the data of all users from the list at once
+    // because the leaderboard timeframes of individual players may differ from each other
+    // We have to fetch data one at a time
+    for (const item of items) {
+      const {
+        username,
+        walletId,
+        fromDayStart,
+        toDayEnd,
+        bounty,
+        blockNumber,
+        blockTimestamp,
+        points,
+        landId,
+        planetName,
+      } = item;
+      const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
+        username,
+        walletId,
+        fromDayStart,
+        toDayEnd
       );
-    } else {
-      const { content: monthlyUserLeaderboard } = userMonthlySearch;
-      monthlyUpdate = await this.monthlyLeaderboardRepository.update(
-        Leaderboard.cloneAndUpdate(monthlyUserLeaderboard, input, assets)
-      );
+
+      if (userMonthlySearch.isFailure) {
+        updates.push(
+          Leaderboard.create(
+            fromDayStart,
+            toDayEnd,
+            walletId,
+            username,
+            bounty,
+            blockNumber,
+            blockTimestamp,
+            points,
+            landId,
+            planetName,
+            assets
+          )
+        );
+      } else {
+        const { content: monthlyUserLeaderboard } = userMonthlySearch;
+        updates.push(Leaderboard.cloneAndUpdate(monthlyUserLeaderboard, item, assets));
+      }
     }
-    return monthlyUpdate;
+
+    // and as part of improvements we can send already updated data at once
+
+    return this.monthlyLeaderboardRepository.updateMany(updates);
   }
 
   /*methods*/

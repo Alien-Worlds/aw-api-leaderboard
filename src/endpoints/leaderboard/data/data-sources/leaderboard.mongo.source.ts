@@ -67,7 +67,6 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
         {
           key: {
             wallet_id: 1,
-            username: 1,
             start_timestamp: 1,
             end_timestamp: 1,
           },
@@ -89,6 +88,7 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
             update: {
               $set: documentWithoutId as MongoDB.MatchKeysAndValues<LeaderboardDocument>,
             },
+            upsert: true,
           },
         };
       });

@@ -9,7 +9,7 @@ import {
   LeaderboardStruct,
   MinigToolData,
 } from '../../data/leaderboard.dtos';
-import { UpdateLeaderboardInput } from '../models/update-leaderboard.input';
+import { LeaderboardEntry } from '../models/update-leaderboard.input';
 
 /**
  * @class
@@ -147,7 +147,7 @@ export class Leaderboard {
 
   public static cloneAndUpdate(
     leaderboard: Leaderboard,
-    updates: UpdateLeaderboardInput,
+    updates: LeaderboardEntry,
     assets: AtomicAsset<MinigToolData>[]
   ): Leaderboard {
     const {

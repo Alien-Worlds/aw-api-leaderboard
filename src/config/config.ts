@@ -51,11 +51,17 @@ export const buildConfig = (): LeaderboardConfig => {
     ),
   };
 
+  const cronTime = environment.CRON_TIME || dotEnv.CRON_TIME;
+  const updateBatchSize =
+    Number(environment.UPDATE_BATCH_SIZE || dotEnv.UPDATE_BATCH_SIZE) || 0;
+
   return {
     api,
     mongo,
     redis,
     historyToolsBroadcast: historyToolsBroadcast.host ? historyToolsBroadcast : null,
     atomicassets,
+    cronTime,
+    updatesBatchSize: updateBatchSize,
   };
 };

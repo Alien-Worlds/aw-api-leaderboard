@@ -1,7 +1,7 @@
 import { AtomicAsset, AtomicAssetRepository } from '@alien-worlds/alienworlds-api-common';
 import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
-import { UpdateLeaderboardInput } from '../models/update-leaderboard.input';
+import { LeaderboardEntry } from '../models/update-leaderboard.input';
 import { UpdateDailyLeaderboardUseCase } from './update-daily-leaderboard.use-case';
 import { UpdateMonthlyLeaderboardUseCase } from './update-monthly-leaderboard.use-case';
 import { UpdateWeeklyLeaderboardUseCase } from './update-weekly-leaderboard.use-case';
@@ -25,16 +25,20 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
     private atomicAssetRepository: AtomicAssetRepository
   ) {}
 
-  /**
-   * @async
-   */
-  public async execute(input: UpdateLeaderboardInput): Promise<Result<void>> {
-    const { tools } = input;
+  private async getAssets(items: LeaderboardEntry[]) {
+    const ids = new Set<string | number | bigint>();
     const assets = [];
 
-    if (tools) {
+    items.forEach(item => {
+      const { bagItems } = item;
+      bagItems.forEach(id => {
+        ids.add(id);
+      });
+    });
+
+    if (ids.size > 0) {
       const { content, failure: atomicAssetsFailure } =
-        await this.atomicAssetRepository.getAssets(tools);
+        await this.atomicAssetRepository.getAssets(Array.from(ids));
 
       if (atomicAssetsFailure) {
         //
@@ -43,17 +47,30 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
       }
     }
 
-    const dailyUpdate = await this.updateDailyLeaderboardUseCase.execute(
-      input,
-      <AtomicAsset<MinigToolData>[]>assets
-    );
+    return assets;
+  }
+
+  /**
+   * @async
+   */
+  public async execute(items: LeaderboardEntry[]): Promise<Result<void>> {
+    const assets = await this.getAssets(items);
+
+    /*
+     * UPDATE DAILY LEADERBOARD
+     */
+    const dailyUpdate = await this.updateDailyLeaderboardUseCase.execute(items, assets);
 
     if (dailyUpdate.isFailure) {
       return Result.withFailure(dailyUpdate.failure);
     }
 
+    /*
+     * UPDATE WEEKLY LEADERBOARD
+     */
+
     const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(
-      input,
+      items,
       <AtomicAsset<MinigToolData>[]>assets
     );
 
@@ -62,8 +79,12 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
       return Result.withFailure(weeklyUpdate.failure);
     }
 
+    /*
+     * UPDATE MONTHLY LEADERBOARD
+     */
+
     const monthlyUpdate = await this.updateMonthlyLeaderboardUseCase.execute(
-      input,
+      items,
       <AtomicAsset<MinigToolData>[]>assets
     );
 

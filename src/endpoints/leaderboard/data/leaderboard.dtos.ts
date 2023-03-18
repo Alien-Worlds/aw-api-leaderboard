@@ -56,7 +56,7 @@ export type MinigToolData = {
   difficulty: number;
 };
 
-export type UpdateLeaderboardRequest = {
+export type UpdateLeaderboardStruct = {
   wallet_id: string;
   username?: string;
   bounty?: string | number;
@@ -69,7 +69,7 @@ export type UpdateLeaderboardRequest = {
   [key: string]: unknown;
 };
 
-export type UpdateLeaderboardStruct = UpdateLeaderboardRequest;
+export type UpdateLeaderboardDocuemnt = UpdateLeaderboardStruct;
 
 export type LeaderboardStruct = {
   block_number: string;
