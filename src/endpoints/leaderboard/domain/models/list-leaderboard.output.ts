@@ -1,9 +1,13 @@
 import { Result } from '@alien-worlds/api-core';
-import { LeaderboardStruct } from '../../data/leaderboard.dtos';
-import { Leaderboard } from '../entities/leaderboard';
+import {
+  LeaderboardStruct,
+  ListLeaderboardControllerOutput,
+} from '../../data/leaderboard.dtos';
 
 export class ListLeaderboardOutput {
-  public static create(result: Result<Leaderboard[]>): ListLeaderboardOutput {
+  public static create(
+    result: Result<ListLeaderboardControllerOutput>
+  ): ListLeaderboardOutput {
     if (result.isFailure) {
       const {
         failure: { error },
@@ -12,19 +16,24 @@ export class ListLeaderboardOutput {
         console.log(error);
         return {
           status: 500,
-          body: [],
+          body: null,
         };
       }
     }
 
+    const output = {
+      results: result.content.results.map(leaderboard => leaderboard.toStruct()),
+      total: result.content.total,
+    };
+
     return {
       status: 200,
-      body: result.content.map(leaderboard => leaderboard.toStruct()),
+      body: output,
     };
   }
 
   private constructor(
     public readonly status: number,
-    public readonly body: LeaderboardStruct[]
+    public readonly body: { results: LeaderboardStruct[]; total: number }
   ) {}
 }

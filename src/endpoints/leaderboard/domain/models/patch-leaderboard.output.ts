@@ -21,5 +21,5 @@ export class PatchLeaderboardOutput {
     };
   }
 
-  private constructor(public readonly status: number, public readonly body: boolean) { }
+  private constructor(public readonly status: number, public readonly body: boolean) {}
 }

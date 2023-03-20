@@ -1,6 +1,9 @@
 import { inject, injectable, Result } from '@alien-worlds/api-core';
 
-import { PatchLeaderboardControllerInput } from '../data/leaderboard.dtos';
+import {
+  ListLeaderboardControllerOutput,
+  PatchLeaderboardControllerInput,
+} from '../data/leaderboard.dtos';
 import { Leaderboard } from './entities/leaderboard';
 import { FindUserInLeaderboardInput } from './models/find-user-in-leaderboard.input';
 import { ListLeaderboardInput } from './models/list-leaderboard.input';
@@ -30,7 +33,7 @@ export class LeaderboardController {
 
     @inject(FindUserInLeaderboardUseCase.Token)
     private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase
-  ) { }
+  ) {}
 
   /*methods*/
 
@@ -38,7 +41,9 @@ export class LeaderboardController {
    *
    * @returns {Promise<Result<Leaderboard[], Error>>}
    */
-  public async list(input: ListLeaderboardInput): Promise<Result<Leaderboard[], Error>> {
+  public async list(
+    input: ListLeaderboardInput
+  ): Promise<Result<ListLeaderboardControllerOutput, Error>> {
     return this.listLeaderboardUseCase.execute(input);
   }
   /**
@@ -61,9 +66,10 @@ export class LeaderboardController {
   /**
    *
    * @returns {Promise<Result<void, Error>>}
-  */
-  public async patch(input: PatchLeaderboardControllerInput): Promise<Result<void, Error>> {
+   */
+  public async patch(
+    input: PatchLeaderboardControllerInput
+  ): Promise<Result<void, Error>> {
     return this.patchLeaderboardUseCase.execute(input);
   }
-
 }

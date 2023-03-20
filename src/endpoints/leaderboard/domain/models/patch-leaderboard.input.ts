@@ -1,4 +1,7 @@
-import { LeaderboardDocument, PatchLeaderboardControllerInput } from '../../data/leaderboard.dtos';
+import {
+  LeaderboardDocument,
+  PatchLeaderboardControllerInput,
+} from '../../data/leaderboard.dtos';
 
 import { Request } from '@alien-worlds/api-core';
 
