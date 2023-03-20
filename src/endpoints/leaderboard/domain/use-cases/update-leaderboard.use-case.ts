@@ -1,4 +1,10 @@
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import {
+  inject,
+  injectable,
+  Result,
+  UpdateStatus,
+  UseCase,
+} from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
 import { UpdateLeaderboardInput } from '../models/update-leaderboard.input';
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
@@ -46,7 +52,7 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
 
     // DAILY LEADERBOARD UPDATE
 
-    let dailyUpdate: Result;
+    let dailyUpdate: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
     const userDailySearch = await this.dailyLeaderboardRepository.findUser(
       username,
       walletId,
@@ -83,7 +89,7 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
 
     // WEEKLY LEADERBOARD UPDATE
 
-    let weeklyUpdate: Result;
+    let weeklyUpdate: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
     const userWeeklySearch = await this.weeklyLeaderboardRepository.findUser(
       username,
       walletId,
@@ -120,7 +126,7 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
 
     // MONTHLY LEADERBOARD UPDATE
 
-    let monthlyUpdate: Result;
+    let monthlyUpdate: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
     const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
       username,
       walletId,

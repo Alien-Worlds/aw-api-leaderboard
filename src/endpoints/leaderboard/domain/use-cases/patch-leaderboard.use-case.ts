@@ -1,4 +1,11 @@
-import { inject, injectable, removeUndefinedProperties, Result, UseCase } from '@alien-worlds/api-core';
+import {
+  inject,
+  injectable,
+  removeUndefinedProperties,
+  Result,
+  UpdateStatus,
+  UseCase,
+} from '@alien-worlds/api-core';
 
 import { LeaderboardDocument } from '../../data/leaderboard.dtos';
 import { Leaderboard } from '../entities/leaderboard';
@@ -22,23 +29,32 @@ export class PatchLeaderboardUseCase implements UseCase<void> {
     private weeklyLeaderboardRepository: MiningWeeklyLeaderboardRepository,
     @inject(MiningMonthlyLeaderboardRepository.Token)
     private monthlyLeaderboardRepository: MiningMonthlyLeaderboardRepository
-  ) { }
+  ) {}
 
   /**
    * @async
    */
   public async execute(input: Partial<LeaderboardDocument>): Promise<Result<void>> {
-    const dailyPatch = await this.patchLeaderboardRepository(this.dailyLeaderboardRepository, input);
+    const dailyPatch = await this.patchLeaderboardRepository(
+      this.dailyLeaderboardRepository,
+      input
+    );
     if (dailyPatch.isFailure) {
       return Result.withFailure(dailyPatch.failure);
     }
 
-    const weeklyPatch = await this.patchLeaderboardRepository(this.weeklyLeaderboardRepository, input);
+    const weeklyPatch = await this.patchLeaderboardRepository(
+      this.weeklyLeaderboardRepository,
+      input
+    );
     if (weeklyPatch.isFailure) {
       return Result.withFailure(weeklyPatch.failure);
     }
 
-    const monthlyPatch = await this.patchLeaderboardRepository(this.monthlyLeaderboardRepository, input);
+    const monthlyPatch = await this.patchLeaderboardRepository(
+      this.monthlyLeaderboardRepository,
+      input
+    );
     if (monthlyPatch.isFailure) {
       return Result.withFailure(monthlyPatch.failure);
     }
@@ -51,11 +67,11 @@ export class PatchLeaderboardUseCase implements UseCase<void> {
     repository: MiningLeaderboardRepository,
     updates: Partial<LeaderboardDocument>
   ): Promise<Result<void>> {
-
-    const { wallet_id: walletId, ...leaderboardWithoutWalletId } = removeUndefinedProperties<LeaderboardDocument>(updates);
+    const { wallet_id: walletId, ...leaderboardWithoutWalletId } =
+      removeUndefinedProperties<LeaderboardDocument>(updates);
     const propsToUpdate = Object.keys(leaderboardWithoutWalletId);
 
-    let patchResult: Result;
+    let patchResult: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
     const userSearch = await repository.findAll(walletId);
     if (userSearch.isFailure) {
       return Result.withFailure(userSearch.failure);
@@ -69,18 +85,19 @@ export class PatchLeaderboardUseCase implements UseCase<void> {
           if (leaderboardEntry[prop] != leaderboardWithoutWalletId[prop]) {
             updatedEntry[prop] = leaderboardWithoutWalletId[prop];
           }
-        })
+        });
 
         patchResult = await repository.update(
           Leaderboard.fromDocument({
             ...leaderboardEntry.toDocument(),
             ...updatedEntry,
-          }))
+          })
+        );
 
         if (patchResult.isFailure) {
           return Result.withFailure(patchResult.failure);
         }
-      })
+      });
     }
 
     return Result.withoutContent();

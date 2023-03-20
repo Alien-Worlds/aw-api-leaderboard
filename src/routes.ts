@@ -1,5 +1,10 @@
 import { Container, Route } from '@alien-worlds/api-core';
-import { FindUserInLeaderboardRoute, LeaderboardController, ListLeaderboardRoute, UpdateLeaderboardRoute } from './endpoints/leaderboard';
+import {
+  FindUserInLeaderboardRoute,
+  LeaderboardController,
+  ListLeaderboardRoute,
+  UpdateLeaderboardRoute,
+} from './endpoints/leaderboard';
 
 import { LeaderboardApi } from './api';
 import { PatchLeaderboardRoute } from './endpoints/leaderboard/routes/patch-leaderboard.route';
@@ -27,8 +32,6 @@ export const mountRoutes = (api: LeaderboardApi, container: Container) => {
   );
   Route.mount(
     api.framework,
-    PatchLeaderboardRoute.create(
-      leaderboardController.patch.bind(leaderboardController)
-    )
+    PatchLeaderboardRoute.create(leaderboardController.patch.bind(leaderboardController))
   );
 };

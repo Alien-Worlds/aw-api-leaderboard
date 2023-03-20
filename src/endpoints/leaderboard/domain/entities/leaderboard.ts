@@ -3,7 +3,6 @@ import {
   MongoDB,
   parseToBigInt,
 } from '@alien-worlds/api-core';
-import e from 'express';
 import { LeaderboardDocument, LeaderboardStruct } from '../../data/leaderboard.dtos';
 import { UpdateLeaderboardInput, UsedTool } from '../models/update-leaderboard.input';
 
@@ -15,9 +14,13 @@ export class Leaderboard {
    *
    * @static
    * @param {LeaderboardDocument} document
+   * @param {number} position - calculated externally using offset
    * @returns {Leaderboard}
    */
-  public static fromDocument(document: LeaderboardDocument): Leaderboard {
+  public static fromDocument(
+    document: LeaderboardDocument,
+    position?: number
+  ): Leaderboard {
     const {
       _id,
       block_number,
@@ -42,7 +45,6 @@ export class Leaderboard {
       planets,
       planets_mined_on,
       mine_rating,
-      position,
       ...rest
     } = document;
 
@@ -366,7 +368,7 @@ export class Leaderboard {
 
     /**
      * Do not add "position" to the document!
-     * It shouldn't be stored in the leaderboard colelction.
+     * It shouldn't be stored in the leaderboard collection.
      * This value is dynamic and should be calculated only
      * in the aggregation pipeline.
      */
@@ -399,6 +401,7 @@ export class Leaderboard {
       mineRating,
       blockNumber,
       blockTimestamp,
+      position,
     } = this;
 
     const struct: LeaderboardStruct = {
@@ -421,6 +424,7 @@ export class Leaderboard {
       lands_mined_on: landsMinedOn,
       planets_mined_on: planetsMinedOn,
       mine_rating: mineRating,
+      position: position,
     };
 
     return removeUndefinedProperties<LeaderboardStruct>(struct);

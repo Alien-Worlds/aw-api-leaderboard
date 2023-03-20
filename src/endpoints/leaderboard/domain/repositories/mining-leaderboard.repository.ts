@@ -1,19 +1,19 @@
-import { Result, injectable } from '@alien-worlds/api-core';
+import { Result, injectable, Repository } from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../entities/leaderboard';
+import { MiningLeaderboardOrder } from '../mining-leaderboard.enums';
 
 /**
  * @abstract
  * @class
  */
 @injectable()
-export abstract class MiningLeaderboardRepository {
-  public abstract update(leaderboard: Leaderboard): Promise<Result<void>>;
-
+export abstract class MiningLeaderboardRepository extends Repository {
   public abstract list(
     sort: string,
     offset: number,
     limit: number,
+    order: MiningLeaderboardOrder,
     fromDate: Date,
     toDate: Date
   ): Promise<Result<Leaderboard[]>>;

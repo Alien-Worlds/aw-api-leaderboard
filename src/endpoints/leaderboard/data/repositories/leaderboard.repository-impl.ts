@@ -1,17 +1,29 @@
-import { Failure, Result } from '@alien-worlds/api-core';
+import { Failure, Result, UpdateStatus } from '@alien-worlds/api-core';
 
-import { Leaderboard } from './../../domain/entities/leaderboard';
+import { Leaderboard } from '../../domain/entities/leaderboard';
+import {
+  MiningLeaderboardOrder,
+  MiningLeaderboardSort,
+} from '../../domain/mining-leaderboard.enums';
+import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
-import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
-import { MiningLeaderboardSort } from '../../domain/mining-leaderboard.enums';
-import { UserLeaderboardNotFoundError } from './../../domain/errors/user-leaderboard-not-found.error';
+import { UserLeaderboardNotFoundError } from '../../domain/errors/user-leaderboard-not-found.error';
+import { RepositoryImpl } from '@alien-worlds/api-core/build/architecture/data/repository-impl';
+import { LeaderboardDocument } from '../leaderboard.dtos';
+import { LeaderboardMapper } from '../mappers/leaderboard.mapper';
 
-export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
+export class LeaderboardRepositoryImpl
+  extends RepositoryImpl<Leaderboard, LeaderboardDocument>
+  implements MiningLeaderboardRepository
+{
   constructor(
     protected readonly mongoSource: LeaderboardMongoSource,
-    protected readonly redisSource: LeaderboardRedisSource
-  ) { }
+    protected readonly redisSource: LeaderboardRedisSource,
+    protected readonly mapper: LeaderboardMapper
+  ) {
+    super(mongoSource, mapper);
+  }
 
   public async findUser(
     username: string,
@@ -20,7 +32,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     toDate: Date
   ): Promise<Result<Leaderboard, Error>> {
     try {
-      const { mongoSource, redisSource } = this;
+      const { mongoSource } = this;
       const document = await mongoSource.findOne({
         filter: {
           $and: [
@@ -31,14 +43,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
               end_timestamp: { $lte: new Date(toDate.toISOString()) },
             },
             {
-              $or: [
-                {
-                  wallet_id: walletId,
-                },
-                {
-                  username,
-                },
-              ],
+              wallet_id: walletId,
             },
           ],
         },
@@ -56,11 +61,9 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     }
   }
 
-  public async findAll(
-    walletId: string,
-  ): Promise<Result<Leaderboard[], Error>> {
+  public async findAll(walletId: string): Promise<Result<Leaderboard[], Error>> {
     try {
-      const { mongoSource, redisSource } = this;
+      const { mongoSource } = this;
 
       const documents = await mongoSource.find({
         filter: {
@@ -80,7 +83,9 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     }
   }
 
-  public async update(leaderboard: Leaderboard): Promise<Result<void>> {
+  public async update(
+    leaderboard: Leaderboard
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure, Error>> {
     try {
       const { walletId, startTimestamp, endTimestamp } = leaderboard;
       await this.mongoSource.update(leaderboard.toDocument(), {
@@ -90,7 +95,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           end_timestamp: endTimestamp,
         },
       });
-      return Result.withoutContent();
+      return Result.withContent(UpdateStatus.Success);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
@@ -100,11 +105,12 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     sort: MiningLeaderboardSort,
     offset: number,
     limit: number,
+    order: MiningLeaderboardOrder,
     fromDate: Date,
     toDate: Date
   ): Promise<Result<Leaderboard[]>> {
     try {
-      const { mongoSource, redisSource } = this;
+      const { mongoSource } = this;
       const documents = await mongoSource.find({
         filter: {
           $and: [
@@ -117,12 +123,18 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           ],
         },
         options: {
-          sort: JSON.parse(`{ "${sort}": -1 }`),
+          sort: JSON.parse(`{ "${sort}": ${order} }`),
           skip: Number(offset),
           limit: Number(limit),
         },
       });
-      return Result.withContent(documents.map(Leaderboard.fromDocument));
+
+      const docsres = documents.map((document, index) => {
+        const position = Number(offset) + Number(index) + 1;
+        return Leaderboard.fromDocument(document, position);
+      });
+
+      return Result.withContent(docsres);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

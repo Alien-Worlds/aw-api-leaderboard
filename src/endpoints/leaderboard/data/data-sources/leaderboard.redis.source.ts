@@ -1,4 +1,4 @@
-import { LeaderboardDocument, LeaderboardStruct } from './../leaderboard.dtos';
+import { LeaderboardStruct } from '../leaderboard.dtos';
 import { RedisSource } from './redis.source';
 
 /**
@@ -10,6 +10,7 @@ export class LeaderboardRedisSource {
   /**
    * @constructor
    * @param {RedisSource} redisSource
+   * @param {string} name
    */
   constructor(private readonly redisSource: RedisSource, private readonly name: string) {}
 
