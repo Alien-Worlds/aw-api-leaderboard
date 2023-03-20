@@ -1,4 +1,4 @@
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import { inject, injectable, Result, UpdateStatus, UseCase } from '@alien-worlds/api-core';
 import { buildConfig } from '../../../../config';
 import { LeaderboardEntry } from '../models/update-leaderboard.input';
 import { LeaderboardInputRepository } from '../repositories/leaderboard-input.repository';
@@ -12,7 +12,9 @@ const { updatesBatchSize } = buildConfig();
  * @class
  */
 @injectable()
-export class CacheOrSendLeaderboardUseCase implements UseCase<void> {
+export class CacheOrSendLeaderboardUseCase
+  implements UseCase<UpdateStatus.Success | UpdateStatus.Failure>
+{
   public static Token = 'CACHE_OR_SEND_LEADERBOARD_USE_CASE';
 
   constructor(
@@ -25,7 +27,9 @@ export class CacheOrSendLeaderboardUseCase implements UseCase<void> {
   /**
    * @async
    */
-  public async execute(items: LeaderboardEntry[]): Promise<Result<void>> {
+  public async execute(
+    items: LeaderboardEntry[]
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     const addResult = await this.leaderboardInputRepository.addMany(items);
 
     if (addResult.isFailure) {
@@ -43,7 +47,7 @@ export class CacheOrSendLeaderboardUseCase implements UseCase<void> {
       return this.sendCachedLeaderboardUseCase.execute();
     }
 
-    return Result.withoutContent();
+    return Result.withContent(UpdateStatus.Success);
   }
 
   /*methods*/

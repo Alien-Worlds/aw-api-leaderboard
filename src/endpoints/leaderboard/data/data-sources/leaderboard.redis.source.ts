@@ -10,6 +10,7 @@ export class LeaderboardRedisSource extends CollectionRedisSource<LeaderboardStr
   /**
    * @constructor
    * @param {RedisSource} redisSource
+   * @param {string} name
    */
   constructor(redisSource: RedisSource, name: string) {
     super(redisSource, name);

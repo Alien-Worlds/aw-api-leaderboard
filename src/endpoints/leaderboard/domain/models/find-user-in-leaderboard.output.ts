@@ -1,20 +1,24 @@
-import { Result } from '@alien-worlds/api-core';
-import { LeaderboardStruct } from '../../data/leaderboard.dtos';
+import { log, Result } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
 
 export class FindUserInLeaderboardOutput {
   public static create(result: Result<Leaderboard>): FindUserInLeaderboardOutput {
+    return new FindUserInLeaderboardOutput(result);
+  }
+
+  private constructor(public readonly result: Result<Leaderboard>) {}
+
+  public toResponse() {
+    const { result } = this;
     if (result.isFailure) {
       const {
         failure: { error },
       } = result;
-      if (error) {
-        console.log(error);
-        return {
-          status: 500,
-          body: null,
-        };
-      }
+      log(error);
+      return {
+        status: 500,
+        body: null,
+      };
     }
 
     return {
@@ -22,9 +26,4 @@ export class FindUserInLeaderboardOutput {
       body: result.content.toStruct(),
     };
   }
-
-  private constructor(
-    public readonly status: number,
-    public readonly body: LeaderboardStruct
-  ) {}
 }

@@ -1,4 +1,10 @@
-import { Failure, Result } from '@alien-worlds/api-core';
+import {
+  Failure,
+  getParams,
+  QueryModel,
+  Result,
+  UpdateStatus,
+} from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../../domain/entities/leaderboard';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
@@ -46,13 +52,12 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   }
 
   public async findUser(
-    username: string,
-    walletId: string,
+    user: string,
     fromDate: Date,
     toDate: Date
   ): Promise<Result<Leaderboard, Error>> {
     try {
-      const { mongoSource, redisSource } = this;
+      const { mongoSource } = this;
       const document = await mongoSource.findOne({
         filter: {
           $and: [
@@ -63,7 +68,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
               end_timestamp: { $lte: new Date(toDate.toISOString()) },
             },
             {
-              wallet_id: walletId,
+              wallet_id: user,
             },
           ],
         },
@@ -74,25 +79,29 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
       }
 
       return Result.withFailure(
-        Failure.fromError(new UserLeaderboardNotFoundError(username))
+        Failure.fromError(new UserLeaderboardNotFoundError(user))
       );
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
   }
 
-  public async updateMany(leaderboards: Leaderboard[]): Promise<Result<void>> {
+  public async updateMany(
+    leaderboards: Leaderboard[]
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     try {
       await this.mongoSource.updateManyByWalletId(
         leaderboards.map(leaderboard => leaderboard.toDocument())
       );
-      return Result.withoutContent();
+      return Result.withContent(UpdateStatus.Success);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
   }
 
-  public async update(leaderboard: Leaderboard): Promise<Result<void>> {
+  public async update(
+    leaderboard: Leaderboard
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     try {
       const { walletId, startTimestamp, endTimestamp } = leaderboard;
       await this.mongoSource.update(leaderboard.toDocument(), {
@@ -102,7 +111,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           end_timestamp: endTimestamp,
         },
       });
-      return Result.withoutContent();
+      return Result.withContent(UpdateStatus.Success);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
@@ -117,7 +126,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     toDate: Date
   ): Promise<Result<Leaderboard[]>> {
     try {
-      const { mongoSource, redisSource } = this;
+      const { mongoSource } = this;
       const documents = await mongoSource.find({
         filter: {
           $and: [
@@ -141,6 +150,17 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           return Leaderboard.fromDocument(document, position);
         })
       );
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
+
+  public async count(model: QueryModel): Promise<Result<number, Error>> {
+    try {
+      const params = getParams(model);
+      const count = await this.mongoSource.count(params);
+
+      return Result.withContent(count);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

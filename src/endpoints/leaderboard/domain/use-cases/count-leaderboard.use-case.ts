@@ -1,7 +1,8 @@
 import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.input';
+import { ListLeaderboardCountQueryModel } from '../models/list-leaderboard-count.query-model';
+import { ListLeaderboardInput } from '../models/list-leaderboard.input';
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
 import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
@@ -11,8 +12,8 @@ import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly
  * @class
  */
 @injectable()
-export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
-  public static Token = 'FIND_USER_IN_LEADERBOARD_USE_CASE';
+export class CountLeaderboardUseCase implements UseCase<number> {
+  public static Token = 'COUNT_LEADERBOARD_USE_CASE';
 
   constructor(
     @inject(MiningDailyLeaderboardRepository.Token)
@@ -25,21 +26,23 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
 
   /**
    * @async
-   * @returns {Promise<Result<Leaderboard>>}
+   * @returns {Promise<Result<number>>}
    */
-  public async execute(input: FindUserInLeaderboardInput): Promise<Result<Leaderboard>> {
-    const { user, fromDate, toDate, timeframe } = input;
+  public async execute(input: ListLeaderboardInput): Promise<Result<number>> {
+    //
+    const { timeframe } = input;
+    const countQueryModel = ListLeaderboardCountQueryModel.create(input);
 
     if (timeframe === MiningLeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.findUser(user, fromDate, toDate);
+      return this.dailyLeaderboardRepository.count(countQueryModel);
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.findUser(user, fromDate, toDate);
+      return this.weeklyLeaderboardRepository.count(countQueryModel);
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Monthly) {
-      return this.monthlyLeaderboardRepository.findUser(user, fromDate, toDate);
+      return this.monthlyLeaderboardRepository.count(countQueryModel);
     }
 
     return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));

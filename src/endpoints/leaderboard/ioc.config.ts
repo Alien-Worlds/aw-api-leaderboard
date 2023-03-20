@@ -20,6 +20,7 @@ import { LeaderboardInputRepositoryImpl } from './data/repositories/leaderboard-
 import { LeaderboardInputRepository } from './domain/repositories/leaderboard-input.repository';
 import { CacheOrSendLeaderboardUseCase } from './domain/use-cases/cache-or-send-leaderboard.use-case';
 import { SendCachedLeaderboardUseCase } from './domain/use-cases/send-cached-leaderboard.use-case';
+import { CountLeaderboardUseCase } from './domain/use-cases/count-leaderboard.use-case';
 
 export const setupDependencies = async (
   config: LeaderboardConfig,
@@ -59,6 +60,9 @@ export const setupDependencies = async (
     .bind<MiningMonthlyLeaderboardRepository>(MiningMonthlyLeaderboardRepository.Token)
     .toConstantValue(monthlyLeaderboardRepository);
 
+  container
+    .bind<CountLeaderboardUseCase>(CountLeaderboardUseCase.Token)
+    .to(CountLeaderboardUseCase);
   container
     .bind<ListLeaderboardUseCase>(ListLeaderboardUseCase.Token)
     .to(ListLeaderboardUseCase);

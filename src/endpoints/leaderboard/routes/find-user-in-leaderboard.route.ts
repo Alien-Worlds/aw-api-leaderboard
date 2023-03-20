@@ -16,7 +16,7 @@ export class FindUserInLeaderboardRoute extends GetRoute {
     super('/v1/leaderboard/:timeframe', handler, {
       hooks: {
         pre: FindUserInLeaderboardInput.fromRequest,
-        post: FindUserInLeaderboardOutput.create,
+        post: (output: FindUserInLeaderboardOutput) => output.toResponse(),
       },
     });
   }

@@ -78,7 +78,7 @@ export class Leaderboard {
       planets,
       planets_mined_on,
       mine_rating,
-      position || document.position,
+      position || document.position || -1,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
       _id instanceof MongoDB.ObjectId ? _id.toString() : '',
       rest
@@ -371,6 +371,7 @@ export class Leaderboard {
       planets,
       planetsMinedOn,
       mineRating,
+      position,
     } = this;
 
     const document: LeaderboardDocument = {
@@ -399,12 +400,9 @@ export class Leaderboard {
       planets,
     };
 
-    /**
-     * Do not add "position" to the document!
-     * It shouldn't be stored in the leaderboard colelction.
-     * This value is dynamic and should be calculated only
-     * in the aggregation pipeline.
-     */
+    if (position && position > -1) {
+      document.position = position;
+    }
 
     if (id && MongoDB.ObjectId.isValid(id)) {
       document._id = new MongoDB.ObjectId(id);
@@ -435,6 +433,7 @@ export class Leaderboard {
       blockNumber,
       blockTimestamp,
       uniqueToolsUsed,
+      position,
     } = this;
 
     const struct: LeaderboardStruct = {
@@ -459,6 +458,10 @@ export class Leaderboard {
       mine_rating: mineRating,
       unique_tools_used: uniqueToolsUsed,
     };
+
+    if (position && position > -1) {
+      struct.position = position;
+    }
 
     return removeUndefinedProperties<LeaderboardStruct>(struct);
   }

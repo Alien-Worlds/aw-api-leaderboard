@@ -1,5 +1,5 @@
 import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import { inject, injectable, Result, UpdateStatus, UseCase } from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
 import { Leaderboard } from '../entities/leaderboard';
 import { LeaderboardEntry } from '../models/update-leaderboard.input';
@@ -10,7 +10,9 @@ import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-month
  * @class
  */
 @injectable()
-export class UpdateMonthlyLeaderboardUseCase implements UseCase<void> {
+export class UpdateMonthlyLeaderboardUseCase
+  implements UseCase<UpdateStatus.Success | UpdateStatus.Failure>
+{
   public static Token = 'UPDATE_MONTHLY_LEADERBOARD_USE_CASE';
 
   constructor(
@@ -24,7 +26,7 @@ export class UpdateMonthlyLeaderboardUseCase implements UseCase<void> {
   public async execute(
     items: LeaderboardEntry[],
     assets: AtomicAsset<MinigToolData>[]
-  ): Promise<Result<void>> {
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     const updates = [];
     // We can't fetch the data of all users from the list at once
     // because the leaderboard timeframes of individual players may differ from each other
@@ -43,7 +45,6 @@ export class UpdateMonthlyLeaderboardUseCase implements UseCase<void> {
         planetName,
       } = item;
       const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
-        username,
         walletId,
         fromDayStart,
         toDayEnd

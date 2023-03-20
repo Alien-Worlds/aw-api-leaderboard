@@ -1,18 +1,27 @@
-import { Result } from '@alien-worlds/api-core';
+import { log, Result, UpdateStatus } from '@alien-worlds/api-core';
 
 export class UpdateLeaderboardOutput {
-  public static create(result: Result<void>): UpdateLeaderboardOutput {
+  public static create(
+    result: Result<UpdateStatus.Success | UpdateStatus.Failure>
+  ): UpdateLeaderboardOutput {
+    return new UpdateLeaderboardOutput(result);
+  }
+
+  private constructor(
+    public readonly result: Result<UpdateStatus.Success | UpdateStatus.Failure>
+  ) {}
+
+  public toResponse() {
+    const { result } = this;
     if (result.isFailure) {
       const {
         failure: { error },
       } = result;
-      if (error) {
-        console.log(error);
-        return {
-          status: 500,
-          body: false,
-        };
-      }
+      log(error);
+      return {
+        status: 500,
+        body: false,
+      };
     }
 
     return {
@@ -20,6 +29,4 @@ export class UpdateLeaderboardOutput {
       body: true,
     };
   }
-
-  private constructor(public readonly status: number, public readonly body: boolean) {}
 }

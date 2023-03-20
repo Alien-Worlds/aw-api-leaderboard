@@ -37,9 +37,9 @@ export class LeaderboardBroadcast {
       BroadcastChannel.LeaderboardUpdate,
       async (message: BroadcastMessage<LeaderboardUpdateMessage>) => {
         const input = UpdateLeaderboardInput.fromMessage(message);
-        const updateResult = await this.leaderboardController.update(input);
+        const { result } = await this.leaderboardController.update(input);
 
-        if (updateResult.isFailure) {
+        if (result.isFailure) {
           //
         }
       }

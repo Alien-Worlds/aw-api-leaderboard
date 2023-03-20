@@ -16,7 +16,7 @@ export class ListLeaderboardRoute extends GetRoute {
     super('/v1/leaderboard/:timeframe/:sort/:offset/:limit', handler, {
       hooks: {
         pre: ListLeaderboardInput.fromRequest,
-        post: ListLeaderboardOutput.create,
+        post: (output: ListLeaderboardOutput) => output.toResponse(),
       },
     });
   }

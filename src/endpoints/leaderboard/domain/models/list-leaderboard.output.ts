@@ -1,30 +1,40 @@
-import { Result } from '@alien-worlds/api-core';
-import { LeaderboardStruct } from '../../data/leaderboard.dtos';
+import { log, Result } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
 
 export class ListLeaderboardOutput {
-  public static create(result: Result<Leaderboard[]>): ListLeaderboardOutput {
-    if (result.isFailure) {
-      const {
-        failure: { error },
-      } = result;
-      if (error) {
-        console.log(error);
-        return {
-          status: 500,
-          body: [],
-        };
-      }
+  public static create(
+    listResult: Result<Leaderboard[]>,
+    countResult: Result<number>
+  ): ListLeaderboardOutput {
+    return new ListLeaderboardOutput(listResult, countResult);
+  }
+
+  private constructor(
+    public readonly listResult: Result<Leaderboard[]>,
+    public readonly countResult: Result<number>
+  ) {}
+
+  public toResponse() {
+    const {
+      listResult: { content: list, failure: listFailure },
+      countResult: { content: total, failure: countFailure },
+    } = this;
+    if (listFailure || countFailure) {
+      const { error } = listFailure || countFailure;
+
+      log(error);
+      return {
+        status: 500,
+        body: null,
+      };
     }
 
     return {
       status: 200,
-      body: result.content.map(leaderboard => leaderboard.toStruct()),
+      body: {
+        results: list.map(leaderboard => leaderboard.toStruct()),
+        total: total,
+      },
     };
   }
-
-  private constructor(
-    public readonly status: number,
-    public readonly body: LeaderboardStruct[]
-  ) {}
 }

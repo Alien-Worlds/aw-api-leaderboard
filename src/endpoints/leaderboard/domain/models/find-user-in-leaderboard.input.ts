@@ -1,6 +1,9 @@
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';
-import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import {
+  MiningLeaderboardSort,
+  MiningLeaderboardTimeframe,
+} from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 export class FindUserInLeaderboardInput {
@@ -22,18 +25,18 @@ export class FindUserInLeaderboardInput {
     );
 
     return new FindUserInLeaderboardInput(
-      query.walletId,
-      query.username,
+      query.user,
       timeframe || MiningLeaderboardTimeframe.Daily,
+      query.sort || MiningLeaderboardSort.TlmGainsTotal,
       fromDate,
       toDate
     );
   }
 
   private constructor(
-    public readonly walletId: string,
-    public readonly username: string,
+    public readonly user: string,
     public readonly timeframe: string,
+    public readonly sort: string,
     public readonly fromDate: Date,
     public readonly toDate: Date
   ) {}

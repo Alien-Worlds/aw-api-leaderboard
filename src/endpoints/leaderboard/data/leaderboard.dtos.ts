@@ -15,8 +15,7 @@ export type ListLeaderboardRequest = {
 export type FindUserInLeaderboardRequest = {
   timeframe?: string;
   sort?: string;
-  username?: string;
-  walletId?: string;
+  user?: string;
   fromDate?: string;
   toDate?: string;
   date?: string;
@@ -57,8 +56,6 @@ export type MinigToolData = {
   difficulty: number;
 };
 
-export type LeaderboardUpdateDocuemnt = LeaderboardUpdateStruct;
-
 export type LeaderboardStruct = {
   block_number: string;
   block_timesamp: string;
@@ -83,5 +80,8 @@ export type LeaderboardStruct = {
   lands?: string[];
   tools_used?: string[];
   last_update_timestamp?: string;
+  position?: number;
   [key: string]: unknown;
 };
+
+export type LeaderboardUpdateDocuemnt = LeaderboardUpdateStruct;

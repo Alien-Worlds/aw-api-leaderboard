@@ -39,7 +39,7 @@ export class UpdateLeaderboardRoute extends PostRoute {
       },
       hooks: {
         pre: UpdateLeaderboardInput.fromRequest,
-        post: UpdateLeaderboardOutput.create,
+        post: (output: UpdateLeaderboardOutput) => output.toResponse(),
       },
     });
   }

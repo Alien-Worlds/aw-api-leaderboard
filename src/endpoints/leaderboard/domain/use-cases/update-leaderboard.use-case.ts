@@ -1,5 +1,11 @@
 import { AtomicAsset, AtomicAssetRepository } from '@alien-worlds/alienworlds-api-common';
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import {
+  inject,
+  injectable,
+  Result,
+  UpdateStatus,
+  UseCase,
+} from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
 import { LeaderboardEntry } from '../models/update-leaderboard.input';
 import { UpdateDailyLeaderboardUseCase } from './update-daily-leaderboard.use-case';
@@ -11,7 +17,9 @@ import { UpdateWeeklyLeaderboardUseCase } from './update-weekly-leaderboard.use-
  * @class
  */
 @injectable()
-export class UpdateLeaderboardUseCase implements UseCase<void> {
+export class UpdateLeaderboardUseCase
+  implements UseCase<UpdateStatus.Success | UpdateStatus.Failure>
+{
   public static Token = 'UPDATE_LEADERBOARD_USE_CASE';
 
   constructor(
@@ -53,7 +61,9 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
   /**
    * @async
    */
-  public async execute(items: LeaderboardEntry[]): Promise<Result<void>> {
+  public async execute(
+    items: LeaderboardEntry[]
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     const assets = await this.getAssets(items);
 
     /*
@@ -94,7 +104,7 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
       return Result.withFailure(monthlyUpdate.failure);
     }
 
-    return Result.withoutContent();
+    return Result.withContent(UpdateStatus.Success);
   }
 
   /*methods*/
