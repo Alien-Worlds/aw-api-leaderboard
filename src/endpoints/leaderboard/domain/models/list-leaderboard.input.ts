@@ -42,6 +42,6 @@ export class ListLeaderboardInput {
     public readonly offset: number,
     public readonly limit: number,
     public readonly fromDate: Date,
-    public readonly toDate: Date,
+    public readonly toDate: Date
   ) {}
 }

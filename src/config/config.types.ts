@@ -1,4 +1,4 @@
-import { MongoConfig } from "@alien-worlds/api-core";
+import { MongoConfig } from '@alien-worlds/api-core';
 
 export type Environment = {
   MONGO_HOSTS?: string;

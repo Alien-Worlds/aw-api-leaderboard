@@ -1,4 +1,5 @@
 import { MongoDB } from '@alien-worlds/api-core';
+import { Leaderboard } from '../domain/entities/leaderboard';
 
 export type ListLeaderboardRequest = {
   timeframe?: string;
@@ -72,9 +73,10 @@ export type UpdateLeaderboardRequest = {
 export type PatchLeaderboardRequest = {
   wallet_id: string;
   [key: string]: unknown;
-}
+};
 
-export type PatchLeaderboardControllerInput = Partial<LeaderboardDocument> & Pick<LeaderboardDocument, 'wallet_id'>;
+export type PatchLeaderboardControllerInput = Partial<LeaderboardDocument> &
+  Pick<LeaderboardDocument, 'wallet_id'>;
 
 export type LeaderboardStruct = {
   block_number: string;
@@ -100,4 +102,9 @@ export type LeaderboardStruct = {
   tools_used?: string[];
   last_update_timestamp?: string;
   [key: string]: unknown;
+};
+
+export type ListLeaderboardControllerOutput = {
+  results: Leaderboard[];
+  total: number;
 };

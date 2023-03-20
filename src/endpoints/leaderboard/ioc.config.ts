@@ -14,6 +14,7 @@ import { MiningWeeklyLeaderboardRepository } from './domain/repositories/mining-
 import { PatchLeaderboardUseCase } from './domain/use-cases/patch-leaderboard.use-case';
 import { RedisSource } from './data/data-sources/redis.source';
 import { UpdateLeaderboardUseCase } from './domain/use-cases/update-leaderboard.use-case';
+import { LeaderboardMapper } from './data/mappers/leaderboard.mapper';
 
 export const setupDependencies = async (
   config: LeaderboardApiConfig,
@@ -24,7 +25,8 @@ export const setupDependencies = async (
 
   const dailyLeaderboardRepository = new LeaderboardRepositoryImpl(
     new LeaderboardMongoSource(mongoSource, MiningLeaderboardTimeframe.Daily),
-    new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Daily)
+    new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Daily),
+    new LeaderboardMapper()
   );
   container
     .bind<MiningDailyLeaderboardRepository>(MiningDailyLeaderboardRepository.Token)
@@ -32,7 +34,8 @@ export const setupDependencies = async (
 
   const weeklyLeaderboardRepository = new LeaderboardRepositoryImpl(
     new LeaderboardMongoSource(mongoSource, MiningLeaderboardTimeframe.Weekly),
-    new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Weekly)
+    new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Weekly),
+    new LeaderboardMapper()
   );
   container
     .bind<MiningWeeklyLeaderboardRepository>(MiningWeeklyLeaderboardRepository.Token)
@@ -40,7 +43,8 @@ export const setupDependencies = async (
 
   const monthlyLeaderboardRepository = new LeaderboardRepositoryImpl(
     new LeaderboardMongoSource(mongoSource, MiningLeaderboardTimeframe.Monthly),
-    new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Monthly)
+    new LeaderboardRedisSource(redisSource, MiningLeaderboardTimeframe.Monthly),
+    new LeaderboardMapper()
   );
   container
     .bind<MiningMonthlyLeaderboardRepository>(MiningMonthlyLeaderboardRepository.Token)

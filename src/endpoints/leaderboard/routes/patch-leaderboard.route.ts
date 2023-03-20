@@ -22,10 +22,10 @@ export class PatchLeaderboardRoute extends PatchRoute {
 
           return {
             valid,
-            message: !valid ? "bad request" : "",
-            errors: ["wallet_id is required"],
-          }
-        }
+            message: !valid ? 'bad request' : '',
+            errors: ['wallet_id is required'],
+          };
+        },
       },
       hooks: {
         pre: PatchLeaderboardInput.fromRequest,

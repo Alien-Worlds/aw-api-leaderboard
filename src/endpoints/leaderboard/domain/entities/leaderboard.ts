@@ -3,7 +3,6 @@ import {
   MongoDB,
   parseToBigInt,
 } from '@alien-worlds/api-core';
-import e from 'express';
 import { LeaderboardDocument, LeaderboardStruct } from '../../data/leaderboard.dtos';
 import { UpdateLeaderboardInput, UsedTool } from '../models/update-leaderboard.input';
 
