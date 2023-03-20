@@ -1,4 +1,4 @@
-import { UpdateLeaderboardStruct } from './../data/leaderboard.dtos';
+import { LeaderboardUpdateStruct } from '@alien-worlds/alienworlds-api-common';
 import { PostRoute, RouteHandler, Request } from '@alien-worlds/api-core';
 import { UpdateLeaderboardInput } from '../domain/models/update-leaderboard.input';
 import { UpdateLeaderboardOutput } from '../domain/models/update-leaderboard.output';
@@ -17,7 +17,7 @@ export class UpdateLeaderboardRoute extends PostRoute {
     super('/v1/leaderboard', handler, {
       validators: {
         request: (
-          request: Request<UpdateLeaderboardStruct | UpdateLeaderboardStruct[]>
+          request: Request<LeaderboardUpdateStruct | LeaderboardUpdateStruct[]>
         ) => {
           let valid = true;
           if (Array.isArray(request?.body)) {

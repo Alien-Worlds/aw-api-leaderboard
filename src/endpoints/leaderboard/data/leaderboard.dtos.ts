@@ -1,3 +1,4 @@
+import { LeaderboardUpdateStruct } from '@alien-worlds/alienworlds-api-common';
 import { MongoDB } from '@alien-worlds/api-core';
 
 export type ListLeaderboardRequest = {
@@ -56,20 +57,7 @@ export type MinigToolData = {
   difficulty: number;
 };
 
-export type UpdateLeaderboardStruct = {
-  wallet_id: string;
-  username?: string;
-  bounty?: string | number;
-  block_number?: string;
-  block_timestamp?: string;
-  points?: number | string;
-  land_id?: string;
-  planet_name?: string;
-  bag_items?: string[];
-  [key: string]: unknown;
-};
-
-export type UpdateLeaderboardDocuemnt = UpdateLeaderboardStruct;
+export type LeaderboardUpdateDocuemnt = LeaderboardUpdateStruct;
 
 export type LeaderboardStruct = {
   block_number: string;

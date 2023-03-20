@@ -1,10 +1,13 @@
-import { Request, parseToBigInt } from '@alien-worlds/api-core';
-import { UpdateLeaderboardStruct } from '../../data/leaderboard.dtos';
+import {
+  LeaderboardUpdateMessage,
+  LeaderboardUpdateStruct,
+} from '@alien-worlds/alienworlds-api-common';
+import { Request, parseToBigInt, BroadcastMessage } from '@alien-worlds/api-core';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 export class LeaderboardEntry {
-  public static fromStruct(struct: UpdateLeaderboardStruct): LeaderboardEntry {
+  public static fromStruct(struct: LeaderboardUpdateStruct): LeaderboardEntry {
     const {
       wallet_id,
       username,
@@ -66,12 +69,50 @@ export class LeaderboardEntry {
 }
 
 export class UpdateLeaderboardInput {
-  public static create(items: UpdateLeaderboardStruct[]): UpdateLeaderboardInput {
+  public static create(items: LeaderboardUpdateStruct[]): UpdateLeaderboardInput {
     return new UpdateLeaderboardInput(items.map(LeaderboardEntry.fromStruct));
   }
 
+  public static fromMessage(
+    message: BroadcastMessage<LeaderboardUpdateMessage>
+  ): UpdateLeaderboardInput {
+    const {
+      content: {
+        data: { block_number, block_timestamp, addpoints, logmine, settag },
+      },
+    } = message;
+
+    let data: LeaderboardUpdateStruct;
+
+    if (addpoints) {
+      data = {
+        wallet_id: addpoints.user,
+        points: addpoints.points,
+        block_number,
+        block_timestamp,
+      };
+    } else if (logmine) {
+      const { miner, ...rest } = logmine;
+      data = {
+        wallet_id: miner,
+        block_number,
+        block_timestamp,
+        ...rest,
+      };
+    } else if (settag) {
+      data = {
+        wallet_id: settag.account,
+        username: settag.account,
+        block_number,
+        block_timestamp,
+      };
+    }
+
+    return new UpdateLeaderboardInput([LeaderboardEntry.fromStruct(data)]);
+  }
+
   public static fromRequest(
-    request: Request<UpdateLeaderboardStruct[]>
+    request: Request<LeaderboardUpdateStruct[]>
   ): UpdateLeaderboardInput {
     if (Array.isArray(request.body)) {
       return UpdateLeaderboardInput.create(request.body);

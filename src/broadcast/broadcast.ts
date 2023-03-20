@@ -1,3 +1,4 @@
+import { LeaderboardUpdateMessage } from '@alien-worlds/alienworlds-api-common';
 import {
   Broadcast,
   BroadcastClient,
@@ -6,12 +7,8 @@ import {
   log,
 } from '@alien-worlds/api-core';
 import { LeaderboardConfig } from '../config/config.types';
-import {
-  LeaderboardController,
-  LeaderboardEntry,
-  UpdateLeaderboardInput,
-  UpdateLeaderboardStruct,
-} from '../endpoints/leaderboard';
+import { LeaderboardController, UpdateLeaderboardInput } from '../endpoints/leaderboard';
+import { BroadcastChannel } from './broadcast.enums';
 
 export class LeaderboardBroadcast {
   private broadcast: BroadcastClient;
@@ -37,9 +34,9 @@ export class LeaderboardBroadcast {
     this.broadcast = await Broadcast.createClient(historyToolsBroadcast);
 
     this.broadcast.onMessage(
-      'update',
-      async (message: BroadcastMessage<UpdateLeaderboardStruct[]>) => {
-        const input = UpdateLeaderboardInput.create(message.content);
+      BroadcastChannel.LeaderboardUpdate,
+      async (message: BroadcastMessage<LeaderboardUpdateMessage>) => {
+        const input = UpdateLeaderboardInput.fromMessage(message);
         const updateResult = await this.leaderboardController.update(input);
 
         if (updateResult.isFailure) {
