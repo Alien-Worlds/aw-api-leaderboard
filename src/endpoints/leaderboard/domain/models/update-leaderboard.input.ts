@@ -1,4 +1,5 @@
 import {
+  Abi,
   LeaderboardUpdateMessage,
   LeaderboardUpdateStruct,
 } from '@alien-worlds/alienworlds-api-common';
@@ -11,7 +12,6 @@ export class LeaderboardEntry {
     const {
       wallet_id,
       username,
-      bounty,
       block_number,
       block_timestamp,
       points,
@@ -30,6 +30,14 @@ export class LeaderboardEntry {
     );
     const toMonthEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Monthly);
 
+    let bounty = struct.bounty;
+
+    // check if is abi asset string
+    if (typeof bounty === 'string' && /^[0-9.]+\s[a-zA-Z]+$/.test(bounty)) {
+      const asset = Abi.Asset.fromStruct(bounty);
+      bounty = asset.value;
+    }
+
     return new LeaderboardEntry(
       fromDayStart,
       toDayEnd,
@@ -42,7 +50,7 @@ export class LeaderboardEntry {
       bounty ? Number(bounty) : 0,
       parseToBigInt(block_number),
       new Date(block_timestamp),
-      Number(points),
+      points ? Number(points) : 0,
       land_id ? parseToBigInt(land_id) : null,
       planet_name,
       bag_items ? bag_items.map(item => parseToBigInt(item)) : []
@@ -102,7 +110,7 @@ export class UpdateLeaderboardInput {
     } else if (settag) {
       data = {
         wallet_id: settag.account,
-        username: settag.account,
+        username: settag.tag,
         block_number,
         block_timestamp,
       };

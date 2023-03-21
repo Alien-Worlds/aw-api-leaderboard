@@ -11,10 +11,10 @@
     debug "^4.3.4"
     safe-buffer "~5.1.2"
 
-"@alien-worlds/alienworlds-api-common@^0.0.44":
-  version "0.0.44"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.44/ffce18516dd8243cf2f40c254c425b0576861eeb#ffce18516dd8243cf2f40c254c425b0576861eeb"
-  integrity sha512-cu4mdHGYAzHS7bFAlYIU5Lz0om468x2a4u2zuPaBPCiKGKB4eoPZAXZrjwUrTfcWwP6dhKjM+WFLEpVt/ZNHrw==
+"@alien-worlds/alienworlds-api-common@^0.0.45":
+  version "0.0.45"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.45/3e57b6b6a6baeadce96c23111a201d8f6b297999#3e57b6b6a6baeadce96c23111a201d8f6b297999"
+  integrity sha512-FFbJxFFuiKYI23ZESzsbm/5V5/b+fuiqbItQeqmu4Wu6AoXT02bjL/uu+5WsCpTfZ2TDSzgIciT1HNz4BB0lBA==
   dependencies:
     "@alien-worlds/api-core" "^0.0.78"
     atomicassets "^1.5.1"
