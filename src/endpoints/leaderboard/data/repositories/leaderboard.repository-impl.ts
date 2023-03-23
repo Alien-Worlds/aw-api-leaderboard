@@ -165,4 +165,24 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
       return Result.withFailure(Failure.fromError(error));
     }
   }
+
+  public async completeUpdate(): Promise<Result<boolean, Error>> {
+    try {
+      const { modifiedCount } = await this.mongoSource.completeUpdate();
+
+      return Result.withContent(modifiedCount > 0);
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
+
+  public async revertUpdate(): Promise<Result<boolean, Error>> {
+    try {
+      const { deletedCount } = await this.mongoSource.revertUpdate();
+
+      return Result.withContent(deletedCount > 0);
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
 }

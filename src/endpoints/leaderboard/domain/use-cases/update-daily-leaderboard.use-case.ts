@@ -1,8 +1,14 @@
 import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
-import { inject, injectable, Result, UpdateStatus, UseCase } from '@alien-worlds/api-core';
+import {
+  inject,
+  injectable,
+  Result,
+  UpdateStatus,
+  UseCase,
+} from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
 import { Leaderboard } from '../entities/leaderboard';
-import { LeaderboardEntry } from '../models/update-leaderboard.input';
+import { LeaderboardUpdate } from '../models/update-leaderboard.input';
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
 
 /*imports*/
@@ -24,14 +30,14 @@ export class UpdateDailyLeaderboardUseCase
    * @async
    */
   public async execute(
-    items: LeaderboardEntry[],
-    assets: AtomicAsset<MinigToolData>[]
+    updates: LeaderboardUpdate[],
+    assetsByItem: Map<string, AtomicAsset<MinigToolData>[]>
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    const updates = [];
+    const newUpdates = [];
     // We can't fetch the data of all users from the list at once
     // because the leaderboard timeframes of individual players may differ from each other
     // We have to fetch data one at a time
-    for (const item of items) {
+    for (const update of updates) {
       const {
         username,
         walletId,
@@ -43,15 +49,16 @@ export class UpdateDailyLeaderboardUseCase
         points,
         landId,
         planetName,
-      } = item;
+      } = update;
       const userDailySearch = await this.dailyLeaderboardRepository.findUser(
         walletId,
         fromDayStart,
         toDayEnd
       );
+      const assets = assetsByItem.get(update.id);
 
       if (userDailySearch.isFailure) {
-        updates.push(
+        newUpdates.push(
           Leaderboard.create(
             fromDayStart,
             toDayEnd,
@@ -68,13 +75,18 @@ export class UpdateDailyLeaderboardUseCase
         );
       } else {
         const { content: dailyUserLeaderboard } = userDailySearch;
-        updates.push(Leaderboard.cloneAndUpdate(dailyUserLeaderboard, item, assets));
+        //
+        if (dailyUserLeaderboard.lastUpdateHash !== update.id) {
+          newUpdates.push(
+            Leaderboard.cloneAndUpdate(dailyUserLeaderboard, update, assets)
+          );
+        }
       }
     }
 
     // and as part of improvements we can send already updated data at once
 
-    return this.dailyLeaderboardRepository.updateMany(updates);
+    return this.dailyLeaderboardRepository.updateMany(newUpdates);
   }
 
   /*methods*/

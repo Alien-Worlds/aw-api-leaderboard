@@ -9,7 +9,7 @@ import {
   LeaderboardStruct,
   MinigToolData,
 } from '../../data/leaderboard.dtos';
-import { LeaderboardEntry } from '../models/update-leaderboard.input';
+import { LeaderboardUpdate } from '../models/update-leaderboard.input';
 
 /**
  * @class
@@ -30,6 +30,7 @@ export class Leaderboard {
       block_number,
       block_timesamp,
       last_update_timestamp,
+      last_update_hash,
       start_timestamp,
       end_timestamp,
       username,
@@ -80,6 +81,8 @@ export class Leaderboard {
       mine_rating,
       position || document.position || -1,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
+      last_update_hash,
+      false,
       _id instanceof MongoDB.ObjectId ? _id.toString() : '',
       rest
     );
@@ -110,6 +113,7 @@ export class Leaderboard {
       tools_used,
       unique_tools_used,
       last_update_timestamp,
+      last_update_hash,
       ...rest
     } = struct;
 
@@ -140,6 +144,8 @@ export class Leaderboard {
       mine_rating,
       -1,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
+      last_update_hash,
+      false,
       '',
       rest
     );
@@ -147,14 +153,13 @@ export class Leaderboard {
 
   public static cloneAndUpdate(
     leaderboard: Leaderboard,
-    updates: LeaderboardEntry,
+    updates: LeaderboardUpdate,
     assets: AtomicAsset<MinigToolData>[]
   ): Leaderboard {
     const {
       startTimestamp,
       endTimestamp,
       walletId,
-      username,
       tlmGainsTotal,
       tlmGainsHighest,
       totalNftPoints,
@@ -162,9 +167,9 @@ export class Leaderboard {
       id,
       rest,
     } = leaderboard;
-
-    const { bounty, points, landId, planetName } = updates;
-
+    const { landId, planetName } = updates;
+    const points = updates.points || 0;
+    const bounty = updates.bounty || 0;
     let totalChargeTime = leaderboard.totalChargeTime;
     let totalMiningPower = leaderboard.totalMiningPower;
     let totalNftPower = leaderboard.totalNftPower;
@@ -191,7 +196,7 @@ export class Leaderboard {
       ? totalMiningPower / toolsCount
       : leaderboard.avgMiningPower;
     const avgNftPower = toolsCount ? totalNftPower / toolsCount : leaderboard.avgNftPower;
-
+    const username = leaderboard.username || updates.username;
     const lands = leaderboard.lands;
     let landsMinedOn = leaderboard.landsMinedOn;
     const planets = leaderboard.planets;
@@ -229,9 +234,11 @@ export class Leaderboard {
       landsMinedOn,
       planets,
       planetsMinedOn,
-      0,
+      -1,
       -1,
       new Date(),
+      updates.id,
+      false,
       id,
       rest
     );
@@ -248,7 +255,8 @@ export class Leaderboard {
     points: number,
     landId: bigint,
     planetName: string,
-    assets: AtomicAsset<MinigToolData>[]
+    assets: AtomicAsset<MinigToolData>[],
+    lastUpdateHash?: string
   ): Leaderboard {
     const toolsUsed = [];
     let totalChargeTime = 0;
@@ -264,9 +272,9 @@ export class Leaderboard {
         data: { ease, delay, difficulty },
       } = asset;
       toolsUsed.push(assetId);
-      totalChargeTime += delay;
-      totalMiningPower += ease;
-      totalNftPower += difficulty;
+      totalChargeTime += delay || 0;
+      totalMiningPower += ease || 0;
+      totalNftPower += difficulty || 0;
     });
     const toolsCount = toolsUsed.length;
 
@@ -304,6 +312,8 @@ export class Leaderboard {
       -1,
       -1,
       new Date(),
+      lastUpdateHash,
+      false,
       '',
       {}
     );
@@ -337,6 +347,8 @@ export class Leaderboard {
     public readonly mineRating: number,
     public readonly position: number,
     public readonly lastUpdateTimestamp: Date,
+    public readonly lastUpdateHash: string,
+    public readonly lastUpdateCompleted: boolean,
     public readonly id: string,
     public readonly rest: object
   ) {}
@@ -372,12 +384,16 @@ export class Leaderboard {
       planetsMinedOn,
       mineRating,
       position,
+      lastUpdateHash,
+      lastUpdateCompleted,
     } = this;
 
     const document: LeaderboardDocument = {
       block_number: MongoDB.Long.fromBigInt(blockNumber),
       block_timesamp: blockTimestamp,
       last_update_timestamp: lastUpdateTimestamp,
+      last_update_hash: lastUpdateHash,
+      last_update_completed: lastUpdateCompleted,
       start_timestamp: startTimestamp,
       end_timestamp: endTimestamp,
       username,
@@ -414,6 +430,8 @@ export class Leaderboard {
   public toStruct(): LeaderboardStruct {
     const {
       lastUpdateTimestamp,
+      lastUpdateHash,
+      lastUpdateCompleted,
       startTimestamp,
       endTimestamp,
       walletId,
@@ -440,6 +458,8 @@ export class Leaderboard {
       block_number: blockNumber.toString(),
       block_timesamp: blockTimestamp.toISOString(),
       last_update_timestamp: lastUpdateTimestamp.toISOString(),
+      last_update_hash: lastUpdateHash,
+      last_update_completed: lastUpdateCompleted,
       start_timestamp: startTimestamp.toISOString(),
       end_timestamp: endTimestamp.toISOString(),
       username,

@@ -5,7 +5,7 @@ import {
   UpdateStatus,
   UseCase,
 } from '@alien-worlds/api-core';
-import { LeaderboardInputRepository } from '../repositories/leaderboard-input.repository';
+import { LeaderboardUpdateBackupRepository } from '../repositories/leaderboard-update-backup.repository';
 import { UpdateLeaderboardUseCase } from './update-leaderboard.use-case';
 
 /*imports*/
@@ -20,8 +20,8 @@ export class SendCachedLeaderboardUseCase
   public static Token = 'SEND_CACHED_LEADERBOARD_USE_CASE';
 
   constructor(
-    @inject(LeaderboardInputRepository.Token)
-    private leaderboardInputRepository: LeaderboardInputRepository,
+    @inject(LeaderboardUpdateBackupRepository.Token)
+    private leaderboardInputRepository: LeaderboardUpdateBackupRepository,
     @inject(UpdateLeaderboardUseCase.Token)
     private updateLeaderboardUseCase: UpdateLeaderboardUseCase
   ) {}
@@ -34,10 +34,19 @@ export class SendCachedLeaderboardUseCase
       await this.leaderboardInputRepository.extractAll();
 
     if (extractFailure) {
-      // ?
+      return Result.withFailure(extractFailure);
     }
 
-    return this.updateLeaderboardUseCase.execute(allItems);
+    const { content: status, failure: updateFailure } =
+      await this.updateLeaderboardUseCase.execute(allItems);
+
+    if (updateFailure) {
+      this.leaderboardInputRepository.addMany(allItems);
+
+      return Result.withFailure(updateFailure);
+    }
+
+    return Result.withContent(status);
   }
 
   /*methods*/

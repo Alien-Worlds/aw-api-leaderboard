@@ -8,7 +8,7 @@ import {
 } from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
 import { Leaderboard } from '../entities/leaderboard';
-import { LeaderboardEntry } from '../models/update-leaderboard.input';
+import { LeaderboardUpdate } from '../models/update-leaderboard.input';
 import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
 
 /*imports*/
@@ -30,14 +30,15 @@ export class UpdateWeeklyLeaderboardUseCase
    * @async
    */
   public async execute(
-    items: LeaderboardEntry[],
-    assets: AtomicAsset<MinigToolData>[]
+    updates: LeaderboardUpdate[],
+    assetsByItem: Map<string, AtomicAsset<MinigToolData>[]>
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    const updates = [];
+    const newUpdates = [];
+
     // We can't fetch the data of all users from the list at once
     // because the leaderboard timeframes of individual players may differ from each other
     // We have to fetch data one at a time
-    for (const item of items) {
+    for (const update of updates) {
       const {
         username,
         walletId,
@@ -49,15 +50,16 @@ export class UpdateWeeklyLeaderboardUseCase
         points,
         landId,
         planetName,
-      } = item;
+      } = update;
       const userWeeklySearch = await this.weeklyLeaderboardRepository.findUser(
         walletId,
         fromDayStart,
         toDayEnd
       );
+      const assets = assetsByItem.get(update.id);
 
       if (userWeeklySearch.isFailure) {
-        updates.push(
+        newUpdates.push(
           Leaderboard.create(
             fromDayStart,
             toDayEnd,
@@ -74,13 +76,17 @@ export class UpdateWeeklyLeaderboardUseCase
         );
       } else {
         const { content: weeklyUserLeaderboard } = userWeeklySearch;
-        updates.push(Leaderboard.cloneAndUpdate(weeklyUserLeaderboard, item, assets));
+        if (weeklyUserLeaderboard.lastUpdateHash !== update.id) {
+          newUpdates.push(
+            Leaderboard.cloneAndUpdate(weeklyUserLeaderboard, update, assets)
+          );
+        }
       }
     }
 
     // and as part of improvements we can send already updated data at once
 
-    return this.weeklyLeaderboardRepository.updateMany(updates);
+    return this.weeklyLeaderboardRepository.updateMany(newUpdates);
   }
 
   /*methods*/

@@ -4,11 +4,12 @@ import {
   LeaderboardUpdateStruct,
 } from '@alien-worlds/alienworlds-api-common';
 import { Request, parseToBigInt, BroadcastMessage } from '@alien-worlds/api-core';
+import { nanoid } from 'nanoid';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
-export class LeaderboardEntry {
-  public static fromStruct(struct: LeaderboardUpdateStruct): LeaderboardEntry {
+export class LeaderboardUpdate {
+  public static fromStruct(struct: LeaderboardUpdateStruct): LeaderboardUpdate {
     const {
       wallet_id,
       username,
@@ -38,7 +39,7 @@ export class LeaderboardEntry {
       bounty = asset.value;
     }
 
-    return new LeaderboardEntry(
+    return new LeaderboardUpdate(
       fromDayStart,
       toDayEnd,
       fromWeekStart,
@@ -72,13 +73,14 @@ export class LeaderboardEntry {
     public readonly points: number,
     public readonly landId: bigint,
     public readonly planetName: string,
-    public readonly bagItems: bigint[]
+    public readonly bagItems: bigint[],
+    public readonly id = nanoid()
   ) {}
 }
 
 export class UpdateLeaderboardInput {
   public static create(items: LeaderboardUpdateStruct[]): UpdateLeaderboardInput {
-    return new UpdateLeaderboardInput(items.map(LeaderboardEntry.fromStruct));
+    return new UpdateLeaderboardInput(items.map(LeaderboardUpdate.fromStruct));
   }
 
   public static fromMessage(
@@ -116,7 +118,7 @@ export class UpdateLeaderboardInput {
       };
     }
 
-    return new UpdateLeaderboardInput([LeaderboardEntry.fromStruct(data)]);
+    return new UpdateLeaderboardInput([LeaderboardUpdate.fromStruct(data)]);
   }
 
   public static fromRequest(
@@ -126,8 +128,8 @@ export class UpdateLeaderboardInput {
       return UpdateLeaderboardInput.create(request.body);
     }
 
-    return new UpdateLeaderboardInput([LeaderboardEntry.fromStruct(request.body)]);
+    return new UpdateLeaderboardInput([LeaderboardUpdate.fromStruct(request.body)]);
   }
 
-  private constructor(public readonly items: LeaderboardEntry[]) {}
+  private constructor(public readonly items: LeaderboardUpdate[]) {}
 }

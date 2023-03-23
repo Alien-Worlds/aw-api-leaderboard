@@ -1,4 +1,5 @@
-import { AtomicAsset, AtomicAssetRepository } from '@alien-worlds/alienworlds-api-common';
+import { GetAtomicAssetsUseCase } from './get-atomic-assets.use-case';
+import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
 import {
   inject,
   injectable,
@@ -7,10 +8,14 @@ import {
   UseCase,
 } from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
-import { LeaderboardEntry } from '../models/update-leaderboard.input';
+import { LeaderboardUpdate } from '../models/update-leaderboard.input';
 import { UpdateDailyLeaderboardUseCase } from './update-daily-leaderboard.use-case';
 import { UpdateMonthlyLeaderboardUseCase } from './update-monthly-leaderboard.use-case';
 import { UpdateWeeklyLeaderboardUseCase } from './update-weekly-leaderboard.use-case';
+import { LeaderboardUpdateBackupRepository } from '../repositories/leaderboard-update-backup.repository';
+import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
+import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
+import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
 
 /*imports*/
 /**
@@ -29,42 +34,34 @@ export class UpdateLeaderboardUseCase
     private updateWeeklyLeaderboardUseCase: UpdateWeeklyLeaderboardUseCase,
     @inject(UpdateMonthlyLeaderboardUseCase.Token)
     private updateMonthlyLeaderboardUseCase: UpdateMonthlyLeaderboardUseCase,
-    @inject(AtomicAssetRepository.Token)
-    private atomicAssetRepository: AtomicAssetRepository
+    @inject(GetAtomicAssetsUseCase.Token)
+    private getAtomicAssetsUseCase: GetAtomicAssetsUseCase,
+    @inject(LeaderboardUpdateBackupRepository.Token)
+    private leaderboardUpdateBackup: LeaderboardUpdateBackupRepository,
+    @inject(MiningDailyLeaderboardRepository.Token)
+    private dailyLeaderboardRepository: MiningDailyLeaderboardRepository,
+    @inject(MiningWeeklyLeaderboardRepository.Token)
+    private weeklyLeaderboardRepository: MiningWeeklyLeaderboardRepository,
+    @inject(MiningMonthlyLeaderboardRepository.Token)
+    private monthlyLeaderboardRepository: MiningMonthlyLeaderboardRepository
   ) {}
-
-  private async getAssets(items: LeaderboardEntry[]) {
-    const ids = new Set<string | number | bigint>();
-    const assets = [];
-
-    items.forEach(item => {
-      const { bagItems } = item;
-      bagItems.forEach(id => {
-        ids.add(id);
-      });
-    });
-
-    if (ids.size > 0) {
-      const { content, failure: atomicAssetsFailure } =
-        await this.atomicAssetRepository.getAssets(Array.from(ids));
-
-      if (atomicAssetsFailure) {
-        //
-      } else {
-        assets.push(...content);
-      }
-    }
-
-    return assets;
-  }
 
   /**
    * @async
    */
   public async execute(
-    items: LeaderboardEntry[]
+    items: LeaderboardUpdate[]
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    const assets = await this.getAssets(items);
+    const { content, failure: assetsFailure } = await this.getAtomicAssetsUseCase.execute(
+      items
+    );
+    const assets = content as Map<string, AtomicAsset<MinigToolData>[]>;
+
+    if (assetsFailure) {
+      //
+      this.leaderboardUpdateBackup.addMany(items);
+      return Result.withFailure(assetsFailure);
+    }
 
     /*
      * UPDATE DAILY LEADERBOARD
@@ -72,6 +69,7 @@ export class UpdateLeaderboardUseCase
     const dailyUpdate = await this.updateDailyLeaderboardUseCase.execute(items, assets);
 
     if (dailyUpdate.isFailure) {
+      this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(dailyUpdate.failure);
     }
 
@@ -79,13 +77,12 @@ export class UpdateLeaderboardUseCase
      * UPDATE WEEKLY LEADERBOARD
      */
 
-    const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(
-      items,
-      <AtomicAsset<MinigToolData>[]>assets
-    );
+    const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(items, assets);
 
-    // TODO: Should we reverse daily leaderboard update?
     if (weeklyUpdate.isFailure) {
+      // await this.dailyLeaderboardRepository.revertUpdate();
+      //
+      this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(weeklyUpdate.failure);
     }
 
@@ -95,14 +92,22 @@ export class UpdateLeaderboardUseCase
 
     const monthlyUpdate = await this.updateMonthlyLeaderboardUseCase.execute(
       items,
-      <AtomicAsset<MinigToolData>[]>assets
+      assets
     );
 
-    // TODO: Should we reverse daily leaderboard update?
-    // TODO: Should we reverse weekly leaderboard update?
     if (monthlyUpdate.isFailure) {
+      // await this.dailyLeaderboardRepository.revertUpdate();
+      // await this.weeklyLeaderboardRepository.revertUpdate();
+      //
+      this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(monthlyUpdate.failure);
     }
+
+    await Promise.all([
+      this.dailyLeaderboardRepository.completeUpdate(),
+      this.weeklyLeaderboardRepository.completeUpdate(),
+      this.monthlyLeaderboardRepository.completeUpdate(),
+    ]);
 
     return Result.withContent(UpdateStatus.Success);
   }

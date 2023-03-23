@@ -28,6 +28,8 @@ export type LeaderboardDocument = {
   start_timestamp?: Date;
   end_timestamp?: Date;
   last_update_timestamp?: Date;
+  last_update_hash?: string;
+  last_update_completed?: boolean;
   wallet_id?: string;
   username?: string;
   tlm_gains_total?: number;
@@ -80,6 +82,8 @@ export type LeaderboardStruct = {
   lands?: string[];
   tools_used?: string[];
   last_update_timestamp?: string;
+  last_update_hash?: string;
+  last_update_completed?: boolean;
   position?: number;
   [key: string]: unknown;
 };

@@ -1,8 +1,14 @@
 import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
-import { inject, injectable, Result, UpdateStatus, UseCase } from '@alien-worlds/api-core';
+import {
+  inject,
+  injectable,
+  Result,
+  UpdateStatus,
+  UseCase,
+} from '@alien-worlds/api-core';
 import { MinigToolData } from '../../data/leaderboard.dtos';
 import { Leaderboard } from '../entities/leaderboard';
-import { LeaderboardEntry } from '../models/update-leaderboard.input';
+import { LeaderboardUpdate } from '../models/update-leaderboard.input';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
 
 /*imports*/
@@ -24,37 +30,38 @@ export class UpdateMonthlyLeaderboardUseCase
    * @async
    */
   public async execute(
-    items: LeaderboardEntry[],
-    assets: AtomicAsset<MinigToolData>[]
+    updates: LeaderboardUpdate[],
+    assetsByItem: Map<string, AtomicAsset<MinigToolData>[]>
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    const updates = [];
+    const newUpdates = [];
     // We can't fetch the data of all users from the list at once
     // because the leaderboard timeframes of individual players may differ from each other
     // We have to fetch data one at a time
-    for (const item of items) {
+    for (const update of updates) {
       const {
         username,
         walletId,
-        fromDayStart,
-        toDayEnd,
+        fromMonthStart,
+        toMonthEnd,
         bounty,
         blockNumber,
         blockTimestamp,
         points,
         landId,
         planetName,
-      } = item;
+      } = update;
       const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
         walletId,
-        fromDayStart,
-        toDayEnd
+        fromMonthStart,
+        toMonthEnd
       );
+      const assets = assetsByItem.get(update.id);
 
       if (userMonthlySearch.isFailure) {
-        updates.push(
+        newUpdates.push(
           Leaderboard.create(
-            fromDayStart,
-            toDayEnd,
+            fromMonthStart,
+            toMonthEnd,
             walletId,
             username,
             bounty,
@@ -68,13 +75,18 @@ export class UpdateMonthlyLeaderboardUseCase
         );
       } else {
         const { content: monthlyUserLeaderboard } = userMonthlySearch;
-        updates.push(Leaderboard.cloneAndUpdate(monthlyUserLeaderboard, item, assets));
+
+        if (monthlyUserLeaderboard.lastUpdateHash !== update.id) {
+          newUpdates.push(
+            Leaderboard.cloneAndUpdate(monthlyUserLeaderboard, update, assets)
+          );
+        }
       }
     }
 
     // and as part of improvements we can send already updated data at once
 
-    return this.monthlyLeaderboardRepository.updateMany(updates);
+    return this.monthlyLeaderboardRepository.updateMany(newUpdates);
   }
 
   /*methods*/

@@ -1,3 +1,4 @@
+import { GetAtomicAssetsUseCase } from './domain/use-cases/get-atomic-assets.use-case';
 import { Container, MongoSource, RedisSource } from '@alien-worlds/api-core';
 
 import { FindUserInLeaderboardUseCase } from './domain/use-cases/find-user-in-leaderboard.use-case';
@@ -16,8 +17,8 @@ import { setupAtomicAssetRepository } from '@alien-worlds/alienworlds-api-common
 import { UpdateDailyLeaderboardUseCase } from './domain/use-cases/update-daily-leaderboard.use-case';
 import { UpdateWeeklyLeaderboardUseCase } from './domain/use-cases/update-weekly-leaderboard.use-case';
 import { UpdateMonthlyLeaderboardUseCase } from './domain/use-cases/update-monthly-leaderboard.use-case';
-import { LeaderboardInputRepositoryImpl } from './data/repositories/leaderboard-input.repository-impl';
-import { LeaderboardInputRepository } from './domain/repositories/leaderboard-input.repository';
+import { LeaderboardUpdateBackupRepositoryImpl } from './data/repositories/leaderboard-update-backup.repository-impl';
+import { LeaderboardUpdateBackupRepository } from './domain/repositories/leaderboard-update-backup.repository';
 import { CacheOrSendLeaderboardUseCase } from './domain/use-cases/cache-or-send-leaderboard.use-case';
 import { SendCachedLeaderboardUseCase } from './domain/use-cases/send-cached-leaderboard.use-case';
 import { CountLeaderboardUseCase } from './domain/use-cases/count-leaderboard.use-case';
@@ -31,9 +32,9 @@ export const setupDependencies = async (
 
   await setupAtomicAssetRepository(config.atomicassets, mongoSource, container);
 
-  const leaderboardInputRepository = new LeaderboardInputRepositoryImpl();
+  const leaderboardInputRepository = new LeaderboardUpdateBackupRepositoryImpl();
   container
-    .bind<LeaderboardInputRepository>(LeaderboardInputRepository.Token)
+    .bind<LeaderboardUpdateBackupRepository>(LeaderboardUpdateBackupRepository.Token)
     .toConstantValue(leaderboardInputRepository);
 
   const dailyLeaderboardRepository = new LeaderboardRepositoryImpl(
@@ -63,6 +64,9 @@ export const setupDependencies = async (
   container
     .bind<CountLeaderboardUseCase>(CountLeaderboardUseCase.Token)
     .to(CountLeaderboardUseCase);
+  container
+    .bind<GetAtomicAssetsUseCase>(GetAtomicAssetsUseCase.Token)
+    .to(GetAtomicAssetsUseCase);
   container
     .bind<ListLeaderboardUseCase>(ListLeaderboardUseCase.Token)
     .to(ListLeaderboardUseCase);

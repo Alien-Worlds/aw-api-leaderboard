@@ -39,4 +39,7 @@ export abstract class MiningLeaderboardRepository {
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>>;
 
   public abstract count(model: QueryModel): Promise<Result<number>>;
+
+  public abstract completeUpdate(): Promise<Result<boolean>>;
+  public abstract revertUpdate(): Promise<Result<boolean>>;
 }
