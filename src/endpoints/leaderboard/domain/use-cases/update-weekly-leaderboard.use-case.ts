@@ -42,8 +42,8 @@ export class UpdateWeeklyLeaderboardUseCase
       const {
         username,
         walletId,
-        fromDayStart,
-        toDayEnd,
+        fromWeekStart,
+        toWeekEnd,
         bounty,
         blockNumber,
         blockTimestamp,
@@ -53,16 +53,16 @@ export class UpdateWeeklyLeaderboardUseCase
       } = update;
       const userWeeklySearch = await this.weeklyLeaderboardRepository.findUser(
         walletId,
-        fromDayStart,
-        toDayEnd
+        fromWeekStart,
+        toWeekEnd
       );
       const assets = assetsByItem.get(update.id);
 
       if (userWeeklySearch.isFailure) {
         newUpdates.push(
           Leaderboard.create(
-            fromDayStart,
-            toDayEnd,
+            fromWeekStart,
+            toWeekEnd,
             walletId,
             username,
             bounty,

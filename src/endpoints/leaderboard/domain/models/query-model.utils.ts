@@ -1,33 +1,23 @@
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 
 export const calculateStartOfWeek = (date: Date) => {
-  const dayOfWeek = date.getUTCDay();
-  return new Date(
-    Date.UTC(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate() - dayOfWeek + 1,
-      0,
-      0,
-      0,
-      0
-    )
-  );
+  const dayOfWeek = date.getDay();
+  const cm = date.getMonth();
+  const month = cm < 10 ? `0${cm}` : cm;
+  const cd = date.getDate() - dayOfWeek + 1;
+  const day = cd < 10 ? `0${cd}` : cd;
+
+  return new Date(`${date.getFullYear()}-${month}-${day}T00:00:00.000Z`);
 };
 
 export const calculateEndOfWeek = (date: Date) => {
-  const dayOfWeek = date.getUTCDay();
-  return new Date(
-    Date.UTC(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate() - dayOfWeek + 7,
-      23,
-      59,
-      59,
-      999
-    )
-  );
+  const dayOfWeek = date.getDay();
+  const cm = date.getMonth();
+  const month = cm < 10 ? `0${cm}` : cm;
+  const cd = date.getDate() - dayOfWeek + 7;
+  const day = cd < 10 ? `0${cd}` : cd;
+
+  return new Date(`${date.getFullYear()}-${month}-${day}T23:59:59.999Z`);
 };
 
 export const calculateStartOfMonth = (date: Date) => {
@@ -45,23 +35,27 @@ export const calculateEndOfMonth = (date: Date) => {
 };
 
 export const calculateStartOfDay = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+  const cm = date.getMonth();
+  const month = cm < 10 ? `0${cm}` : cm;
+  const cd = date.getDate();
+  const day = cd < 10 ? `0${cd}` : cd;
+
+  return new Date(`${date.getFullYear()}-${month}-${day}T00:00:00.000Z`);
 };
 
 export const calculateEndOfDay = (date: Date) => {
-  const startOfDay = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    0,
-    0,
-    0,
-    0
-  );
-  return new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000 - 1);
+  const cm = date.getMonth();
+  const month = cm < 10 ? `0${cm}` : cm;
+  const cd = date.getDate();
+  const day = cd < 10 ? `0${cd}` : cd;
+
+  return new Date(`${date.getFullYear()}-${month}-${day}T23:59:59.999Z`);
 };
 
-export const getStartDateByTimeframe = (dateRef: string | Date, timeframe: string) => {
+export const getStartDateByTimeframe = (
+  dateRef: string | Date,
+  timeframe: string
+): Date => {
   const date = typeof dateRef === 'string' ? new Date(dateRef) : dateRef;
 
   if (timeframe === MiningLeaderboardTimeframe.Daily) {
@@ -79,7 +73,10 @@ export const getStartDateByTimeframe = (dateRef: string | Date, timeframe: strin
   throw new Error(`Unknown timeframe: ${timeframe}`);
 };
 
-export const getEndDateByTimeframe = (dateRef: string | Date, timeframe: string) => {
+export const getEndDateByTimeframe = (
+  dateRef: string | Date,
+  timeframe: string
+): Date => {
   const date = typeof dateRef === 'string' ? new Date(dateRef) : dateRef;
 
   if (timeframe === MiningLeaderboardTimeframe.Daily) {
