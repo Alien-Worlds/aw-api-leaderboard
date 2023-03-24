@@ -9,7 +9,11 @@ import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.ut
 
 export class ListLeaderboardInput {
   public static fromRequest(
-    request: Request<ListLeaderboardRequest>
+    request: Request<
+      ListLeaderboardRequest,
+      ListLeaderboardRequest,
+      ListLeaderboardRequest
+    >
   ): ListLeaderboardInput {
     const { query } = request;
     const { timeframe, sort, offset, limit } = request.params as ListLeaderboardRequest;

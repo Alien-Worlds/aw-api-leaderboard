@@ -10,6 +10,8 @@ export const buildConfig = (): LeaderboardConfig => {
 
   const api: ApiConfig = {
     port: Number(environment.PORT || dotEnv.PORT),
+    secretKey: environment.TOKEN_SECRET_KEY || dotEnv.TOKEN_SECRET_KEY,
+    expirationTime: environment.TOKEN_EXPIRATION_TIME || dotEnv.TOKEN_EXPIRATION_TIME,
   };
 
   const mongo: MongoConfig = {

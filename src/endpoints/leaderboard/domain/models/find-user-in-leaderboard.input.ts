@@ -8,7 +8,11 @@ import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.ut
 
 export class FindUserInLeaderboardInput {
   public static fromRequest(
-    request: Request<FindUserInLeaderboardRequest>
+    request: Request<
+      FindUserInLeaderboardRequest,
+      FindUserInLeaderboardRequest,
+      FindUserInLeaderboardRequest
+    >
   ): FindUserInLeaderboardInput {
     const { query } = request;
     const { timeframe } = request.params as FindUserInLeaderboardRequest;

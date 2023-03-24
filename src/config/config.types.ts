@@ -19,6 +19,8 @@ export type Environment = {
   REDIS_IANA?: string;
   REDIS_DATABASE?: string;
   PORT?: string;
+  TOKEN_SECRET_KEY?: string;
+  TOKEN_EXPIRATION_TIME?: string;
   HISTORY_TOOLS_BROADCAST_HOST?: string;
   HISTORY_TOOLS_BROADCAST_PORT?: string;
   HISTORY_TOOLS_BROADCAST_DRIVER?: string;
@@ -31,6 +33,8 @@ export type Environment = {
 
 export type ApiConfig = {
   port: number;
+  secretKey: string;
+  expirationTime: string;
 };
 
 export type LeaderboardConfig = {
