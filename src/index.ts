@@ -33,7 +33,11 @@ export const start = async () => {
    * CRON
    */
   if (updatesBatchSize && cronTime) {
-    cron.schedule(cronTime, () => checkAndUpdateLeaderboard(container));
+    const leaderboardCronJob = new cron.CronJob(cronTime, () =>
+      checkAndUpdateLeaderboard(container)
+    );
+
+    leaderboardCronJob.start();
   }
 };
 
