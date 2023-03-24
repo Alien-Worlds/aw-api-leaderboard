@@ -1,41 +1,64 @@
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 
 export const calculateStartOfWeek = (date: Date) => {
-  const startOfWeek = new Date();
-  const day = date.getDay();
-  startOfWeek.setDate(date.getDate() - ((day < 1 ? 7 : 0) + day - 1));
-  startOfWeek.setHours(1, 0, 0, 0);
-
-  return startOfWeek;
+  const dayOfWeek = date.getUTCDay();
+  return new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate() - dayOfWeek + 1,
+      0,
+      0,
+      0,
+      0
+    )
+  );
 };
 
 export const calculateEndOfWeek = (date: Date) => {
-  const startOfWeek = calculateStartOfWeek(date);
-  const endOfWeek = new Date(
-    startOfWeek.getFullYear(),
-    startOfWeek.getMonth(),
-    startOfWeek.getDate() + 6,
-    24,
-    59,
-    59
+  const dayOfWeek = date.getUTCDay();
+  return new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate() - dayOfWeek + 7,
+      23,
+      59,
+      59,
+      999
+    )
   );
-  return endOfWeek;
 };
 
 export const calculateStartOfMonth = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), 1, 1, 0, 0, 0);
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+
+  return new Date(Date.UTC(year, month, 1));
 };
 
 export const calculateEndOfMonth = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 24, 59, 59);
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+
+  return new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
 };
 
 export const calculateStartOfDay = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 1, 0, 0);
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
 };
 
 export const calculateEndOfDay = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 24, 59, 59);
+  const startOfDay = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    0,
+    0,
+    0,
+    0
+  );
+  return new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000 - 1);
 };
 
 export const getStartDateByTimeframe = (dateRef: string | Date, timeframe: string) => {
