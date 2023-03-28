@@ -79,7 +79,7 @@ export class Leaderboard {
       planets,
       planets_mined_on,
       mine_rating,
-      position || document.position || -1,
+      position >= 0 ? position : document.position >= 0 ? document.position : -1,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
       last_update_hash,
       false,
@@ -416,7 +416,7 @@ export class Leaderboard {
       planets,
     };
 
-    if (position && position > -1) {
+    if (position > -1) {
       document.position = position;
     }
 
@@ -479,7 +479,7 @@ export class Leaderboard {
       unique_tools_used: uniqueToolsUsed,
     };
 
-    if (position && position > -1) {
+    if (position > -1) {
       struct.position = position;
     }
 

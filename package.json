@@ -37,14 +37,15 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@alien-worlds/alienworlds-api-common": "^0.0.52",
-    "@alien-worlds/api-core": "^0.0.83",
+    "@alien-worlds/alienworlds-api-common": "^0.0.53",
+    "@alien-worlds/api-core": "^0.0.84",
     "@types/cron": "^2.0.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/ms": "^0.7.31",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "cron": "^2.3.0",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",

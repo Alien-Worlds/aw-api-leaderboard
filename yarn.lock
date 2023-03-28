@@ -11,20 +11,20 @@
     debug "^4.3.4"
     safe-buffer "~5.1.2"
 
-"@alien-worlds/alienworlds-api-common@^0.0.52":
-  version "0.0.52"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.52/6a7a66ad21110de24582fa00de21fed108e7f63e#6a7a66ad21110de24582fa00de21fed108e7f63e"
-  integrity sha512-8ZHqmhD+VuQYGALp4CL/3XB7wUCiZxucjsR8jN2z2VIUfpi//zsHYPcadN8azD9JoYxX/pX3UvvMeP+akaj1lw==
+"@alien-worlds/alienworlds-api-common@^0.0.53":
+  version "0.0.53"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.53/df3821cad6145d27ad3ae6fbc12c7b3bcbccd078#df3821cad6145d27ad3ae6fbc12c7b3bcbccd078"
+  integrity sha512-H1vBIpCXF/TE+PlV3caqXpE+0LQH1WzYd7mU7kepnmBoFCy5m0uA/PQyrWDKUVAI125fRvEbGfQk8Por6gfjpw==
   dependencies:
-    "@alien-worlds/api-core" "^0.0.83"
+    "@alien-worlds/api-core" "^0.0.84"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/api-core@^0.0.83":
-  version "0.0.83"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.83/65dec1d36f5c12fd564fc53d13de0b39d62022c6#65dec1d36f5c12fd564fc53d13de0b39d62022c6"
-  integrity sha512-oKnNByIlJ7AuH9ffDLWykr4hZCjSQwRxl1CT9+0lxV9GPLXH/Besh7+FMpSVfG/8SGgCLDlZOEhjs/sVGEvkmg==
+"@alien-worlds/api-core@^0.0.84":
+  version "0.0.84"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.84/2e3626967d00fc535aa57848d70de4912c9823f7#2e3626967d00fc535aa57848d70de4912c9823f7"
+  integrity sha512-oBNQg4sCuyE1IVqrrvkRMdvkZc6ObpBj7XfJQWqCxgZhYhRoXBtKz2599fdXg7ifhHjk9zoKjkA6Ek4qDGsQqg==
   dependencies:
     "@google-cloud/bigquery" "^6.0.3"
     amqplib "^0.10.3"
@@ -1635,6 +1635,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-fns@^2.29.3:
+  version "2.29.3"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
+  integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
 
 debug@2.6.9:
   version "2.6.9"

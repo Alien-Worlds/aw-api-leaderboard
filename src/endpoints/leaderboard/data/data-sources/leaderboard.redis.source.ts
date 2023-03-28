@@ -15,35 +15,35 @@ export class LeaderboardRedisSource {
   constructor(redisSource: RedisSource, private prefix: string) {
     this.collections.set(
       MiningLeaderboardSort.TlmGainsTotal,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_tlm_gains_total`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_tlm_gains_total`)
     );
     this.collections.set(
       MiningLeaderboardSort.TotalNftPoints,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_total_nft_points`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_total_nft_points`)
     );
     this.collections.set(
       MiningLeaderboardSort.UniqueToolsUsed,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_unique_tools_used`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_unique_tools_used`)
     );
     this.collections.set(
       MiningLeaderboardSort.AvgChargeTime,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_avg_charge_time`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_avg_charge_time`)
     );
     this.collections.set(
       MiningLeaderboardSort.AvgMiningPower,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_avg_mining_power`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_avg_mining_power`)
     );
     this.collections.set(
       MiningLeaderboardSort.AvgNftPower,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_avg_nft_power`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_avg_nft_power`)
     );
     this.collections.set(
       MiningLeaderboardSort.LandsMinedOn,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_lands_mined_on`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_lands_mined_on`)
     );
     this.collections.set(
       MiningLeaderboardSort.PlanetsMinedOn,
-      new SortedCollectionRedisSource(redisSource, `${prefix}_daily_planets_mined_on`)
+      new SortedCollectionRedisSource(redisSource, `${prefix}_planets_mined_on`)
     );
   }
 
@@ -78,6 +78,7 @@ export class LeaderboardRedisSource {
       landsMinedOn.push({ score: lands_mined_on, value: wallet_id });
       planetsMinedOn.push({ score: planets_mined_on, value: wallet_id });
     }
+
 
     this.collections.get(MiningLeaderboardSort.TlmGainsTotal).addMany(tlmGainsTotal);
     this.collections.get(MiningLeaderboardSort.TotalNftPoints).addMany(totalNftPoints);

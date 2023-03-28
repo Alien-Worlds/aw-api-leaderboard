@@ -20,6 +20,10 @@ export class UpdateLeaderboardRoute extends PostRoute {
       authorization: request => {
         const config = buildConfig();
 
+        if (!config.api.secretKey) {
+          return true;
+        }
+
         if (config.api.secretKey && !request.headers['authorization']) {
           return false;
         }

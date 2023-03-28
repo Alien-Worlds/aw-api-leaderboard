@@ -1,23 +1,67 @@
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 
+export const getDaysInMonth = (month: number, year: number) => {
+  return new Date(year, month, 0).getDate();
+};
+
 export const calculateStartOfWeek = (date: Date) => {
   const dayOfWeek = date.getDay();
-  const cm = date.getMonth();
-  const month = cm < 10 ? `0${cm}` : cm;
-  const cd = date.getDate() - dayOfWeek + 1;
-  const day = cd < 10 ? `0${cd}` : cd;
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const dayOfMonth = date.getDate();
+  const tempFirstDayOfWeek = dayOfMonth - dayOfWeek + 1;
 
-  return new Date(`${date.getFullYear()}-${month}-${day}T00:00:00.000Z`);
+  let monthValue;
+  let yearValue;
+  let firstDayOfWeek;
+
+  if (tempFirstDayOfWeek < 0 && month === 0) {
+    monthValue = 11;
+    yearValue = year - 1;
+    const lastDayOfDecember = getDaysInMonth(monthValue, year - 1);
+
+    firstDayOfWeek = lastDayOfDecember + tempFirstDayOfWeek;
+  } else if (tempFirstDayOfWeek < 0 && month > 0) {
+    yearValue = year;
+    monthValue = month - 1;
+    const lastDayOfPrevMonth = getDaysInMonth(monthValue, year);
+    firstDayOfWeek = lastDayOfPrevMonth + tempFirstDayOfWeek;
+  } else {
+    yearValue = year;
+    monthValue = month;
+    firstDayOfWeek = tempFirstDayOfWeek;
+  }
+
+  monthValue += 1;
+  const monthStr = monthValue < 10 ? `0${monthValue}` : monthValue;
+  const dayStr = firstDayOfWeek < 10 ? `0${firstDayOfWeek}` : firstDayOfWeek;
+
+  return new Date(`${yearValue}-${monthStr}-${dayStr}T00:00:00.000Z`);
 };
 
 export const calculateEndOfWeek = (date: Date) => {
   const dayOfWeek = date.getDay();
-  const cm = date.getMonth();
-  const month = cm < 10 ? `0${cm}` : cm;
-  const cd = date.getDate() - dayOfWeek + 7;
-  const day = cd < 10 ? `0${cd}` : cd;
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const dayOfMonth = date.getDate();
+  const lastDayOfMonth = getDaysInMonth(month, year);
+  const tempLastDayOfWeek = dayOfMonth - dayOfWeek + 7;
 
-  return new Date(`${date.getFullYear()}-${month}-${day}T23:59:59.999Z`);
+  let monthValue = month;
+  let lastDayOfWeek = tempLastDayOfWeek;
+
+  if (lastDayOfMonth < lastDayOfWeek) {
+    monthValue += 1;
+    lastDayOfWeek = tempLastDayOfWeek - lastDayOfMonth;
+  }
+
+  // index from 1
+  monthValue += 1;
+
+  const monthStr = monthValue < 10 ? `0${monthValue}` : monthValue;
+  const dayStr = lastDayOfWeek < 10 ? `0${lastDayOfWeek}` : lastDayOfWeek;
+
+  return new Date(`${year}-${monthStr}-${dayStr}T23:59:59.999Z`);
 };
 
 export const calculateStartOfMonth = (date: Date) => {
@@ -35,7 +79,7 @@ export const calculateEndOfMonth = (date: Date) => {
 };
 
 export const calculateStartOfDay = (date: Date) => {
-  const cm = date.getMonth();
+  const cm = date.getMonth() + 1;
   const month = cm < 10 ? `0${cm}` : cm;
   const cd = date.getDate();
   const day = cd < 10 ? `0${cd}` : cd;
@@ -44,7 +88,7 @@ export const calculateStartOfDay = (date: Date) => {
 };
 
 export const calculateEndOfDay = (date: Date) => {
-  const cm = date.getMonth();
+  const cm = date.getMonth() + 1;
   const month = cm < 10 ? `0${cm}` : cm;
   const cd = date.getDate();
   const day = cd < 10 ? `0${cd}` : cd;

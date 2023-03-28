@@ -88,11 +88,12 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
       });
 
       let rank: number;
-      if (sort) {
-        rank = await this.redisSource.getRank(document.wallet_id, sort);
-      }
 
       if (document) {
+        if (sort) {
+          rank = await this.redisSource.getRank(document.wallet_id, sort);
+        }
+
         return Result.withContent(Leaderboard.fromDocument(document, rank));
       }
 
@@ -117,7 +118,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
       const latestDocuments = documents.filter(document => {
         const { start_timestamp, end_timestamp } = document;
         const now = Date.now();
-        return now >= start_timestamp.getTime() && now <= end_timestamp.getDate();
+        return now >= start_timestamp.getTime() && now <= end_timestamp.getTime();
       });
       await this.redisSource.update(latestDocuments);
 
@@ -142,7 +143,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
       });
 
       const now = Date.now();
-      if (now >= startTimestamp.getTime() && now <= endTimestamp.getDate()) {
+      if (now >= startTimestamp.getTime() && now <= endTimestamp.getTime()) {
         //
         this.redisSource.update([document]);
       }
