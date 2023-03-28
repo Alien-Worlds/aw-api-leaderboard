@@ -1,7 +1,10 @@
 import { Result, injectable, UpdateStatus, QueryModel } from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../entities/leaderboard';
-import { MiningLeaderboardOrder } from '../mining-leaderboard.enums';
+import {
+  MiningLeaderboardOrder,
+  MiningLeaderboardSort,
+} from '../mining-leaderboard.enums';
 
 /**
  * @abstract
@@ -21,13 +24,15 @@ export abstract class MiningLeaderboardRepository {
   public abstract findUser(
     user: string,
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
+    sort?: string
   ): Promise<Result<Leaderboard>>;
 
   public abstract findUsers(
     walletIds: string[],
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
+    sort?: MiningLeaderboardSort
   ): Promise<Result<Leaderboard[], Error>>;
 
   public abstract updateMany(

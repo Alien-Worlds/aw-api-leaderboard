@@ -25,7 +25,8 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   public async findUsers(
     walletIds: string[],
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
+    sort?: MiningLeaderboardSort
   ): Promise<Result<Leaderboard[], Error>> {
     try {
       const { mongoSource } = this;
@@ -45,7 +46,18 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
         },
       });
 
-      return Result.withContent(documents.map(Leaderboard.fromDocument));
+      let entities: Leaderboard[] = [];
+
+      if (sort) {
+        for (const document of documents) {
+          const rank = await this.redisSource.getRank(document.wallet_id, sort);
+          entities.push(Leaderboard.fromDocument(document, rank));
+        }
+      } else {
+        entities = documents.map(Leaderboard.fromDocument);
+      }
+
+      return Result.withContent(entities);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
@@ -54,7 +66,8 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   public async findUser(
     user: string,
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
+    sort?: MiningLeaderboardSort
   ): Promise<Result<Leaderboard, Error>> {
     try {
       const { mongoSource } = this;
@@ -74,8 +87,13 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
         },
       });
 
+      let rank: number;
+      if (sort) {
+        rank = await this.redisSource.getRank(document.wallet_id, sort);
+      }
+
       if (document) {
-        return Result.withContent(Leaderboard.fromDocument(document));
+        return Result.withContent(Leaderboard.fromDocument(document, rank));
       }
 
       return Result.withFailure(
@@ -90,9 +108,19 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     leaderboards: Leaderboard[]
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     try {
-      await this.mongoSource.updateManyByWalletId(
-        leaderboards.map(leaderboard => leaderboard.toDocument())
-      );
+      const documents = leaderboards.map(leaderboard => leaderboard.toDocument());
+
+      await this.mongoSource.updateManyByWalletId(documents);
+
+      // add to redis only if the timeframe corresponds to the current date.
+      // The rest is probably history.
+      const latestDocuments = documents.filter(document => {
+        const { start_timestamp, end_timestamp } = document;
+        const now = Date.now();
+        return now >= start_timestamp.getTime() && now <= end_timestamp.getDate();
+      });
+      await this.redisSource.update(latestDocuments);
+
       return Result.withContent(UpdateStatus.Success);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
@@ -104,13 +132,21 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     try {
       const { walletId, startTimestamp, endTimestamp } = leaderboard;
-      await this.mongoSource.update(leaderboard.toDocument(), {
+      const document = leaderboard.toDocument();
+      await this.mongoSource.update(document, {
         where: {
           wallet_id: walletId,
           start_timestamp: startTimestamp,
           end_timestamp: endTimestamp,
         },
       });
+
+      const now = Date.now();
+      if (now >= startTimestamp.getTime() && now <= endTimestamp.getDate()) {
+        //
+        this.redisSource.update([document]);
+      }
+
       return Result.withContent(UpdateStatus.Success);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
@@ -144,12 +180,15 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           limit: Number(limit),
         },
       });
-      return Result.withContent(
-        documents.map((document, index) => {
-          const position = Number(offset) + Number(index) + 1;
-          return Leaderboard.fromDocument(document, position);
-        })
-      );
+
+      const entities: Leaderboard[] = [];
+
+      for (const document of documents) {
+        const rank = await this.redisSource.getRank(document.wallet_id, sort);
+        entities.push(Leaderboard.fromDocument(document, rank));
+      }
+
+      return Result.withContent(entities);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }

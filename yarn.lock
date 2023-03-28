@@ -11,20 +11,35 @@
     debug "^4.3.4"
     safe-buffer "~5.1.2"
 
-"@alien-worlds/alienworlds-api-common@^0.0.48":
-  version "0.0.48"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.48/868672e0888723ba7a52694868094d27d9570767#868672e0888723ba7a52694868094d27d9570767"
-  integrity sha512-ayVcDyfHZUmxEdZ6uWChRRCEu/yfRHQG+s455yIlaoPgcFBSHwwJT0/Rg+Djy4/GAsG2v8GCZ17dhX9VqvWrfQ==
+"@alien-worlds/alienworlds-api-common@^0.0.51":
+  version "0.0.51"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.51/ef0167f3866390ebc47b57629d0219a03716ea6a#ef0167f3866390ebc47b57629d0219a03716ea6a"
+  integrity sha512-wzRwQmv1MlnG9ZrIrAt+X7nMSVRQTA6zHCpsH9rPuAkxQjQQni6buRxpA69G/ahaPe0C5iDORgtRL9LrL4i1tg==
   dependencies:
-    "@alien-worlds/api-core" "^0.0.79"
+    "@alien-worlds/api-core" "^0.0.82"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/api-core@^0.0.79":
-  version "0.0.79"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.79/e7a31ef273f99d37fb827f9de02667b00fad1b3e#e7a31ef273f99d37fb827f9de02667b00fad1b3e"
-  integrity sha512-DTv1DxmGN1ZN25hnfCSs3FvdD9elzQ5xHztpJ13gYEQ4S93F7g1OseU9hW4XifziChGRLTFFmPSsunWTNc0Sjg==
+"@alien-worlds/api-core@^0.0.82":
+  version "0.0.82"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.82/4624aa708530b3ff1083de82dd241859350b94bd#4624aa708530b3ff1083de82dd241859350b94bd"
+  integrity sha512-PPxLlm/GLLrPXRMFmUxVGXsx9bEK5ApP9ztwBJG2h1UObzVb12vLvkL0O7XAKziG6TLy2nLOpcp3oojwLUsC2Q==
+  dependencies:
+    "@google-cloud/bigquery" "^6.0.3"
+    amqplib "^0.10.3"
+    eosjs "^22.1.0"
+    inversify "^6.0.1"
+    mongodb "4.9.1"
+    nanoid "^3.0.0"
+    node-fetch "2"
+    redis "^4.6.5"
+    reflect-metadata "^0.1.13"
+
+"@alien-worlds/api-core@^0.0.83":
+  version "0.0.83"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.83/65dec1d36f5c12fd564fc53d13de0b39d62022c6#65dec1d36f5c12fd564fc53d13de0b39d62022c6"
+  integrity sha512-oKnNByIlJ7AuH9ffDLWykr4hZCjSQwRxl1CT9+0lxV9GPLXH/Besh7+FMpSVfG/8SGgCLDlZOEhjs/sVGEvkmg==
   dependencies:
     "@google-cloud/bigquery" "^6.0.3"
     amqplib "^0.10.3"

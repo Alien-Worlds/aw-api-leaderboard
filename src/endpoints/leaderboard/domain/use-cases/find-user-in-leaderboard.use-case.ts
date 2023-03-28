@@ -28,18 +28,18 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
    * @returns {Promise<Result<Leaderboard>>}
    */
   public async execute(input: FindUserInLeaderboardInput): Promise<Result<Leaderboard>> {
-    const { user, fromDate, toDate, timeframe } = input;
+    const { user, fromDate, toDate, timeframe, sort } = input;
 
     if (timeframe === MiningLeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.findUser(user, fromDate, toDate);
+      return this.dailyLeaderboardRepository.findUser(user, fromDate, toDate, sort);
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.findUser(user, fromDate, toDate);
+      return this.weeklyLeaderboardRepository.findUser(user, fromDate, toDate, sort);
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Monthly) {
-      return this.monthlyLeaderboardRepository.findUser(user, fromDate, toDate);
+      return this.monthlyLeaderboardRepository.findUser(user, fromDate, toDate, sort);
     }
 
     return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));

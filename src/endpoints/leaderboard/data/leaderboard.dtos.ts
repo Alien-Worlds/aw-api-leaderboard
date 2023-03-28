@@ -21,7 +21,18 @@ export type FindUserInLeaderboardRequest = {
   date?: string;
 };
 
-export type LeaderboardDocument = {
+export type LeaderboardBaseDocument = {
+  tlm_gains_total?: number;
+  total_nft_points?: number;
+  unique_tools_used?: number;
+  avg_charge_time?: number;
+  avg_mining_power?: number;
+  avg_nft_power?: number;
+  lands_mined_on?: number;
+  planets_mined_on?: number;
+};
+
+export type LeaderboardDocument = LeaderboardBaseDocument & {
   _id?: MongoDB.ObjectId;
   block_number: MongoDB.Long;
   block_timesamp: Date;
@@ -32,21 +43,13 @@ export type LeaderboardDocument = {
   last_update_completed?: boolean;
   wallet_id?: string;
   username?: string;
-  tlm_gains_total?: number;
   tlm_gains_highest?: number;
-  total_nft_points?: number;
   tools_used?: MongoDB.Long[];
-  unique_tools_used?: number;
   total_charge_time?: number;
-  avg_charge_time?: number;
   total_mining_power?: number;
-  avg_mining_power?: number;
   total_nft_power?: number;
-  avg_nft_power?: number;
   lands?: MongoDB.Long[];
-  lands_mined_on?: number;
   planets?: string[];
-  planets_mined_on?: number;
   mine_rating?: number;
   position?: number;
   [key: string]: unknown;
