@@ -90,9 +90,9 @@ export class LeaderboardRedisSource {
     this.collections.get(MiningLeaderboardSort.PlanetsMinedOn).addMany(planetsMinedOn);
   }
 
-  public async getRank(walletId: string, key: MiningLeaderboardSort) {
+  public async getRank(walletId: string, key: MiningLeaderboardSort, order = -1) {
     if (this.collections.has(key)) {
-      return this.collections.get(key).getRank(walletId);
+      return this.collections.get(key).getRank(walletId, order);
     }
 
     log(`Unknown key: ${key}`);
