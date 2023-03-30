@@ -1,10 +1,7 @@
 import { Request } from '@alien-worlds/api-core';
+
 import { ListLeaderboardRequest } from '../../data/leaderboard.dtos';
-import {
-  MiningLeaderboardOrder,
-  MiningLeaderboardSort,
-  MiningLeaderboardTimeframe,
-} from '../mining-leaderboard.enums';
+import { MiningLeaderboardOrder, MiningLeaderboardSort, MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 export class ListLeaderboardInput {
@@ -16,7 +13,7 @@ export class ListLeaderboardInput {
     >
   ): ListLeaderboardInput {
     const { query } = request;
-    const { timeframe, sort, offset, limit } = request.params as ListLeaderboardRequest;
+    const { timeframe } = request.params as ListLeaderboardRequest;
     const now = new Date();
     const selectedTimeframe = timeframe || MiningLeaderboardTimeframe.Daily;
     const fromDate = getStartDateByTimeframe(
@@ -30,10 +27,10 @@ export class ListLeaderboardInput {
 
     return new ListLeaderboardInput(
       timeframe || MiningLeaderboardTimeframe.Daily,
-      sort || MiningLeaderboardSort.TlmGainsTotal,
+      query.sort || MiningLeaderboardSort.TlmGainsTotal,
       query.order || MiningLeaderboardOrder.Desc,
-      offset || 0,
-      limit || 10,
+      query.offset || 0,
+      query.limit || 10,
       fromDate,
       toDate
     );
@@ -47,5 +44,5 @@ export class ListLeaderboardInput {
     public readonly limit: number,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) {}
+  ) { }
 }
