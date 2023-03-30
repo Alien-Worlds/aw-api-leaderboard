@@ -1,10 +1,8 @@
+import { MiningLeaderboardSort, MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
+
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';
-import {
-  MiningLeaderboardSort,
-  MiningLeaderboardTimeframe,
-} from '../mining-leaderboard.enums';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 export class FindUserInLeaderboardInput {
   public static fromRequest(
@@ -15,10 +13,9 @@ export class FindUserInLeaderboardInput {
     >
   ): FindUserInLeaderboardInput {
     const { query } = request;
-    const { timeframe } = request.params as FindUserInLeaderboardRequest;
 
     const now = new Date();
-    const selectedTimeframe = timeframe || MiningLeaderboardTimeframe.Daily;
+    const selectedTimeframe = query.timeframe || MiningLeaderboardTimeframe.Daily;
     const fromDate = getStartDateByTimeframe(
       query.fromDate || query.date || now,
       selectedTimeframe
@@ -30,7 +27,7 @@ export class FindUserInLeaderboardInput {
 
     return new FindUserInLeaderboardInput(
       query.user,
-      timeframe || MiningLeaderboardTimeframe.Daily,
+      selectedTimeframe,
       query.sort || MiningLeaderboardSort.TlmGainsTotal,
       fromDate,
       toDate
@@ -43,5 +40,5 @@ export class FindUserInLeaderboardInput {
     public readonly sort: string,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) {}
+  ) { }
 }

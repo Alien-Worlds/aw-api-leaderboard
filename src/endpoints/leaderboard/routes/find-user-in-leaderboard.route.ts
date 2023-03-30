@@ -1,4 +1,5 @@
 import { GetRoute, RouteHandler } from '@alien-worlds/api-core';
+
 import { FindUserInLeaderboardInput } from '../domain/models/find-user-in-leaderboard.input';
 import { FindUserInLeaderboardOutput } from '../domain/models/find-user-in-leaderboard.output';
 
@@ -13,7 +14,7 @@ export class FindUserInLeaderboardRoute extends GetRoute {
   }
 
   private constructor(handler: RouteHandler) {
-    super('/v1/leaderboard/:timeframe', handler, {
+    super('/v1/leaderboard/find', handler, {
       hooks: {
         pre: FindUserInLeaderboardInput.fromRequest,
         post: (output: FindUserInLeaderboardOutput) => output.toResponse(),

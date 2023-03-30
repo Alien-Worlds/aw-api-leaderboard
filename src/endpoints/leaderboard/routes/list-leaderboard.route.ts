@@ -14,7 +14,7 @@ export class ListLeaderboardRoute extends GetRoute {
   }
 
   private constructor(handler: RouteHandler) {
-    super('/v1/leaderboard/:timeframe', handler, {
+    super('/v1/leaderboard/list', handler, {
       hooks: {
         pre: ListLeaderboardInput.fromRequest,
         post: (output: ListLeaderboardOutput) => output.toResponse(),
