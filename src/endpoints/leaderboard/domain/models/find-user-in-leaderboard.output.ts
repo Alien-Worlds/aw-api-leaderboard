@@ -1,13 +1,14 @@
-import { UserLeaderboardNotFoundError } from './../errors/user-leaderboard-not-found.error';
 import { log, Result } from '@alien-worlds/api-core';
+
 import { Leaderboard } from '../entities/leaderboard';
+import { UserLeaderboardNotFoundError } from './../errors/user-leaderboard-not-found.error';
 
 export class FindUserInLeaderboardOutput {
   public static create(result: Result<Leaderboard>): FindUserInLeaderboardOutput {
     return new FindUserInLeaderboardOutput(result);
   }
 
-  private constructor(public readonly result: Result<Leaderboard>) {}
+  private constructor(public readonly result: Result<Leaderboard>) { }
 
   public toResponse() {
     const { result } = this;
@@ -24,9 +25,14 @@ export class FindUserInLeaderboardOutput {
       };
     }
 
+    const results = [result.content.toStruct()];
+
     return {
       status: 200,
-      body: result.content.toStruct(),
+      body: {
+        results,
+        total: results.length,
+      },
     };
   }
 }
