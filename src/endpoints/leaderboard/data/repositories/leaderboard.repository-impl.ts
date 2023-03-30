@@ -1,26 +1,17 @@
-import {
-  Failure,
-  getParams,
-  QueryModel,
-  Result,
-  UpdateStatus,
-} from '@alien-worlds/api-core';
+import { Failure, getParams, QueryModel, Result, UpdateStatus } from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../../domain/entities/leaderboard';
+import { MiningLeaderboardOrder, MiningLeaderboardSort } from '../../domain/mining-leaderboard.enums';
+import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
-import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
-import {
-  MiningLeaderboardSort,
-  MiningLeaderboardOrder,
-} from '../../domain/mining-leaderboard.enums';
 import { UserLeaderboardNotFoundError } from './../../domain/errors/user-leaderboard-not-found.error';
 
 export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   constructor(
     protected readonly mongoSource: LeaderboardMongoSource,
     protected readonly redisSource: LeaderboardRedisSource
-  ) {}
+  ) { }
 
   public async findUsers(
     walletIds: string[],
@@ -51,7 +42,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
       if (sort) {
         for (const document of documents) {
           const rank = await this.redisSource.getRank(document.wallet_id, sort);
-          entities.push(Leaderboard.fromDocument(document, rank));
+          entities.push(Leaderboard.fromDocument(document, rank + 1));
         }
       } else {
         entities = documents.map(Leaderboard.fromDocument);
@@ -94,7 +85,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
           rank = await this.redisSource.getRank(document.wallet_id, sort);
         }
 
-        return Result.withContent(Leaderboard.fromDocument(document, rank));
+        return Result.withContent(Leaderboard.fromDocument(document, rank + 1));
       }
 
       return Result.withFailure(
@@ -186,7 +177,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
 
       for (const document of documents) {
         const rank = await this.redisSource.getRank(document.wallet_id, sort);
-        entities.push(Leaderboard.fromDocument(document, rank));
+        entities.push(Leaderboard.fromDocument(document, rank + 1));
       }
 
       return Result.withContent(entities);
