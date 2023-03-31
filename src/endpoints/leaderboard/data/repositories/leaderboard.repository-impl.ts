@@ -1,7 +1,16 @@
-import { Failure, getParams, QueryModel, Result, UpdateStatus } from '@alien-worlds/api-core';
+import {
+  Failure,
+  getParams,
+  QueryModel,
+  Result,
+  UpdateStatus,
+} from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../../domain/entities/leaderboard';
-import { MiningLeaderboardOrder, MiningLeaderboardSort } from '../../domain/mining-leaderboard.enums';
+import {
+  MiningLeaderboardOrder,
+  MiningLeaderboardSort,
+} from '../../domain/mining-leaderboard.enums';
 import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
@@ -11,7 +20,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   constructor(
     protected readonly mongoSource: LeaderboardMongoSource,
     protected readonly redisSource: LeaderboardRedisSource
-  ) { }
+  ) {}
 
   public async findUsers(
     walletIds: string[],

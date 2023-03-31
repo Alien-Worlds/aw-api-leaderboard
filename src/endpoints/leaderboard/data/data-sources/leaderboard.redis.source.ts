@@ -79,7 +79,6 @@ export class LeaderboardRedisSource {
       planetsMinedOn.push({ score: planets_mined_on, value: wallet_id });
     }
 
-
     this.collections.get(MiningLeaderboardSort.TlmGainsTotal).addMany(tlmGainsTotal);
     this.collections.get(MiningLeaderboardSort.TotalNftPoints).addMany(totalNftPoints);
     this.collections.get(MiningLeaderboardSort.UniqueToolsUsed).addMany(uniqueToolsUsed);

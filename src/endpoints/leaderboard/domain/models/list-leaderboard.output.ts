@@ -1,5 +1,6 @@
 import { log, Result } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
+import { parseLeaderboardToResult } from './query-model.utils';
 
 export class ListLeaderboardOutput {
   public static create(
@@ -32,7 +33,7 @@ export class ListLeaderboardOutput {
     return {
       status: 200,
       body: {
-        results: list.map(leaderboard => leaderboard.toStruct()),
+        results: list.map(leaderboard => parseLeaderboardToResult(leaderboard)),
         total: total,
       },
     };

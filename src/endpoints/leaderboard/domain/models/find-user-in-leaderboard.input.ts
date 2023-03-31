@@ -1,4 +1,7 @@
-import { MiningLeaderboardSort, MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import {
+  MiningLeaderboardSort,
+  MiningLeaderboardTimeframe,
+} from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
@@ -40,5 +43,5 @@ export class FindUserInLeaderboardInput {
     public readonly sort: string,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) { }
+  ) {}
 }

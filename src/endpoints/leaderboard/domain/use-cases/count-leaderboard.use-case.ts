@@ -1,5 +1,4 @@
 import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
-import { Leaderboard } from '../entities/leaderboard';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { ListLeaderboardCountQueryModel } from '../models/list-leaderboard-count.query-model';
 import { ListLeaderboardInput } from '../models/list-leaderboard.input';
@@ -29,7 +28,6 @@ export class CountLeaderboardUseCase implements UseCase<number> {
    * @returns {Promise<Result<number>>}
    */
   public async execute(input: ListLeaderboardInput): Promise<Result<number>> {
-    //
     const { timeframe } = input;
     const countQueryModel = ListLeaderboardCountQueryModel.create(input);
 

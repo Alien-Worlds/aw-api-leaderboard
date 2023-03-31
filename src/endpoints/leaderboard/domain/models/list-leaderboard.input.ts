@@ -1,4 +1,8 @@
-import { MiningLeaderboardOrder, MiningLeaderboardSort, MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import {
+  MiningLeaderboardOrder,
+  MiningLeaderboardSort,
+  MiningLeaderboardTimeframe,
+} from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 import { ListLeaderboardRequest } from '../../data/leaderboard.dtos';
@@ -44,5 +48,5 @@ export class ListLeaderboardInput {
     public readonly limit: number,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) { }
+  ) {}
 }

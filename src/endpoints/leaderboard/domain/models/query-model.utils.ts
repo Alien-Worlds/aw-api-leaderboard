@@ -1,4 +1,7 @@
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import { LeaderboardListOutputItem } from '../../data/leaderboard.dtos';
+import { removeUndefinedProperties } from '@alien-worlds/api-core';
+import { Leaderboard } from '../entities/leaderboard';
 
 export const getDaysInMonth = (month: number, year: number) => {
   return new Date(year, month, 0).getDate();
@@ -136,4 +139,46 @@ export const getEndDateByTimeframe = (
   }
 
   throw new Error(`Unknown timeframe: ${timeframe}`);
+};
+
+export const parseLeaderboardToResult = (
+  leaderboard: Leaderboard
+): LeaderboardListOutputItem => {
+  const {
+    wallet_id,
+    username,
+    tlm_gains_total,
+    tlm_gains_highest,
+    total_nft_points,
+    total_charge_time,
+    avg_charge_time,
+    total_mining_power,
+    avg_mining_power,
+    total_nft_power,
+    avg_nft_power,
+    lands_mined_on,
+    planets_mined_on,
+    unique_tools_used,
+    position,
+  } = leaderboard.toStruct();
+
+  const dto = {
+    wallet_id,
+    username,
+    tlm_gains_total,
+    tlm_gains_highest,
+    total_nft_points,
+    total_charge_time,
+    avg_charge_time,
+    total_mining_power,
+    avg_mining_power,
+    total_nft_power,
+    avg_nft_power,
+    lands_mined_on,
+    planets_mined_on,
+    unique_tools_used,
+    position,
+  };
+
+  return removeUndefinedProperties<LeaderboardListOutputItem>(dto);
 };

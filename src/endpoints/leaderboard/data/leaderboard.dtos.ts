@@ -91,4 +91,23 @@ export type LeaderboardStruct = {
   [key: string]: unknown;
 };
 
-export type LeaderboardUpdateDocuemnt = LeaderboardUpdateStruct;
+export type LeaderboardUpdateDocument = LeaderboardUpdateStruct;
+
+export type LeaderboardListOutputItem = Pick<
+  LeaderboardUpdateStruct,
+  | 'wallet_id'
+  | 'username'
+  | 'tlm_gains_total'
+  | 'tlm_gains_highest'
+  | 'total_nft_points'
+  | 'total_charge_time'
+  | 'avg_charge_time'
+  | 'total_mining_power'
+  | 'avg_mining_power'
+  | 'total_nft_power'
+  | 'avg_nft_power'
+  | 'lands_mined_on'
+  | 'planets_mined_on'
+  | 'unique_tools_used'
+  | 'position'
+>;

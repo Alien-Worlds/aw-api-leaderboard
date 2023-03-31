@@ -114,7 +114,9 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
 
   public async revertUpdate() {
     try {
-      const { deletedCount } = await this.collection.deleteMany({ last_update_completed: false });
+      const { deletedCount } = await this.collection.deleteMany({
+        last_update_completed: false,
+      });
 
       return { deletedCount };
     } catch (error) {
