@@ -1,7 +1,7 @@
 import { log, Result } from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../entities/leaderboard';
-import { UserLeaderboardNotFoundError } from './../errors/user-leaderboard-not-found.error';
+import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
 
 export class FindUserInLeaderboardOutput {
   public static create(result: Result<Leaderboard>): FindUserInLeaderboardOutput {
@@ -17,10 +17,21 @@ export class FindUserInLeaderboardOutput {
       const {
         failure: { error },
       } = result;
+
+      if (error instanceof UserLeaderboardNotFoundError ) {
+        return {
+          status: 200,
+          body: {
+            results: [],
+            total: 0,
+          },
+        };
+      }
+
       log(error);
 
       return {
-        status: error instanceof UserLeaderboardNotFoundError ? 204 : 500,
+        status: 500,
         body: null,
       };
     }
