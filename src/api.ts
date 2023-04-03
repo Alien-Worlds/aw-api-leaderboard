@@ -2,12 +2,12 @@ import { log } from '@alien-worlds/api-core';
 import bodyParser from 'body-parser';
 import express, { Express } from 'express';
 import cors from 'cors';
-import { LeaderboardApiConfig } from './config/config.types';
+import { LeaderboardConfig } from './config/config.types';
 
 export class LeaderboardApi {
   private app: Express;
 
-  constructor(private config: LeaderboardApiConfig) {
+  constructor(private config: LeaderboardConfig) {
     this.app = express();
     this.app.use(
       cors({
@@ -19,7 +19,9 @@ export class LeaderboardApi {
 
   public async start() {
     const {
-      config: { port },
+      config: {
+        api: { port },
+      },
     } = this;
     this.app.listen(port, () => {
       log(`Server is running at http://localhost:${port}`);

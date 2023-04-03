@@ -1,39 +1,41 @@
-import { Result } from '@alien-worlds/api-core';
-import {
-  LeaderboardStruct,
-  ListLeaderboardControllerOutput,
-} from '../../data/leaderboard.dtos';
+import { log, Result } from '@alien-worlds/api-core';
+import { Leaderboard } from '../entities/leaderboard';
+import { parseLeaderboardToResult } from './query-model.utils';
 
 export class ListLeaderboardOutput {
   public static create(
-    result: Result<ListLeaderboardControllerOutput>
+    listResult: Result<Leaderboard[]>,
+    countResult: Result<number>
   ): ListLeaderboardOutput {
-    if (result.isFailure) {
-      const {
-        failure: { error },
-      } = result;
-      if (error) {
-        console.log(error);
-        return {
-          status: 500,
-          body: null,
-        };
-      }
-    }
-
-    const output = {
-      results: result.content.results.map(leaderboard => leaderboard.toStruct()),
-      total: result.content.total,
-    };
-
-    return {
-      status: 200,
-      body: output,
-    };
+    return new ListLeaderboardOutput(listResult, countResult);
   }
 
   private constructor(
-    public readonly status: number,
-    public readonly body: { results: LeaderboardStruct[]; total: number }
+    public readonly listResult: Result<Leaderboard[]>,
+    public readonly countResult: Result<number>
   ) {}
+
+  public toResponse() {
+    const {
+      listResult: { content: list, failure: listFailure },
+      countResult: { content: total, failure: countFailure },
+    } = this;
+    if (listFailure || countFailure) {
+      const { error } = listFailure || countFailure;
+
+      log(error);
+      return {
+        status: 500,
+        body: null,
+      };
+    }
+
+    return {
+      status: 200,
+      body: {
+        results: list.map(leaderboard => parseLeaderboardToResult(leaderboard)),
+        total: total,
+      },
+    };
+  }
 }

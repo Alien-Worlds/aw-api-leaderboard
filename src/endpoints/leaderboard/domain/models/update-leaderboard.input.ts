@@ -1,44 +1,26 @@
-import { Request, parseToBigInt } from '@alien-worlds/api-core';
 import {
-  UsedToolRequestData,
-  UpdateLeaderboardRequest,
-} from '../../data/leaderboard.dtos';
+  Abi,
+  LeaderboardUpdateMessage,
+  LeaderboardUpdateStruct,
+} from '@alien-worlds/alienworlds-api-common';
+import { Request, parseToBigInt, BroadcastMessage } from '@alien-worlds/api-core';
+import { nanoid } from 'nanoid';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
-export class UsedTool {
-  public static create(data: UsedToolRequestData): UsedTool {
-    const { asset_id, delay, ease, difficulty } = data;
-    return new UsedTool(parseToBigInt(asset_id), delay, ease, difficulty);
-  }
-
-  private constructor(
-    public readonly assetId: bigint,
-    public readonly delay: number,
-    public readonly ease: number,
-    public readonly difficulty: number
-  ) {}
-}
-
-export class UpdateLeaderboardInput {
-  public static fromRequest(
-    request: Request<UpdateLeaderboardRequest>
-  ): UpdateLeaderboardInput {
+export class LeaderboardUpdate {
+  public static fromStruct(struct: LeaderboardUpdateStruct): LeaderboardUpdate {
     const {
-      body: {
-        wallet_id,
-        username,
-        bounty,
-        block_number,
-        block_timestamp,
-        points,
-        land_id,
-        planet_name,
-        tools,
-      },
-    } = request;
-
-    const now = new Date();
+      wallet_id,
+      username,
+      block_number,
+      block_timestamp,
+      points,
+      land_id,
+      planet_name,
+      bag_items,
+    } = struct;
+    const now = block_timestamp ? new Date(block_timestamp) : new Date();
     const fromDayStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
     const toDayEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Daily);
     const fromWeekStart = getStartDateByTimeframe(now, MiningLeaderboardTimeframe.Weekly);
@@ -49,7 +31,15 @@ export class UpdateLeaderboardInput {
     );
     const toMonthEnd = getEndDateByTimeframe(now, MiningLeaderboardTimeframe.Monthly);
 
-    return new UpdateLeaderboardInput(
+    let bounty = struct.bounty;
+
+    // check if is abi asset string
+    if (typeof bounty === 'string' && /^[0-9.]+\s[a-zA-Z]+$/.test(bounty)) {
+      const asset = Abi.Asset.fromStruct(bounty);
+      bounty = asset.value;
+    }
+
+    return new LeaderboardUpdate(
       fromDayStart,
       toDayEnd,
       fromWeekStart,
@@ -58,13 +48,13 @@ export class UpdateLeaderboardInput {
       toMonthEnd,
       wallet_id,
       username,
-      Number(bounty),
+      bounty ? Number(bounty) : 0,
       parseToBigInt(block_number),
       new Date(block_timestamp),
-      Number(points),
-      parseToBigInt(land_id),
+      points ? Number(points) : 0,
+      land_id ? parseToBigInt(land_id) : null,
       planet_name,
-      tools.map(land => UsedTool.create(land))
+      bag_items ? bag_items.map(item => parseToBigInt(item)) : []
     );
   }
 
@@ -83,6 +73,63 @@ export class UpdateLeaderboardInput {
     public readonly points: number,
     public readonly landId: bigint,
     public readonly planetName: string,
-    public readonly tools: UsedTool[]
+    public readonly bagItems: bigint[],
+    public readonly id = nanoid()
   ) {}
+}
+
+export class UpdateLeaderboardInput {
+  public static create(items: LeaderboardUpdateStruct[]): UpdateLeaderboardInput {
+    return new UpdateLeaderboardInput(items.map(LeaderboardUpdate.fromStruct));
+  }
+
+  public static fromMessage(
+    message: BroadcastMessage<LeaderboardUpdateMessage>
+  ): UpdateLeaderboardInput {
+    const {
+      content: {
+        data: { block_number, block_timestamp, addpoints, logmine, settag },
+      },
+    } = message;
+
+    let data: LeaderboardUpdateStruct;
+
+    if (addpoints) {
+      data = {
+        wallet_id: addpoints.user,
+        points: addpoints.points,
+        block_number,
+        block_timestamp,
+      };
+    } else if (logmine) {
+      const { miner, ...rest } = logmine;
+      data = {
+        wallet_id: miner,
+        block_number,
+        block_timestamp,
+        ...rest,
+      };
+    } else if (settag) {
+      data = {
+        wallet_id: settag.account,
+        username: settag.tag,
+        block_number,
+        block_timestamp,
+      };
+    }
+
+    return new UpdateLeaderboardInput([LeaderboardUpdate.fromStruct(data)]);
+  }
+
+  public static fromRequest(
+    request: Request<LeaderboardUpdateStruct[]>
+  ): UpdateLeaderboardInput {
+    if (Array.isArray(request.body)) {
+      return UpdateLeaderboardInput.create(request.body);
+    }
+
+    return new UpdateLeaderboardInput([LeaderboardUpdate.fromStruct(request.body)]);
+  }
+
+  private constructor(public readonly items: LeaderboardUpdate[]) {}
 }

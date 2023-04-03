@@ -6,7 +6,6 @@ export enum MiningLeaderboardTimeframe {
 }
 
 export enum MiningLeaderboardSort {
-  Username = 'username',
   TlmGainsTotal = 'tlm_gains_total',
   TotalNftPoints = 'total_nft_points',
   AvgChargeTime = 'avg_charge_time',
@@ -14,7 +13,7 @@ export enum MiningLeaderboardSort {
   AvgNftPower = 'avg_nft_power',
   LandsMinedOn = 'lands_mined_on',
   PlanetsMinedOn = 'planets_mined_on',
-  UniqueToolsUsed = 'tools_used',
+  UniqueToolsUsed = 'unique_tools_used',
 }
 
 export enum MiningLeaderboardOrder {

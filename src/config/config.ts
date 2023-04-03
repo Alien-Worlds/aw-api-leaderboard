@@ -1,10 +1,18 @@
-import { MongoConfig } from '@alien-worlds/api-core';
+import { BroadcastConfig } from '@alien-worlds/api-core';
+import { MongoConfig, RedisConfig } from '@alien-worlds/api-core';
 import { readEnvFile } from './config.utils';
-import { Environment, LeaderboardApiConfig, RedisConfig } from './config.types';
+import { Environment, LeaderboardConfig, ApiConfig } from './config.types';
+import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
 
-export const buildConfig = (): LeaderboardApiConfig => {
+export const buildConfig = (): LeaderboardConfig => {
   const environment: Environment = { ...process.env } as Environment;
   const dotEnv = readEnvFile();
+
+  const api: ApiConfig = {
+    port: Number(environment.PORT || dotEnv.PORT),
+    secretKey: environment.TOKEN_SECRET_KEY || dotEnv.TOKEN_SECRET_KEY,
+    expirationTime: environment.TOKEN_EXPIRATION_TIME || dotEnv.TOKEN_EXPIRATION_TIME,
+  };
 
   const mongo: MongoConfig = {
     hosts: (environment.MONGO_HOSTS || dotEnv.MONGO_HOSTS).split(/,\s*/),
@@ -28,9 +36,34 @@ export const buildConfig = (): LeaderboardApiConfig => {
     iana: Boolean(Number(environment.REDIS_IANA || dotEnv.REDIS_IANA)),
   };
 
+  const historyToolsBroadcast: BroadcastConfig = {
+    host: environment.HISTORY_TOOLS_BROADCAST_HOST || dotEnv.HISTORY_TOOLS_BROADCAST_HOST,
+    port: Number(
+      environment.HISTORY_TOOLS_BROADCAST_PORT || dotEnv.HISTORY_TOOLS_BROADCAST_PORT
+    ),
+    driver:
+      environment.HISTORY_TOOLS_BROADCAST_DRIVER || dotEnv.HISTORY_TOOLS_BROADCAST_DRIVER,
+  };
+
+  const atomicassets: AtomicAssetsApiConfig = {
+    host: environment.ATOMICASSETS_API_HOST || dotEnv.ATOMICASSETS_API_HOST,
+    port: Number(environment.ATOMICASSETS_API_PORT || dotEnv.ATOMICASSETS_API_PORT),
+    secure: Boolean(
+      Number(environment.ATOMICASSETS_API_SECURE || dotEnv.ATOMICASSETS_API_SECURE)
+    ),
+  };
+
+  const cronTime = environment.CRON_TIME || dotEnv.CRON_TIME;
+  const updateBatchSize =
+    Number(environment.UPDATE_BATCH_SIZE || dotEnv.UPDATE_BATCH_SIZE) || 0;
+
   return {
-    port: Number(environment.PORT || dotEnv.PORT),
+    api,
     mongo,
     redis,
+    historyToolsBroadcast: historyToolsBroadcast.host ? historyToolsBroadcast : null,
+    atomicassets,
+    cronTime,
+    updatesBatchSize: updateBatchSize,
   };
 };

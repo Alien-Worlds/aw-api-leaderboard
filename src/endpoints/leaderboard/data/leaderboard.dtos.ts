@@ -1,5 +1,5 @@
+import { LeaderboardUpdateStruct } from '@alien-worlds/alienworlds-api-common';
 import { MongoDB } from '@alien-worlds/api-core';
-import { Leaderboard } from '../domain/entities/leaderboard';
 
 export type ListLeaderboardRequest = {
   timeframe?: string;
@@ -15,68 +15,51 @@ export type ListLeaderboardRequest = {
 export type FindUserInLeaderboardRequest = {
   timeframe?: string;
   sort?: string;
-  username?: string;
-  walletId?: string;
+  user?: string;
   fromDate?: string;
   toDate?: string;
   date?: string;
 };
 
-export type LeaderboardDocument = {
+export type LeaderboardBaseDocument = {
+  tlm_gains_total?: number;
+  total_nft_points?: number;
+  unique_tools_used?: number;
+  avg_charge_time?: number;
+  avg_mining_power?: number;
+  avg_nft_power?: number;
+  lands_mined_on?: number;
+  planets_mined_on?: number;
+};
+
+export type LeaderboardDocument = LeaderboardBaseDocument & {
   _id?: MongoDB.ObjectId;
   block_number: MongoDB.Long;
   block_timesamp: Date;
   start_timestamp?: Date;
   end_timestamp?: Date;
   last_update_timestamp?: Date;
+  last_update_hash?: string;
+  last_update_completed?: boolean;
   wallet_id?: string;
   username?: string;
-  tlm_gains_total?: number;
   tlm_gains_highest?: number;
-  total_nft_points?: number;
   tools_used?: MongoDB.Long[];
   total_charge_time?: number;
-  avg_charge_time?: number;
   total_mining_power?: number;
-  avg_mining_power?: number;
   total_nft_power?: number;
-  avg_nft_power?: number;
   lands?: MongoDB.Long[];
-  lands_mined_on?: number;
   planets?: string[];
-  planets_mined_on?: number;
   mine_rating?: number;
   position?: number;
   [key: string]: unknown;
 };
 
-export type UsedToolRequestData = {
-  asset_id: string;
+export type MinigToolData = {
   delay: number;
   ease: number;
   difficulty: number;
 };
-
-export type UpdateLeaderboardRequest = {
-  wallet_id: string;
-  username: string;
-  bounty: string | number;
-  block_number: string;
-  block_timestamp: string;
-  points: number | string;
-  land_id: string;
-  planet_name: string;
-  tools: UsedToolRequestData[];
-  [key: string]: unknown;
-};
-
-export type PatchLeaderboardRequest = {
-  wallet_id: string;
-  [key: string]: unknown;
-};
-
-export type PatchLeaderboardControllerInput = Partial<LeaderboardDocument> &
-  Pick<LeaderboardDocument, 'wallet_id'>;
 
 export type LeaderboardStruct = {
   block_number: string;
@@ -96,15 +79,35 @@ export type LeaderboardStruct = {
   avg_nft_power?: number;
   lands_mined_on?: number;
   planets_mined_on?: number;
+  unique_tools_used?: number;
   mine_rating?: number;
   planets?: string[];
   lands?: string[];
   tools_used?: string[];
   last_update_timestamp?: string;
+  last_update_hash?: string;
+  last_update_completed?: boolean;
+  position?: number;
   [key: string]: unknown;
 };
 
-export type ListLeaderboardControllerOutput = {
-  results: Leaderboard[];
-  total: number;
-};
+export type LeaderboardUpdateDocument = LeaderboardUpdateStruct;
+
+export type LeaderboardListOutputItem = Pick<
+  LeaderboardUpdateStruct,
+  | 'wallet_id'
+  | 'username'
+  | 'tlm_gains_total'
+  | 'tlm_gains_highest'
+  | 'total_nft_points'
+  | 'total_charge_time'
+  | 'avg_charge_time'
+  | 'total_mining_power'
+  | 'avg_mining_power'
+  | 'total_nft_power'
+  | 'avg_nft_power'
+  | 'lands_mined_on'
+  | 'planets_mined_on'
+  | 'unique_tools_used'
+  | 'position'
+>;

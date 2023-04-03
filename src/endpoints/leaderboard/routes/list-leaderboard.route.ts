@@ -1,4 +1,5 @@
 import { GetRoute, RouteHandler } from '@alien-worlds/api-core';
+
 import { ListLeaderboardInput } from '../domain/models/list-leaderboard.input';
 import { ListLeaderboardOutput } from '../domain/models/list-leaderboard.output';
 
@@ -13,10 +14,10 @@ export class ListLeaderboardRoute extends GetRoute {
   }
 
   private constructor(handler: RouteHandler) {
-    super('/v1/leaderboard/:timeframe/:sort/:offset/:limit', handler, {
+    super('/v1/leaderboard/list', handler, {
       hooks: {
         pre: ListLeaderboardInput.fromRequest,
-        post: ListLeaderboardOutput.create,
+        post: (output: ListLeaderboardOutput) => output.toResponse(),
       },
     });
   }

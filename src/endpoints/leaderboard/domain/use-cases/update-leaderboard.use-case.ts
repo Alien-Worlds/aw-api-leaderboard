@@ -1,3 +1,5 @@
+import { GetAtomicAssetsUseCase } from './get-atomic-assets.use-case';
+import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
 import {
   inject,
   injectable,
@@ -5,8 +7,12 @@ import {
   UpdateStatus,
   UseCase,
 } from '@alien-worlds/api-core';
-import { Leaderboard } from '../entities/leaderboard';
-import { UpdateLeaderboardInput } from '../models/update-leaderboard.input';
+import { MinigToolData } from '../../data/leaderboard.dtos';
+import { LeaderboardUpdate } from '../models/update-leaderboard.input';
+import { UpdateDailyLeaderboardUseCase } from './update-daily-leaderboard.use-case';
+import { UpdateMonthlyLeaderboardUseCase } from './update-monthly-leaderboard.use-case';
+import { UpdateWeeklyLeaderboardUseCase } from './update-weekly-leaderboard.use-case';
+import { LeaderboardUpdateBackupRepository } from '../repositories/leaderboard-update-backup.repository';
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
 import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
@@ -16,10 +22,22 @@ import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly
  * @class
  */
 @injectable()
-export class UpdateLeaderboardUseCase implements UseCase<void> {
+export class UpdateLeaderboardUseCase
+  implements UseCase<UpdateStatus.Success | UpdateStatus.Failure>
+{
   public static Token = 'UPDATE_LEADERBOARD_USE_CASE';
 
   constructor(
+    @inject(UpdateDailyLeaderboardUseCase.Token)
+    private updateDailyLeaderboardUseCase: UpdateDailyLeaderboardUseCase,
+    @inject(UpdateWeeklyLeaderboardUseCase.Token)
+    private updateWeeklyLeaderboardUseCase: UpdateWeeklyLeaderboardUseCase,
+    @inject(UpdateMonthlyLeaderboardUseCase.Token)
+    private updateMonthlyLeaderboardUseCase: UpdateMonthlyLeaderboardUseCase,
+    @inject(GetAtomicAssetsUseCase.Token)
+    private getAtomicAssetsUseCase: GetAtomicAssetsUseCase,
+    @inject(LeaderboardUpdateBackupRepository.Token)
+    private leaderboardUpdateBackup: LeaderboardUpdateBackupRepository,
     @inject(MiningDailyLeaderboardRepository.Token)
     private dailyLeaderboardRepository: MiningDailyLeaderboardRepository,
     @inject(MiningWeeklyLeaderboardRepository.Token)
@@ -31,139 +49,67 @@ export class UpdateLeaderboardUseCase implements UseCase<void> {
   /**
    * @async
    */
-  public async execute(input: UpdateLeaderboardInput): Promise<Result<void>> {
-    const {
-      username,
-      walletId,
-      fromDayStart,
-      toDayEnd,
-      fromMonthStart,
-      toMonthEnd,
-      fromWeekStart,
-      toWeekEnd,
-      bounty,
-      blockNumber,
-      blockTimestamp,
-      points,
-      landId,
-      planetName,
-      tools,
-    } = input;
-
-    // DAILY LEADERBOARD UPDATE
-
-    let dailyUpdate: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
-    const userDailySearch = await this.dailyLeaderboardRepository.findUser(
-      username,
-      walletId,
-      fromDayStart,
-      toDayEnd
+  public async execute(
+    items: LeaderboardUpdate[]
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
+    const { content, failure: assetsFailure } = await this.getAtomicAssetsUseCase.execute(
+      items
     );
+    const assets = content as Map<string, AtomicAsset<MinigToolData>[]>;
 
-    if (userDailySearch.isFailure) {
-      dailyUpdate = await this.dailyLeaderboardRepository.update(
-        Leaderboard.create(
-          fromDayStart,
-          toDayEnd,
-          walletId,
-          username,
-          bounty,
-          blockNumber,
-          blockTimestamp,
-          points,
-          landId,
-          planetName,
-          tools
-        )
-      );
-    } else {
-      const { content: dailyUserLeaderboard } = userDailySearch;
-      dailyUpdate = await this.dailyLeaderboardRepository.update(
-        Leaderboard.cloneAndUpdate(dailyUserLeaderboard, input)
-      );
+    if (assetsFailure) {
+      //
+      this.leaderboardUpdateBackup.addMany(items);
+      return Result.withFailure(assetsFailure);
     }
 
+    /*
+     * UPDATE DAILY LEADERBOARD
+     */
+    const dailyUpdate = await this.updateDailyLeaderboardUseCase.execute(items, assets);
+
     if (dailyUpdate.isFailure) {
+      this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(dailyUpdate.failure);
     }
 
-    // WEEKLY LEADERBOARD UPDATE
+    /*
+     * UPDATE WEEKLY LEADERBOARD
+     */
 
-    let weeklyUpdate: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
-    const userWeeklySearch = await this.weeklyLeaderboardRepository.findUser(
-      username,
-      walletId,
-      fromWeekStart,
-      toWeekEnd
-    );
+    const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(items, assets);
 
-    if (userWeeklySearch.isFailure) {
-      weeklyUpdate = await this.weeklyLeaderboardRepository.update(
-        Leaderboard.create(
-          fromWeekStart,
-          toWeekEnd,
-          walletId,
-          username,
-          bounty,
-          blockNumber,
-          blockTimestamp,
-          points,
-          landId,
-          planetName,
-          tools
-        )
-      );
-    } else {
-      const { content: weeklyUserLeaderboard } = userWeeklySearch;
-      weeklyUpdate = await this.weeklyLeaderboardRepository.update(
-        Leaderboard.cloneAndUpdate(weeklyUserLeaderboard, input)
-      );
-    }
-    // Should we reverse daily leaderboard update?
     if (weeklyUpdate.isFailure) {
+      // await this.dailyLeaderboardRepository.revertUpdate();
+      //
+      this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(weeklyUpdate.failure);
     }
 
-    // MONTHLY LEADERBOARD UPDATE
+    /*
+     * UPDATE MONTHLY LEADERBOARD
+     */
 
-    let monthlyUpdate: Result<UpdateStatus.Success | UpdateStatus.Failure, Error>;
-    const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
-      username,
-      walletId,
-      fromMonthStart,
-      toMonthEnd
+    const monthlyUpdate = await this.updateMonthlyLeaderboardUseCase.execute(
+      items,
+      assets
     );
 
-    if (userMonthlySearch.isFailure) {
-      monthlyUpdate = await this.monthlyLeaderboardRepository.update(
-        Leaderboard.create(
-          fromMonthStart,
-          toMonthEnd,
-          walletId,
-          username,
-          bounty,
-          blockNumber,
-          blockTimestamp,
-          points,
-          landId,
-          planetName,
-          tools
-        )
-      );
-    } else {
-      const { content: monthlyUserLeaderboard } = userMonthlySearch;
-      monthlyUpdate = await this.monthlyLeaderboardRepository.update(
-        Leaderboard.cloneAndUpdate(monthlyUserLeaderboard, input)
-      );
-    }
-
-    // Should we reverse daily leaderboard update?
-    // Should we reverse weekly leaderboard update?
     if (monthlyUpdate.isFailure) {
+      // await this.dailyLeaderboardRepository.revertUpdate();
+      // await this.weeklyLeaderboardRepository.revertUpdate();
+      //
+      this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(monthlyUpdate.failure);
     }
 
-    return Result.withoutContent();
+    await Promise.all([
+      this.dailyLeaderboardRepository.completeUpdate(),
+      this.weeklyLeaderboardRepository.completeUpdate(),
+      this.monthlyLeaderboardRepository.completeUpdate(),
+    ]);
+
+    return Result.withContent(UpdateStatus.Success);
   }
 
   /*methods*/

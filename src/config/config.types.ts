@@ -1,4 +1,5 @@
-import { MongoConfig } from '@alien-worlds/api-core';
+import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
+import { BroadcastConfig, MongoConfig, RedisConfig } from '@alien-worlds/api-core';
 
 export type Environment = {
   MONGO_HOSTS?: string;
@@ -18,19 +19,30 @@ export type Environment = {
   REDIS_IANA?: string;
   REDIS_DATABASE?: string;
   PORT?: string;
+  TOKEN_SECRET_KEY?: string;
+  TOKEN_EXPIRATION_TIME?: string;
+  HISTORY_TOOLS_BROADCAST_HOST?: string;
+  HISTORY_TOOLS_BROADCAST_PORT?: string;
+  HISTORY_TOOLS_BROADCAST_DRIVER?: string;
+  ATOMICASSETS_API_HOST?: string;
+  ATOMICASSETS_API_PORT?: string;
+  ATOMICASSETS_API_SECURE?: string;
+  CRON_TIME?: string;
+  UPDATE_BATCH_SIZE?: string;
 };
 
-export type RedisConfig = {
-  hosts: string[];
-  ports: string[];
-  iana?: boolean;
-  user?: string;
-  password?: string;
-  database?: string | number;
-};
-
-export type LeaderboardApiConfig = {
+export type ApiConfig = {
   port: number;
+  secretKey: string;
+  expirationTime: string;
+};
+
+export type LeaderboardConfig = {
+  api: ApiConfig;
   mongo: MongoConfig;
   redis: RedisConfig;
+  historyToolsBroadcast: BroadcastConfig;
+  atomicassets: AtomicAssetsApiConfig;
+  cronTime?: string;
+  updatesBatchSize?: number;
 };

@@ -1,17 +1,24 @@
+import {
+  MiningLeaderboardSort,
+  MiningLeaderboardTimeframe,
+} from '../mining-leaderboard.enums';
+import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
+
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';
-import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
 
 export class FindUserInLeaderboardInput {
   public static fromRequest(
-    request: Request<FindUserInLeaderboardRequest>
+    request: Request<
+      FindUserInLeaderboardRequest,
+      FindUserInLeaderboardRequest,
+      FindUserInLeaderboardRequest
+    >
   ): FindUserInLeaderboardInput {
     const { query } = request;
-    const { timeframe } = request.params as FindUserInLeaderboardRequest;
 
     const now = new Date();
-    const selectedTimeframe = timeframe || MiningLeaderboardTimeframe.Daily;
+    const selectedTimeframe = query.timeframe || MiningLeaderboardTimeframe.Daily;
     const fromDate = getStartDateByTimeframe(
       query.fromDate || query.date || now,
       selectedTimeframe
@@ -22,18 +29,18 @@ export class FindUserInLeaderboardInput {
     );
 
     return new FindUserInLeaderboardInput(
-      query.walletId,
-      query.username,
-      timeframe || MiningLeaderboardTimeframe.Daily,
+      query.user,
+      selectedTimeframe,
+      query.sort || MiningLeaderboardSort.TlmGainsTotal,
       fromDate,
       toDate
     );
   }
 
   private constructor(
-    public readonly walletId: string,
-    public readonly username: string,
+    public readonly user: string,
     public readonly timeframe: string,
+    public readonly sort: string,
     public readonly fromDate: Date,
     public readonly toDate: Date
   ) {}
