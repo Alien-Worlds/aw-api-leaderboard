@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  CollectionMongoSource,
-  MongoSource,
-  MongoDB,
-  DataSourceOperationError,
-} from '@alien-worlds/api-core';
+import { CollectionMongoSource, MongoSource } from '@alien-worlds/api-core';
 import { LeaderboardDocument } from '../leaderboard.dtos';
 
 /**
@@ -77,59 +72,6 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
     });
   }
 
-  public async updateManyByWalletId(documents: LeaderboardDocument[]) {
-    try {
-      const operations = documents.map(dto => {
-        const { _id, ...documentWithoutId } = dto;
-        const { wallet_id, start_timestamp, end_timestamp } = documentWithoutId;
-        return {
-          updateOne: {
-            filter: {
-              $and: [
-                { wallet_id },
-                { start_timestamp: { $gte: start_timestamp } },
-                { end_timestamp: { $lte: end_timestamp } },
-              ],
-            },
-            update: {
-              $set: documentWithoutId as MongoDB.MatchKeysAndValues<LeaderboardDocument>,
-            },
-            upsert: true,
-          },
-        };
-      });
-      const { modifiedCount, upsertedCount, upsertedIds } =
-        await this.collection.bulkWrite(operations);
-      return { modifiedCount, upsertedCount, upsertedIds };
-    } catch (error) {
-      throw DataSourceOperationError.fromError(error);
-    }
-  }
-
-  public async completeUpdate() {
-    try {
-      const { modifiedCount } = await this.collection.updateMany(
-        { last_update_completed: false },
-        { $set: { last_update_completed: true } }
-      );
-      return { modifiedCount };
-    } catch (error) {
-      throw DataSourceOperationError.fromError(error);
-    }
-  }
-
-  public async revertUpdate() {
-    try {
-      const { deletedCount } = await this.collection.deleteMany({
-        last_update_completed: false,
-      });
-
-      return { deletedCount };
-    } catch (error) {
-      throw DataSourceOperationError.fromError(error);
-    }
-  }
-
   public async findUser(
     user: string,
     sort: string,
@@ -176,7 +118,6 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
     ];
 
     const documents = await this.aggregate({ pipeline });
-
 
     return documents[0];
   }
