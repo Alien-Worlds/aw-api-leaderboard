@@ -13,9 +13,6 @@ import { UpdateDailyLeaderboardUseCase } from './update-daily-leaderboard.use-ca
 import { UpdateMonthlyLeaderboardUseCase } from './update-monthly-leaderboard.use-case';
 import { UpdateWeeklyLeaderboardUseCase } from './update-weekly-leaderboard.use-case';
 import { LeaderboardUpdateBackupRepository } from '../repositories/leaderboard-update-backup.repository';
-import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
-import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
-import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
 
 /*imports*/
 /**
@@ -38,12 +35,6 @@ export class UpdateLeaderboardUseCase
     private getAtomicAssetsUseCase: GetAtomicAssetsUseCase,
     @inject(LeaderboardUpdateBackupRepository.Token)
     private leaderboardUpdateBackup: LeaderboardUpdateBackupRepository,
-    @inject(MiningDailyLeaderboardRepository.Token)
-    private dailyLeaderboardRepository: MiningDailyLeaderboardRepository,
-    @inject(MiningWeeklyLeaderboardRepository.Token)
-    private weeklyLeaderboardRepository: MiningWeeklyLeaderboardRepository,
-    @inject(MiningMonthlyLeaderboardRepository.Token)
-    private monthlyLeaderboardRepository: MiningMonthlyLeaderboardRepository
   ) {}
 
   /**
@@ -80,7 +71,6 @@ export class UpdateLeaderboardUseCase
     const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(items, assets);
 
     if (weeklyUpdate.isFailure) {
-      // await this.dailyLeaderboardRepository.revertUpdate();
       //
       this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(weeklyUpdate.failure);
@@ -96,18 +86,10 @@ export class UpdateLeaderboardUseCase
     );
 
     if (monthlyUpdate.isFailure) {
-      // await this.dailyLeaderboardRepository.revertUpdate();
-      // await this.weeklyLeaderboardRepository.revertUpdate();
       //
       this.leaderboardUpdateBackup.addMany(items);
       return Result.withFailure(monthlyUpdate.failure);
     }
-
-    await Promise.all([
-      this.dailyLeaderboardRepository.completeUpdate(),
-      this.weeklyLeaderboardRepository.completeUpdate(),
-      this.monthlyLeaderboardRepository.completeUpdate(),
-    ]);
 
     return Result.withContent(UpdateStatus.Success);
   }

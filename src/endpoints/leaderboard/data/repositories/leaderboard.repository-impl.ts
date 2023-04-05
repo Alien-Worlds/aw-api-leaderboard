@@ -1,12 +1,13 @@
 import {
+  DataSourceBulkWriteError,
   Failure,
-  getParams,
-  QueryModel,
   Result,
   UpdateStatus,
 } from '@alien-worlds/api-core';
+import { buildConfig } from '../../../../config';
 
 import { Leaderboard } from '../../domain/entities/leaderboard';
+import { ClearingRedisError } from '../../domain/errors/clearing-redis.error';
 import {
   MiningLeaderboardOrder,
   MiningLeaderboardSort,
@@ -14,7 +15,8 @@ import {
 import { MiningLeaderboardRepository } from '../../domain/repositories/mining-leaderboard.repository';
 import { LeaderboardMongoSource } from '../data-sources/leaderboard.mongo.source';
 import { LeaderboardRedisSource } from '../data-sources/leaderboard.redis.source';
-import { UserLeaderboardNotFoundError } from './../../domain/errors/user-leaderboard-not-found.error';
+
+const { archiveBatchSize } = buildConfig();
 
 export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
   constructor(
@@ -24,12 +26,20 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
 
   public async findUsers(
     walletIds: string[],
-    fromDate: Date,
-    toDate: Date,
-    sort?: MiningLeaderboardSort
+    fromDate?: Date,
+    toDate?: Date
   ): Promise<Result<Leaderboard[], Error>> {
+    const { redisSource, mongoSource } = this;
     try {
-      const { mongoSource } = this;
+      const now = Date.now();
+      if (
+        (!fromDate && !toDate) ||
+        (now >= fromDate.getTime() && now <= toDate.getTime())
+      ) {
+        const structs = await redisSource.findUsers(walletIds);
+        return Result.withContent(structs.map(Leaderboard.fromStruct));
+      }
+
       const documents = await mongoSource.find({
         filter: {
           $and: [
@@ -46,109 +56,7 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
         },
       });
 
-      let entities: Leaderboard[] = [];
-
-      if (sort) {
-        for (const document of documents) {
-          const rank = await this.redisSource.getRank(document.wallet_id, sort);
-          entities.push(Leaderboard.fromDocument(document, rank + 1));
-        }
-      } else {
-        entities = documents.map(Leaderboard.fromDocument);
-      }
-
-      return Result.withContent(entities);
-    } catch (error) {
-      return Result.withFailure(Failure.fromError(error));
-    }
-  }
-
-  public async findUser(
-    user: string,
-    fromDate: Date,
-    toDate: Date,
-    sort?: MiningLeaderboardSort
-  ): Promise<Result<Leaderboard, Error>> {
-    try {
-      const { mongoSource } = this;
-      const document = await mongoSource.findOne({
-        filter: {
-          $and: [
-            {
-              start_timestamp: { $gte: new Date(fromDate.toISOString()) },
-            },
-            {
-              end_timestamp: { $lte: new Date(toDate.toISOString()) },
-            },
-            {
-              wallet_id: user,
-            },
-          ],
-        },
-      });
-
-      let rank: number;
-
-      if (document) {
-        if (sort) {
-          rank = await this.redisSource.getRank(document.wallet_id, sort);
-        }
-
-        return Result.withContent(Leaderboard.fromDocument(document, rank + 1));
-      }
-
-      return Result.withFailure(
-        Failure.fromError(new UserLeaderboardNotFoundError(user))
-      );
-    } catch (error) {
-      return Result.withFailure(Failure.fromError(error));
-    }
-  }
-
-  public async updateMany(
-    leaderboards: Leaderboard[]
-  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    try {
-      const documents = leaderboards.map(leaderboard => leaderboard.toDocument());
-
-      await this.mongoSource.updateManyByWalletId(documents);
-
-      // add to redis only if the timeframe corresponds to the current date.
-      // The rest is probably history.
-      const latestDocuments = documents.filter(document => {
-        const { start_timestamp, end_timestamp } = document;
-        const now = Date.now();
-        return now >= start_timestamp.getTime() && now <= end_timestamp.getTime();
-      });
-      await this.redisSource.update(latestDocuments);
-
-      return Result.withContent(UpdateStatus.Success);
-    } catch (error) {
-      return Result.withFailure(Failure.fromError(error));
-    }
-  }
-
-  public async update(
-    leaderboard: Leaderboard
-  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    try {
-      const { walletId, startTimestamp, endTimestamp } = leaderboard;
-      const document = leaderboard.toDocument();
-      await this.mongoSource.update(document, {
-        where: {
-          wallet_id: walletId,
-          start_timestamp: startTimestamp,
-          end_timestamp: endTimestamp,
-        },
-      });
-
-      const now = Date.now();
-      if (now >= startTimestamp.getTime() && now <= endTimestamp.getTime()) {
-        //
-        this.redisSource.update([document]);
-      }
-
-      return Result.withContent(UpdateStatus.Success);
+      return Result.withContent(documents.map(Leaderboard.fromDocument));
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
@@ -159,11 +67,20 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
     offset: number,
     limit: number,
     order: MiningLeaderboardOrder,
-    fromDate: Date,
-    toDate: Date
+    fromDate?: Date,
+    toDate?: Date
   ): Promise<Result<Leaderboard[]>> {
+    const { redisSource, mongoSource } = this;
     try {
-      const { mongoSource } = this;
+      const now = Date.now();
+      if (
+        (!fromDate && !toDate) ||
+        (now >= fromDate.getTime() && now <= toDate.getTime())
+      ) {
+        const structs = await redisSource.list({ sort, offset, limit, order });
+        return Result.withContent(structs.map(Leaderboard.fromStruct));
+      }
+
       const documents = await mongoSource.find({
         filter: {
           $and: [
@@ -182,47 +99,100 @@ export class LeaderboardRepositoryImpl implements MiningLeaderboardRepository {
         },
       });
 
-      const entities: Leaderboard[] = [];
+      return Result.withContent(documents.map(Leaderboard.fromDocument));
+    } catch (error) {
+      return Result.withFailure(Failure.fromError(error));
+    }
+  }
 
-      for (const document of documents) {
-        const rank = await this.redisSource.getRank(document.wallet_id, sort);
-        entities.push(Leaderboard.fromDocument(document, rank + 1));
+  public async count(fromDate?: Date, toDate?: Date): Promise<Result<number, Error>> {
+    const { redisSource, mongoSource } = this;
+    try {
+      const now = Date.now();
+      if (
+        (!fromDate && !toDate) ||
+        (now >= fromDate.getTime() && now <= toDate.getTime())
+      ) {
+        const size = await redisSource.count();
+        return Result.withContent(size);
       }
 
-      return Result.withContent(entities);
+      const size = await mongoSource.count({
+        filter: {
+          $and: [
+            {
+              start_timestamp: { $gte: new Date(fromDate.toISOString()) },
+            },
+            {
+              end_timestamp: { $lte: new Date(toDate.toISOString()) },
+            },
+          ],
+        },
+      });
+
+      return Result.withContent(size);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
   }
 
-  public async count(model: QueryModel): Promise<Result<number, Error>> {
+  public async update(
+    leaderboards: Leaderboard[]
+  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     try {
-      const params = getParams(model);
-      const count = await this.mongoSource.count(params);
+      const structs = leaderboards.map(leaderboard => leaderboard.toStruct());
 
-      return Result.withContent(count);
+      await this.redisSource.update(structs);
+
+      return Result.withContent(UpdateStatus.Success);
     } catch (error) {
       return Result.withFailure(Failure.fromError(error));
     }
   }
 
-  public async completeUpdate(): Promise<Result<boolean, Error>> {
+  public async archive(): Promise<Result<boolean>> {
+    const { redisSource, mongoSource } = this;
+    let operationError: Error;
+
     try {
-      const { modifiedCount } = await this.mongoSource.completeUpdate();
+      const size = await redisSource.count();
+      const batchSize = archiveBatchSize || 10000;
+      const rounds = Math.ceil(size / batchSize);
+      let round = 0;
 
-      return Result.withContent(modifiedCount > 0);
+      while (round < rounds) {
+        const list = await redisSource.list({
+          offset: round * batchSize,
+          limit: batchSize,
+        });
+        const documents = list.map(item => Leaderboard.fromStruct(item).toDocument());
+        await mongoSource.insertMany(documents);
+
+        round++;
+      }
     } catch (error) {
-      return Result.withFailure(Failure.fromError(error));
+      if (error instanceof DataSourceBulkWriteError) {
+        error.writeErrors.forEach(writeError => {
+          if (writeError.isDuplicateError === false) {
+            operationError = error;
+          }
+        });
+      } else {
+        operationError = error;
+      }
     }
-  }
 
-  public async revertUpdate(): Promise<Result<boolean, Error>> {
-    try {
-      const { deletedCount } = await this.mongoSource.revertUpdate();
-
-      return Result.withContent(deletedCount > 0);
-    } catch (error) {
-      return Result.withFailure(Failure.fromError(error));
+    if (!operationError) {
+      const redisCleaned = await redisSource.clear();
+      if (!redisCleaned) {
+        operationError = new ClearingRedisError();
+      }
     }
+
+    if (operationError) {
+      return Result.withFailure(Failure.fromError(operationError));
+    }
+
+    return Result.withContent(true);
   }
 }

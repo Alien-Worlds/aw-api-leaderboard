@@ -1,3 +1,4 @@
+import { LeaderboardNumbers } from './../../data/leaderboard.dtos';
 import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
 import {
   removeUndefinedProperties,
@@ -21,14 +22,9 @@ export class Leaderboard {
    * @param {LeaderboardDocument} document
    * @returns {Leaderboard}
    */
-  public static fromDocument(
-    document: LeaderboardDocument,
-    position?: number
-  ): Leaderboard {
+  public static fromDocument(document: LeaderboardDocument): Leaderboard {
     const {
       _id,
-      block_number,
-      block_timesamp,
       last_update_timestamp,
       last_update_hash,
       start_timestamp,
@@ -50,17 +46,22 @@ export class Leaderboard {
       lands_mined_on,
       planets,
       planets_mined_on,
-      mine_rating,
+      rankings,
       ...rest
     } = document;
 
-    const blockDate = new Date(block_timesamp);
+    const rankingsMap = new Map<string, number>();
+
+    if (rankings) {
+      const keys = Object.keys(rankings);
+      for (const key of keys) {
+        rankingsMap.set(key, rankings[key]);
+      }
+    }
 
     return new Leaderboard(
-      parseToBigInt(block_number),
-      block_timesamp,
-      start_timestamp ? new Date(start_timestamp) : blockDate,
-      end_timestamp ? new Date(end_timestamp) : blockDate,
+      new Date(start_timestamp),
+      new Date(end_timestamp),
       wallet_id,
       username,
       tlm_gains_total,
@@ -78,11 +79,9 @@ export class Leaderboard {
       lands_mined_on,
       planets,
       planets_mined_on,
-      mine_rating,
-      position >= 0 ? position : document.position >= 0 ? document.position : -1,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
       last_update_hash,
-      false,
+      rankingsMap,
       _id instanceof MongoDB.ObjectId ? _id.toString() : '',
       rest
     );
@@ -90,8 +89,6 @@ export class Leaderboard {
 
   public static fromStruct(struct: LeaderboardStruct): Leaderboard {
     const {
-      block_number,
-      block_timesamp,
       start_timestamp,
       end_timestamp,
       wallet_id,
@@ -107,23 +104,28 @@ export class Leaderboard {
       avg_nft_power,
       lands_mined_on,
       planets_mined_on,
-      mine_rating,
       planets,
       lands,
       tools_used,
       unique_tools_used,
       last_update_timestamp,
       last_update_hash,
+      rankings,
       ...rest
     } = struct;
 
-    const blockDate = new Date(block_timesamp);
+    const rankingsMap = new Map<string, number>();
+
+    if (rankings) {
+      const keys = Object.keys(rankings);
+      for (const key of keys) {
+        rankingsMap.set(key, rankings[key]);
+      }
+    }
 
     return new Leaderboard(
-      parseToBigInt(block_number),
-      blockDate,
-      start_timestamp ? new Date(start_timestamp) : blockDate,
-      end_timestamp ? new Date(end_timestamp) : blockDate,
+      new Date(start_timestamp),
+      new Date(end_timestamp),
       wallet_id,
       username,
       tlm_gains_total,
@@ -141,11 +143,9 @@ export class Leaderboard {
       lands_mined_on,
       planets,
       planets_mined_on,
-      mine_rating,
-      -1,
       last_update_timestamp ? new Date(last_update_timestamp) : new Date(),
       last_update_hash,
-      false,
+      rankingsMap,
       '',
       rest
     );
@@ -213,8 +213,6 @@ export class Leaderboard {
     }
 
     return new Leaderboard(
-      updates.blockNumber,
-      updates.blockTimestamp,
       startTimestamp,
       endTimestamp,
       walletId,
@@ -234,11 +232,9 @@ export class Leaderboard {
       landsMinedOn,
       planets,
       planetsMinedOn,
-      -1,
-      -1,
       new Date(),
       updates.id,
-      false,
+      leaderboard.rankings,
       id,
       rest
     );
@@ -250,12 +246,11 @@ export class Leaderboard {
     walletId: string,
     username: string,
     bounty: number,
-    blockNumber: bigint,
-    blockTimestamp: Date,
     points: number,
     landId: bigint,
     planetName: string,
     assets: AtomicAsset<MinigToolData>[],
+    rankings?: LeaderboardNumbers,
     lastUpdateHash?: string
   ): Leaderboard {
     const toolsUsed = [];
@@ -286,10 +281,16 @@ export class Leaderboard {
 
     const lands = landId ? [landId] : [];
     const planets = planetName ? [planetName] : [];
+    const rankingsMap = new Map<string, number>();
+
+    if (rankings) {
+      const keys = Object.keys(rankings);
+      for (const key of keys) {
+        rankingsMap.set(key, rankings[key]);
+      }
+    }
 
     return new Leaderboard(
-      blockNumber,
-      blockTimestamp,
       fromDate,
       toDate,
       walletId,
@@ -309,11 +310,9 @@ export class Leaderboard {
       lands.length,
       planets,
       planets.length,
-      -1,
-      -1,
       new Date(),
       lastUpdateHash,
-      false,
+      rankingsMap,
       '',
       {}
     );
@@ -323,8 +322,6 @@ export class Leaderboard {
    * @constructor
    */
   protected constructor(
-    public readonly blockNumber: bigint,
-    public readonly blockTimestamp: Date,
     public readonly startTimestamp: Date,
     public readonly endTimestamp: Date,
     public readonly walletId: string,
@@ -344,11 +341,9 @@ export class Leaderboard {
     public readonly landsMinedOn: number,
     public readonly planets: string[],
     public readonly planetsMinedOn: number,
-    public readonly mineRating: number,
-    public readonly position: number,
     public readonly lastUpdateTimestamp: Date,
     public readonly lastUpdateHash: string,
-    public readonly lastUpdateCompleted: boolean,
+    public readonly rankings: Map<string, number>,
     public readonly id: string,
     public readonly rest: object
   ) {}
@@ -360,8 +355,6 @@ export class Leaderboard {
   public toDocument(): LeaderboardDocument {
     const {
       id,
-      blockNumber,
-      blockTimestamp,
       lastUpdateTimestamp,
       startTimestamp,
       endTimestamp,
@@ -382,18 +375,13 @@ export class Leaderboard {
       landsMinedOn,
       planets,
       planetsMinedOn,
-      mineRating,
-      position,
       lastUpdateHash,
-      lastUpdateCompleted,
+      rankings,
     } = this;
 
     const document: LeaderboardDocument = {
-      block_number: MongoDB.Long.fromBigInt(blockNumber),
-      block_timesamp: blockTimestamp,
       last_update_timestamp: lastUpdateTimestamp,
       last_update_hash: lastUpdateHash,
-      last_update_completed: lastUpdateCompleted,
       start_timestamp: startTimestamp,
       end_timestamp: endTimestamp,
       username,
@@ -409,15 +397,17 @@ export class Leaderboard {
       avg_nft_power: avgNftPower,
       lands_mined_on: landsMinedOn,
       planets_mined_on: planetsMinedOn,
-      mine_rating: mineRating,
       unique_tools_used: uniqueToolsUsed,
       tools_used: toolsUsed.map(id => MongoDB.Long.fromBigInt(id)),
       lands: lands.map(land => MongoDB.Long.fromBigInt(land)),
       planets,
     };
 
-    if (position > -1) {
-      document.position = position;
+    if (rankings.size > 0) {
+      document.rankings = {};
+      rankings.forEach((value, key) => {
+        document.rankings[key] = value;
+      });
     }
 
     if (id && MongoDB.ObjectId.isValid(id)) {
@@ -431,7 +421,6 @@ export class Leaderboard {
     const {
       lastUpdateTimestamp,
       lastUpdateHash,
-      lastUpdateCompleted,
       startTimestamp,
       endTimestamp,
       walletId,
@@ -447,19 +436,13 @@ export class Leaderboard {
       avgNftPower,
       landsMinedOn,
       planetsMinedOn,
-      mineRating,
-      blockNumber,
-      blockTimestamp,
       uniqueToolsUsed,
-      position,
+      rankings,
     } = this;
 
     const struct: LeaderboardStruct = {
-      block_number: blockNumber.toString(),
-      block_timesamp: blockTimestamp.toISOString(),
       last_update_timestamp: lastUpdateTimestamp.toISOString(),
       last_update_hash: lastUpdateHash,
-      last_update_completed: lastUpdateCompleted,
       start_timestamp: startTimestamp.toISOString(),
       end_timestamp: endTimestamp.toISOString(),
       username,
@@ -475,12 +458,14 @@ export class Leaderboard {
       avg_nft_power: avgNftPower,
       lands_mined_on: landsMinedOn,
       planets_mined_on: planetsMinedOn,
-      mine_rating: mineRating,
       unique_tools_used: uniqueToolsUsed,
     };
 
-    if (position > -1) {
-      struct.position = position;
+    if (rankings.size > 0) {
+      struct.rankings = {};
+      rankings.forEach((value, key) => {
+        struct.rankings[key] = value;
+      });
     }
 
     return removeUndefinedProperties<LeaderboardStruct>(struct);

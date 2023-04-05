@@ -28,21 +28,35 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
    * @returns {Promise<Result<Leaderboard>>}
    */
   public async execute(input: FindUserInLeaderboardInput): Promise<Result<Leaderboard>> {
-    const { user, fromDate, toDate, timeframe, sort } = input;
-
+    const { user, fromDate, toDate, timeframe } = input;
+    let usersSearch: Result<Leaderboard[]>;
     if (timeframe === MiningLeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.findUser(user, fromDate, toDate, sort);
+      usersSearch = await this.dailyLeaderboardRepository.findUsers(
+        [user],
+        fromDate,
+        toDate
+      );
+    } else if (timeframe === MiningLeaderboardTimeframe.Weekly) {
+      usersSearch = await this.weeklyLeaderboardRepository.findUsers(
+        [user],
+        fromDate,
+        toDate
+      );
+    } else if (timeframe === MiningLeaderboardTimeframe.Monthly) {
+      usersSearch = await this.monthlyLeaderboardRepository.findUsers(
+        [user],
+        fromDate,
+        toDate
+      );
+    } else {
+      return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));
     }
 
-    if (timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.findUser(user, fromDate, toDate, sort);
+    if (usersSearch.isFailure) {
+      return Result.withFailure(usersSearch.failure);
     }
 
-    if (timeframe === MiningLeaderboardTimeframe.Monthly) {
-      return this.monthlyLeaderboardRepository.findUser(user, fromDate, toDate, sort);
-    }
-
-    return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));
+    return Result.withContent(usersSearch.content[0]);
   }
 
   /*methods*/

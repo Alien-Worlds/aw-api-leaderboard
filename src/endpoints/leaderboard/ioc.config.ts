@@ -1,6 +1,5 @@
 import { GetAtomicAssetsUseCase } from './domain/use-cases/get-atomic-assets.use-case';
 import { Container, MongoSource, RedisSource } from '@alien-worlds/api-core';
-
 import { FindUserInLeaderboardUseCase } from './domain/use-cases/find-user-in-leaderboard.use-case';
 import { LeaderboardConfig } from '../../config/config.types';
 import { LeaderboardController } from './domain/leaderboard.controller';
@@ -22,6 +21,7 @@ import { LeaderboardUpdateBackupRepository } from './domain/repositories/leaderb
 import { CacheOrSendLeaderboardUseCase } from './domain/use-cases/cache-or-send-leaderboard.use-case';
 import { SendCachedLeaderboardUseCase } from './domain/use-cases/send-cached-leaderboard.use-case';
 import { CountLeaderboardUseCase } from './domain/use-cases/count-leaderboard.use-case';
+import { ArchiveLeaderboardUseCase } from './domain/use-cases/archive-leaderboard.use-case';
 
 export const setupDependencies = async (
   config: LeaderboardConfig,
@@ -64,6 +64,9 @@ export const setupDependencies = async (
   container
     .bind<CountLeaderboardUseCase>(CountLeaderboardUseCase.Token)
     .to(CountLeaderboardUseCase);
+  container
+    .bind<ArchiveLeaderboardUseCase>(ArchiveLeaderboardUseCase.Token)
+    .to(ArchiveLeaderboardUseCase);
   container
     .bind<GetAtomicAssetsUseCase>(GetAtomicAssetsUseCase.Token)
     .to(GetAtomicAssetsUseCase);

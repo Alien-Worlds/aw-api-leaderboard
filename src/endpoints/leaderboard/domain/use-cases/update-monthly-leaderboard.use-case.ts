@@ -44,20 +44,25 @@ export class UpdateMonthlyLeaderboardUseCase
         fromMonthStart,
         toMonthEnd,
         bounty,
-        blockNumber,
-        blockTimestamp,
         points,
         landId,
         planetName,
       } = update;
-      const userMonthlySearch = await this.monthlyLeaderboardRepository.findUser(
-        walletId,
-        fromMonthStart,
-        toMonthEnd
-      );
-      const assets = assetsByItem.get(update.id);
 
-      if (userMonthlySearch.isFailure) {
+      // skip history
+      if (toMonthEnd.getTime() < Date.now()) {
+        continue;
+      }
+
+      const assets = assetsByItem.get(update.id);
+      const { content: usersFound, failure: userSearchFailure } =
+        await this.monthlyLeaderboardRepository.findUsers([walletId]);
+
+      if (userSearchFailure) {
+        return Result.withFailure(userSearchFailure);
+      }
+
+      if (usersFound.length === 0) {
         newUpdates.push(
           Leaderboard.create(
             fromMonthStart,
@@ -65,8 +70,6 @@ export class UpdateMonthlyLeaderboardUseCase
             walletId,
             username,
             bounty,
-            blockNumber,
-            blockTimestamp,
             points,
             landId,
             planetName,
@@ -74,19 +77,17 @@ export class UpdateMonthlyLeaderboardUseCase
           )
         );
       } else {
-        const { content: monthlyUserLeaderboard } = userMonthlySearch;
+        const current = usersFound[0];
 
-        if (monthlyUserLeaderboard.lastUpdateHash !== update.id) {
-          newUpdates.push(
-            Leaderboard.cloneAndUpdate(monthlyUserLeaderboard, update, assets)
-          );
+        if (current.lastUpdateHash !== update.id) {
+          newUpdates.push(Leaderboard.cloneAndUpdate(current, update, assets));
         }
       }
     }
 
     // and as part of improvements we can send already updated data at once
 
-    return this.monthlyLeaderboardRepository.updateMany(newUpdates);
+    return this.monthlyLeaderboardRepository.update(newUpdates);
   }
 
   /*methods*/

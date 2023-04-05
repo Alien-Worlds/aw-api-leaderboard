@@ -1,6 +1,5 @@
 import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { ListLeaderboardInput } from '../models/list-leaderboard.input';
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
 import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
@@ -10,8 +9,8 @@ import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly
  * @class
  */
 @injectable()
-export class CountLeaderboardUseCase implements UseCase<number> {
-  public static Token = 'COUNT_LEADERBOARD_USE_CASE';
+export class ArchiveLeaderboardUseCase implements UseCase<boolean> {
+  public static Token = 'ARCHIVE_LEADERBOARD_USE_CASE';
 
   constructor(
     @inject(MiningDailyLeaderboardRepository.Token)
@@ -26,19 +25,18 @@ export class CountLeaderboardUseCase implements UseCase<number> {
    * @async
    * @returns {Promise<Result<number>>}
    */
-  public async execute(input: ListLeaderboardInput): Promise<Result<number>> {
-    const { timeframe, fromDate, toDate } = input;
+  public async execute(timeframe: string): Promise<Result<boolean>> {
 
     if (timeframe === MiningLeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.count(fromDate, toDate);
+      return this.dailyLeaderboardRepository.archive();
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.count(fromDate, toDate);
+      return this.weeklyLeaderboardRepository.archive();
     }
 
     if (timeframe === MiningLeaderboardTimeframe.Monthly) {
-      return this.monthlyLeaderboardRepository.count(fromDate, toDate);
+      return this.monthlyLeaderboardRepository.archive();
     }
 
     return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));

@@ -7,7 +7,7 @@ import {
   log,
 } from '@alien-worlds/api-core';
 import { LeaderboardConfig } from '../config/config.types';
-import { LeaderboardController, UpdateLeaderboardInput } from '../endpoints/leaderboard';
+import { LeaderboardController, UpdateLeaderboardInput } from '../endpoints';
 import { BroadcastChannel } from './broadcast.enums';
 
 export class LeaderboardBroadcast {

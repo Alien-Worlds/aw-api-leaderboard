@@ -1,10 +1,7 @@
-import { Result, injectable, UpdateStatus, QueryModel } from '@alien-worlds/api-core';
+import { Result, injectable, UpdateStatus } from '@alien-worlds/api-core';
 
 import { Leaderboard } from '../entities/leaderboard';
-import {
-  MiningLeaderboardOrder,
-  MiningLeaderboardSort,
-} from '../mining-leaderboard.enums';
+import { MiningLeaderboardOrder } from '../mining-leaderboard.enums';
 
 /**
  * @abstract
@@ -17,34 +14,20 @@ export abstract class MiningLeaderboardRepository {
     offset: number,
     limit: number,
     order: MiningLeaderboardOrder,
-    fromDate: Date,
-    toDate: Date
+    fromDate?: Date,
+    toDate?: Date
   ): Promise<Result<Leaderboard[]>>;
-
-  public abstract findUser(
-    user: string,
-    fromDate: Date,
-    toDate: Date,
-    sort?: string
-  ): Promise<Result<Leaderboard>>;
 
   public abstract findUsers(
     walletIds: string[],
-    fromDate: Date,
-    toDate: Date,
-    sort?: MiningLeaderboardSort
+    fromDate?: Date,
+    toDate?: Date
   ): Promise<Result<Leaderboard[], Error>>;
 
-  public abstract updateMany(
+  public abstract update(
     leaderboards: Leaderboard[]
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>>;
 
-  public abstract update(
-    leaderboard: Leaderboard
-  ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>>;
-
-  public abstract count(model: QueryModel): Promise<Result<number>>;
-
-  public abstract completeUpdate(): Promise<Result<boolean>>;
-  public abstract revertUpdate(): Promise<Result<boolean>>;
+  public abstract count(fromDate?: Date, toDate?: Date): Promise<Result<number>>;
+  public abstract archive(): Promise<Result<boolean>>;
 }

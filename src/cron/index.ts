@@ -1,10 +1,4 @@
-import { Container } from '@alien-worlds/api-core';
-import { SendCachedLeaderboardUseCase } from '../endpoints/leaderboard/domain/use-cases/send-cached-leaderboard.use-case';
-
-export const checkAndUpdateLeaderboard = async (container: Container) => {
-  const useCase = container.get<SendCachedLeaderboardUseCase>(
-    SendCachedLeaderboardUseCase.Token
-  );
-
-  await useCase.execute();
-};
+export * from "./archive-daily-leaderboard";
+export * from "./archive-monthly-leaderboard";
+export * from "./archive-weekly-leaderboard";
+export * from "./check-and-update-leaderboard";

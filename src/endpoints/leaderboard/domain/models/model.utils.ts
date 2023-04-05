@@ -142,7 +142,8 @@ export const getEndDateByTimeframe = (
 };
 
 export const parseLeaderboardToResult = (
-  leaderboard: Leaderboard
+  leaderboard: Leaderboard,
+  sort: string,
 ): LeaderboardListOutputItem => {
   const {
     wallet_id,
@@ -159,7 +160,7 @@ export const parseLeaderboardToResult = (
     lands_mined_on,
     planets_mined_on,
     unique_tools_used,
-    position,
+    rankings,
   } = leaderboard.toStruct();
 
   const dto = {
@@ -177,7 +178,7 @@ export const parseLeaderboardToResult = (
     lands_mined_on,
     planets_mined_on,
     unique_tools_used,
-    position,
+    position: rankings?.[sort] || -1,
   };
 
   return removeUndefinedProperties<LeaderboardListOutputItem>(dto);

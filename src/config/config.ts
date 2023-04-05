@@ -53,9 +53,20 @@ export const buildConfig = (): LeaderboardConfig => {
     ),
   };
 
-  const cronTime = environment.CRON_TIME || dotEnv.CRON_TIME;
-  const updateBatchSize =
-    Number(environment.UPDATE_BATCH_SIZE || dotEnv.UPDATE_BATCH_SIZE) || 0;
+  const checkAndUpdateCronTime =
+    environment.CHECK_AND_UPDATE_CRON_TIME || dotEnv.CHECK_AND_UPDATE_CRON_TIME;
+  const dailyArchiveCronTime =
+    environment.DAILY_ARCHIVE_CRON_TIME || dotEnv.DAILY_ARCHIVE_CRON_TIME;
+  const weeklyArchiveCronTime =
+    environment.WEEKLY_ARCHIVE_CRON_TIME || dotEnv.WEEKLY_ARCHIVE_CRON_TIME;
+  const monthlyArchiveCronTime =
+    environment.MONTHLY_ARCHIVE_CRON_TIME || dotEnv.MONTHLY_ARCHIVE_CRON_TIME;
+  const archiveBatchSize =
+    Number(environment.ARCHIVE_BATCH_SIZE || dotEnv.ARCHIVE_BATCH_SIZE) || 0;
+  const checkAndUpdateBatchSize =
+    Number(
+      environment.CHECK_AND_UPDATE_BATCH_SIZE || dotEnv.CHECK_AND_UPDATE_BATCH_SIZE
+    ) || 0;
 
   return {
     api,
@@ -63,7 +74,11 @@ export const buildConfig = (): LeaderboardConfig => {
     redis,
     historyToolsBroadcast: historyToolsBroadcast.host ? historyToolsBroadcast : null,
     atomicassets,
-    cronTime,
-    updatesBatchSize: updateBatchSize,
+    checkAndUpdateCronTime,
+    checkAndUpdateBatchSize,
+    archiveBatchSize,
+    dailyArchiveCronTime,
+    weeklyArchiveCronTime,
+    monthlyArchiveCronTime,
   };
 };

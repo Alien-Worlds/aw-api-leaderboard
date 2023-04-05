@@ -2,7 +2,7 @@ import {
   MiningLeaderboardSort,
   MiningLeaderboardTimeframe,
 } from '../mining-leaderboard.enums';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
+import { getEndDateByTimeframe, getStartDateByTimeframe } from './model.utils';
 
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';

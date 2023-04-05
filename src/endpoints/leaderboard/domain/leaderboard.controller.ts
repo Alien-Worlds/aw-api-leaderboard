@@ -45,7 +45,7 @@ export class LeaderboardController {
     const listResult = await this.listLeaderboardUseCase.execute(input);
     const countResult = await this.countLeaderboardUseCase.execute(input);
 
-    return ListLeaderboardOutput.create(listResult, countResult);
+    return ListLeaderboardOutput.create(listResult, countResult, input.sort);
   }
   /**
    *
@@ -56,7 +56,7 @@ export class LeaderboardController {
   ): Promise<FindUserInLeaderboardOutput> {
     const result = await this.findUserInLeaderboardUseCase.execute(input);
 
-    return FindUserInLeaderboardOutput.create(result);
+    return FindUserInLeaderboardOutput.create(result, input.sort);
   }
   /**
    *
@@ -66,7 +66,7 @@ export class LeaderboardController {
     const { items } = input;
     let result: Result<UpdateStatus.Success | UpdateStatus.Failure>;
 
-    if (config.updatesBatchSize) {
+    if (config.checkAndUpdateBatchSize) {
       result = await this.cacheOrSendLeaderboardUseCase.execute(items);
     }
 

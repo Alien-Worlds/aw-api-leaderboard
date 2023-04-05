@@ -81,10 +81,16 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
     try {
       const operations = documents.map(dto => {
         const { _id, ...documentWithoutId } = dto;
-        const { wallet_id } = documentWithoutId;
+        const { wallet_id, start_timestamp, end_timestamp } = documentWithoutId;
         return {
           updateOne: {
-            filter: { wallet_id },
+            filter: {
+              $and: [
+                { wallet_id },
+                { start_timestamp: { $gte: start_timestamp } },
+                { end_timestamp: { $lte: end_timestamp } },
+              ],
+            },
             update: {
               $set: documentWithoutId as MongoDB.MatchKeysAndValues<LeaderboardDocument>,
             },
@@ -122,5 +128,56 @@ export class LeaderboardMongoSource extends CollectionMongoSource<LeaderboardDoc
     } catch (error) {
       throw DataSourceOperationError.fromError(error);
     }
+  }
+
+  public async findUser(
+    user: string,
+    sort: string,
+    fromDate?: Date,
+    toDate?: Date
+  ): Promise<LeaderboardDocument> {
+    const { collectionName } = this;
+    const match =
+      fromDate && toDate
+        ? {
+            $and: [
+              { $or: [{ wallet_id: user }, { username: user }] },
+              { start_timestamp: { $gte: fromDate } },
+              { end_timestamp: { $lte: toDate } },
+            ],
+          }
+        : { $or: [{ wallet_id: user }, { username: user }] };
+
+    const pipeline = [
+      { $match: match },
+      {
+        $lookup: {
+          from: collectionName,
+          let: { sortBy: '$' + sort },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $gt: ['$' + sort, '$$sortBy'] },
+              },
+            },
+            { $project: { wallet_id: 1 } },
+          ],
+          as: 'higherScores',
+        },
+      },
+      {
+        $addFields: {
+          rank: { $add: [{ $size: '$higherScores' }, 1] },
+        },
+      },
+      {
+        $unset: 'higherScores',
+      },
+    ];
+
+    const documents = await this.aggregate({ pipeline });
+
+
+    return documents[0];
   }
 }

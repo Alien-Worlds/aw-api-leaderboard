@@ -21,7 +21,7 @@ export type FindUserInLeaderboardRequest = {
   date?: string;
 };
 
-export type LeaderboardBaseDocument = {
+export type LeaderboardNumbers = {
   tlm_gains_total?: number;
   total_nft_points?: number;
   unique_tools_used?: number;
@@ -32,15 +32,12 @@ export type LeaderboardBaseDocument = {
   planets_mined_on?: number;
 };
 
-export type LeaderboardDocument = LeaderboardBaseDocument & {
+export type LeaderboardDocument = LeaderboardNumbers & {
   _id?: MongoDB.ObjectId;
-  block_number: MongoDB.Long;
-  block_timesamp: Date;
   start_timestamp?: Date;
   end_timestamp?: Date;
   last_update_timestamp?: Date;
   last_update_hash?: string;
-  last_update_completed?: boolean;
   wallet_id?: string;
   username?: string;
   tlm_gains_highest?: number;
@@ -50,8 +47,7 @@ export type LeaderboardDocument = LeaderboardBaseDocument & {
   total_nft_power?: number;
   lands?: MongoDB.Long[];
   planets?: string[];
-  mine_rating?: number;
-  position?: number;
+  rankings?: LeaderboardNumbers;
   [key: string]: unknown;
 };
 
@@ -61,37 +57,28 @@ export type MinigToolData = {
   difficulty: number;
 };
 
-export type LeaderboardStruct = {
-  block_number: string;
-  block_timesamp: string;
+export type LeaderboardStruct = LeaderboardNumbers & {
   start_timestamp?: string;
   end_timestamp?: string;
-  wallet_id?: string;
-  username?: string;
-  tlm_gains_total?: number;
-  tlm_gains_highest?: number;
-  total_nft_points?: number;
-  total_charge_time?: number;
-  avg_charge_time?: number;
-  total_mining_power?: number;
-  avg_mining_power?: number;
-  total_nft_power?: number;
-  avg_nft_power?: number;
-  lands_mined_on?: number;
-  planets_mined_on?: number;
-  unique_tools_used?: number;
-  mine_rating?: number;
-  planets?: string[];
-  lands?: string[];
-  tools_used?: string[];
   last_update_timestamp?: string;
   last_update_hash?: string;
   last_update_completed?: boolean;
-  position?: number;
+  wallet_id?: string;
+  username?: string;
+  tlm_gains_highest?: number;
+  tools_used?: string[];
+  total_charge_time?: number;
+  total_mining_power?: number;
+  total_nft_power?: number;
+  lands?: string[];
+  planets?: string[];
+  rankings?: LeaderboardNumbers;
   [key: string]: unknown;
 };
 
 export type LeaderboardUpdateDocument = LeaderboardUpdateStruct;
+export type LeaderboardUserRankingsStruct = { [key: string]: LeaderboardNumbers };
+export type LeaderboardUserScoresStruct = { [key: string]: LeaderboardNumbers };
 
 export type LeaderboardListOutputItem = Pick<
   LeaderboardUpdateStruct,

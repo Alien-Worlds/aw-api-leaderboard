@@ -12,7 +12,7 @@ import { SendCachedLeaderboardUseCase } from './send-cached-leaderboard.use-case
 
 /*imports*/
 
-const { updatesBatchSize } = buildConfig();
+const { checkAndUpdateBatchSize } = buildConfig();
 
 /**
  * @class
@@ -49,7 +49,7 @@ export class CacheOrSendLeaderboardUseCase
       // ?
     }
 
-    if (count >= updatesBatchSize) {
+    if (count >= checkAndUpdateBatchSize) {
       return this.sendCachedLeaderboardUseCase.execute();
     }
 

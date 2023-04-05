@@ -27,8 +27,12 @@ export type Environment = {
   ATOMICASSETS_API_HOST?: string;
   ATOMICASSETS_API_PORT?: string;
   ATOMICASSETS_API_SECURE?: string;
-  CRON_TIME?: string;
-  UPDATE_BATCH_SIZE?: string;
+  CHECK_AND_UPDATE_BATCH_SIZE?: string;
+  CHECK_AND_UPDATE_CRON_TIME?: string;
+  ARCHIVE_BATCH_SIZE?: string;
+  DAILY_ARCHIVE_CRON_TIME?: string;
+  WEEKLY_ARCHIVE_CRON_TIME?: string;
+  MONTHLY_ARCHIVE_CRON_TIME?: string;
 };
 
 export type ApiConfig = {
@@ -43,6 +47,10 @@ export type LeaderboardConfig = {
   redis: RedisConfig;
   historyToolsBroadcast: BroadcastConfig;
   atomicassets: AtomicAssetsApiConfig;
-  cronTime?: string;
-  updatesBatchSize?: number;
+  checkAndUpdateBatchSize?: number;
+  checkAndUpdateCronTime?: string;
+  archiveBatchSize?: number;
+  dailyArchiveCronTime?: string;
+  weeklyArchiveCronTime?: string;
+  monthlyArchiveCronTime?: string;
 };

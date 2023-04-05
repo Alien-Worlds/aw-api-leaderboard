@@ -45,20 +45,25 @@ export class UpdateWeeklyLeaderboardUseCase
         fromWeekStart,
         toWeekEnd,
         bounty,
-        blockNumber,
-        blockTimestamp,
         points,
         landId,
         planetName,
       } = update;
-      const userWeeklySearch = await this.weeklyLeaderboardRepository.findUser(
-        walletId,
-        fromWeekStart,
-        toWeekEnd
-      );
-      const assets = assetsByItem.get(update.id);
 
-      if (userWeeklySearch.isFailure) {
+      // skip history
+      if (toWeekEnd.getTime() < Date.now()) {
+        continue;
+      }
+
+      const assets = assetsByItem.get(update.id);
+      const { content: usersFound, failure: userSearchFailure } =
+        await this.weeklyLeaderboardRepository.findUsers([walletId]);
+
+      if (userSearchFailure) {
+        return Result.withFailure(userSearchFailure);
+      }
+
+      if (usersFound.length === 0) {
         newUpdates.push(
           Leaderboard.create(
             fromWeekStart,
@@ -66,8 +71,6 @@ export class UpdateWeeklyLeaderboardUseCase
             walletId,
             username,
             bounty,
-            blockNumber,
-            blockTimestamp,
             points,
             landId,
             planetName,
@@ -75,18 +78,17 @@ export class UpdateWeeklyLeaderboardUseCase
           )
         );
       } else {
-        const { content: weeklyUserLeaderboard } = userWeeklySearch;
-        if (weeklyUserLeaderboard.lastUpdateHash !== update.id) {
-          newUpdates.push(
-            Leaderboard.cloneAndUpdate(weeklyUserLeaderboard, update, assets)
-          );
+        const current = usersFound[0];
+
+        if (current.lastUpdateHash !== update.id) {
+          newUpdates.push(Leaderboard.cloneAndUpdate(current, update, assets));
         }
       }
     }
 
     // and as part of improvements we can send already updated data at once
 
-    return this.weeklyLeaderboardRepository.updateMany(newUpdates);
+    return this.weeklyLeaderboardRepository.update(newUpdates);
   }
 
   /*methods*/

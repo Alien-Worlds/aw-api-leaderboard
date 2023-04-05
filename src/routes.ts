@@ -4,7 +4,7 @@ import {
   LeaderboardController,
   ListLeaderboardRoute,
   UpdateLeaderboardRoute,
-} from './endpoints/leaderboard';
+} from './endpoints';
 
 import { LeaderboardApi } from './api';
 

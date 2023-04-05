@@ -6,14 +6,13 @@ import {
 import { Request, parseToBigInt, BroadcastMessage } from '@alien-worlds/api-core';
 import { nanoid } from 'nanoid';
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from './query-model.utils';
+import { getEndDateByTimeframe, getStartDateByTimeframe } from './model.utils';
 
 export class LeaderboardUpdate {
   public static fromStruct(struct: LeaderboardUpdateStruct): LeaderboardUpdate {
     const {
       wallet_id,
       username,
-      block_number,
       block_timestamp,
       points,
       land_id,
@@ -49,8 +48,6 @@ export class LeaderboardUpdate {
       wallet_id,
       username,
       bounty ? Number(bounty) : 0,
-      parseToBigInt(block_number),
-      new Date(block_timestamp),
       points ? Number(points) : 0,
       land_id ? parseToBigInt(land_id) : null,
       planet_name,
@@ -68,8 +65,6 @@ export class LeaderboardUpdate {
     public readonly walletId: string,
     public readonly username: string,
     public readonly bounty: number,
-    public readonly blockNumber: bigint,
-    public readonly blockTimestamp: Date,
     public readonly points: number,
     public readonly landId: bigint,
     public readonly planetName: string,
