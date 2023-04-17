@@ -5,6 +5,7 @@ import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.i
 import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
 import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
 import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
+import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
 
 /*imports*/
 /**
@@ -21,7 +22,7 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
     private weeklyLeaderboardRepository: MiningWeeklyLeaderboardRepository,
     @inject(MiningMonthlyLeaderboardRepository.Token)
     private monthlyLeaderboardRepository: MiningMonthlyLeaderboardRepository
-  ) {}
+  ) { }
 
   /**
    * @async
@@ -54,6 +55,10 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
 
     if (usersSearch.isFailure) {
       return Result.withFailure(usersSearch.failure);
+    }
+
+    if (!usersSearch.content.length) {
+      return Result.withFailure(Failure.fromError(new UserLeaderboardNotFoundError(user)));
     }
 
     return Result.withContent(usersSearch.content[0]);
