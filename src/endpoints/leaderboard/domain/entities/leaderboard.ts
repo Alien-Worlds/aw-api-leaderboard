@@ -1,15 +1,8 @@
-import { LeaderboardNumbers } from './../../data/leaderboard.dtos';
+import { LeaderboardDocument, LeaderboardStruct, MinigToolData } from '../../data/leaderboard.dtos';
+import { MongoDB, parseToBigInt, removeUndefinedProperties } from '@alien-worlds/api-core';
+
 import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
-import {
-  removeUndefinedProperties,
-  MongoDB,
-  parseToBigInt,
-} from '@alien-worlds/api-core';
-import {
-  LeaderboardDocument,
-  LeaderboardStruct,
-  MinigToolData,
-} from '../../data/leaderboard.dtos';
+import { LeaderboardNumbers } from './../../data/leaderboard.dtos';
 import { LeaderboardUpdate } from '../models/update-leaderboard.input';
 
 /**
@@ -207,7 +200,7 @@ export class Leaderboard {
       landsMinedOn += 1;
     }
 
-    if (planetName && planets.indexOf(planetName) === -1) {
+    if (planetName && planets?.indexOf(planetName) === -1) {
       planets.push(planetName);
       planetsMinedOn += 1;
     }
@@ -346,7 +339,7 @@ export class Leaderboard {
     public readonly rankings: Map<string, number>,
     public readonly id: string,
     public readonly rest: object
-  ) {}
+  ) { }
 
   /**
    *
