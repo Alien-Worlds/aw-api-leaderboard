@@ -30,18 +30,22 @@ export class SendCachedLeaderboardUseCase
    * @async
    */
   public async execute(): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    const { content: allItems, failure: extractFailure } =
+    const { content: updates, failure: extractFailure } =
       await this.leaderboardInputRepository.extractAll();
 
     if (extractFailure) {
       return Result.withFailure(extractFailure);
     }
 
+    if (updates.length === 0) {
+      return Result.withContent(UpdateStatus.Failure);
+    }
+
     const { content: status, failure: updateFailure } =
-      await this.updateLeaderboardUseCase.execute(allItems);
+      await this.updateLeaderboardUseCase.execute(updates);
 
     if (updateFailure) {
-      this.leaderboardInputRepository.addMany(allItems);
+      this.leaderboardInputRepository.addMany(updates);
 
       return Result.withFailure(updateFailure);
     }

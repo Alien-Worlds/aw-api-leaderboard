@@ -34,9 +34,9 @@ export class CacheOrSendLeaderboardUseCase
    * @async
    */
   public async execute(
-    items: LeaderboardUpdate[]
+    updates: LeaderboardUpdate[]
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
-    const addResult = await this.leaderboardUpdateBackup.addMany(items);
+    const addResult = await this.leaderboardUpdateBackup.addMany(updates);
 
     if (addResult.isFailure) {
       return Result.withFailure(addResult.failure);

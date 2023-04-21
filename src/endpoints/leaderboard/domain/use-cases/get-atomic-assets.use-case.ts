@@ -28,36 +28,36 @@ export class GetAtomicAssetsUseCase implements UseCase<Map<string, AtomicAsset[]
    * @async
    */
   public async execute(
-    items: LeaderboardUpdate[]
+    updates: LeaderboardUpdate[]
   ): Promise<Result<Map<string, AtomicAsset[]>>> {
     const assetsByItem = new Map<string, AtomicAsset[]>();
     let fetchFailureCount = 0;
     let partialFetchCount = 0;
 
-    for (const item of items) {
+    for (const update of updates) {
       const { content: assets, failure: atomicAssetsFailure } =
-        await this.atomicAssetRepository.getAssets(item.bagItems);
+        await this.atomicAssetRepository.getAssets(update.bagItems);
 
       if (atomicAssetsFailure) {
         log(atomicAssetsFailure.error);
-        assetsByItem.set(item.id, []);
+        assetsByItem.set(update.id, []);
         fetchFailureCount++;
         continue;
       }
 
-      if (assets.length < item.bagItems.length) {
+      if (assets.length < update.bagItems.length) {
         log(
-          new AtomicAssetsPartialFetchError(assets.length, item.bagItems.length).message
+          new AtomicAssetsPartialFetchError(assets.length, update.bagItems.length).message
         );
-        assetsByItem.set(item.id, []);
+        assetsByItem.set(update.id, []);
         partialFetchCount++;
         continue;
       }
 
-      assetsByItem.set(item.id, assets);
+      assetsByItem.set(update.id, assets);
     }
 
-    return fetchFailureCount + partialFetchCount < items.length
+    return fetchFailureCount + partialFetchCount < updates.length
       ? Result.withContent(assetsByItem)
       : Result.withFailure(
           Failure.fromError(

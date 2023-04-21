@@ -41,26 +41,26 @@ export class UpdateLeaderboardUseCase
    * @async
    */
   public async execute(
-    items: LeaderboardUpdate[]
+    updates: LeaderboardUpdate[]
   ): Promise<Result<UpdateStatus.Success | UpdateStatus.Failure>> {
     const { content, failure: assetsFailure } = await this.getAtomicAssetsUseCase.execute(
-      items
+      updates
     );
     const assets = content as Map<string, AtomicAsset<MinigToolData>[]>;
 
     if (assetsFailure) {
       //
-      this.leaderboardUpdateBackup.addMany(items);
+      this.leaderboardUpdateBackup.addMany(updates);
       return Result.withFailure(assetsFailure);
     }
 
     /*
      * UPDATE DAILY LEADERBOARD
      */
-    const dailyUpdate = await this.updateDailyLeaderboardUseCase.execute(items, assets);
+    const dailyUpdate = await this.updateDailyLeaderboardUseCase.execute(updates, assets);
 
     if (dailyUpdate.isFailure) {
-      this.leaderboardUpdateBackup.addMany(items);
+      this.leaderboardUpdateBackup.addMany(updates);
       return Result.withFailure(dailyUpdate.failure);
     }
 
@@ -68,11 +68,11 @@ export class UpdateLeaderboardUseCase
      * UPDATE WEEKLY LEADERBOARD
      */
 
-    const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(items, assets);
+    const weeklyUpdate = await this.updateWeeklyLeaderboardUseCase.execute(updates, assets);
 
     if (weeklyUpdate.isFailure) {
       //
-      this.leaderboardUpdateBackup.addMany(items);
+      this.leaderboardUpdateBackup.addMany(updates);
       return Result.withFailure(weeklyUpdate.failure);
     }
 
@@ -81,13 +81,13 @@ export class UpdateLeaderboardUseCase
      */
 
     const monthlyUpdate = await this.updateMonthlyLeaderboardUseCase.execute(
-      items,
+      updates,
       assets
     );
 
     if (monthlyUpdate.isFailure) {
       //
-      this.leaderboardUpdateBackup.addMany(items);
+      this.leaderboardUpdateBackup.addMany(updates);
       return Result.withFailure(monthlyUpdate.failure);
     }
 

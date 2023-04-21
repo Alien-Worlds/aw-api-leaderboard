@@ -64,12 +64,16 @@ export class LeaderboardController {
    */
   public async update(input: UpdateLeaderboardInput): Promise<UpdateLeaderboardOutput> {
     const { items } = input;
+
+    if (items.length === 0) {
+      return UpdateLeaderboardOutput.create(Result.withContent(UpdateStatus.Failure));
+    }
+
     let result: Result<UpdateStatus.Success | UpdateStatus.Failure>;
 
     if (config.checkAndUpdateBatchSize) {
       result = await this.cacheOrSendLeaderboardUseCase.execute(items);
     }
-
     result = await this.updateLeaderboardUseCase.execute(items);
 
     return UpdateLeaderboardOutput.create(result);
