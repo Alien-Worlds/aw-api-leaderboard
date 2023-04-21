@@ -1,5 +1,13 @@
-import { LeaderboardDocument, LeaderboardStruct, MinigToolData } from '../../data/leaderboard.dtos';
-import { MongoDB, parseToBigInt, removeUndefinedProperties } from '@alien-worlds/api-core';
+import {
+  LeaderboardDocument,
+  LeaderboardStruct,
+  MinigToolData,
+} from '../../data/leaderboard.dtos';
+import {
+  MongoDB,
+  parseToBigInt,
+  removeUndefinedProperties,
+} from '@alien-worlds/api-core';
 
 import { AtomicAsset } from '@alien-worlds/alienworlds-api-common';
 import { LeaderboardNumbers } from './../../data/leaderboard.dtos';
@@ -339,7 +347,7 @@ export class Leaderboard {
     public readonly rankings: Map<string, number>,
     public readonly id: string,
     public readonly rest: object
-  ) { }
+  ) {}
 
   /**
    *
@@ -431,6 +439,8 @@ export class Leaderboard {
       planetsMinedOn,
       uniqueToolsUsed,
       rankings,
+      planets,
+      lands,
     } = this;
 
     const struct: LeaderboardStruct = {
@@ -452,6 +462,8 @@ export class Leaderboard {
       lands_mined_on: landsMinedOn,
       planets_mined_on: planetsMinedOn,
       unique_tools_used: uniqueToolsUsed,
+      planets,
+      lands: lands.map(land => land.toString()),
     };
 
     if (rankings.size > 0) {

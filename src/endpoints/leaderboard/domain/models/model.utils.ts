@@ -146,7 +146,7 @@ export const getEndDateByTimeframe = (
 
 export const parseLeaderboardToResult = (
   leaderboard: Leaderboard,
-  sort: string,
+  sort: string
 ): LeaderboardListOutputItem => {
   const {
     wallet_id,
@@ -174,15 +174,15 @@ export const parseLeaderboardToResult = (
     tlm_gains_total: Number((Number(tlm_gains_total) || 0).toFixed(decimalPrecision)),
     tlm_gains_highest: Number((Number(tlm_gains_highest) || 0).toFixed(decimalPrecision)),
     total_nft_points: Number((Number(total_nft_points) || 0).toFixed(decimalPrecision)),
-    total_charge_time,
+    total_charge_time: Number(total_charge_time),
     avg_charge_time: Number((Number(avg_charge_time) || 0).toFixed(decimalPrecision)),
-    total_mining_power,
+    total_mining_power: Number(total_mining_power),
     avg_mining_power: Number((Number(avg_mining_power) || 0).toFixed(decimalPrecision)),
-    total_nft_power,
+    total_nft_power: Number(total_nft_power),
     avg_nft_power: Number((Number(avg_nft_power) || 0).toFixed(decimalPrecision)),
-    lands_mined_on,
-    planets_mined_on,
-    unique_tools_used,
+    lands_mined_on: Number(lands_mined_on),
+    planets_mined_on: Number(planets_mined_on),
+    unique_tools_used: Number(unique_tools_used),
     position: rankings?.[sort] || -1,
   };
 
