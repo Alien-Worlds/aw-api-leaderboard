@@ -1,5 +1,6 @@
-import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
 import { BroadcastConfig, MongoConfig, RedisConfig } from '@alien-worlds/api-core';
+
+import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
 
 export type Environment = {
   MONGO_HOSTS?: string;
@@ -33,6 +34,7 @@ export type Environment = {
   DAILY_ARCHIVE_CRON_TIME?: string;
   WEEKLY_ARCHIVE_CRON_TIME?: string;
   MONTHLY_ARCHIVE_CRON_TIME?: string;
+  DECIMAL_PRECISION?: number;
 };
 
 export type ApiConfig = {
@@ -53,4 +55,5 @@ export type LeaderboardConfig = {
   dailyArchiveCronTime?: string;
   weeklyArchiveCronTime?: string;
   monthlyArchiveCronTime?: string;
+  decimalPrecision: number;
 };

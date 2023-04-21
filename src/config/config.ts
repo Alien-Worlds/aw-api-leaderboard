@@ -1,8 +1,9 @@
-import { BroadcastConfig } from '@alien-worlds/api-core';
+import { ApiConfig, Environment, LeaderboardConfig } from './config.types';
 import { MongoConfig, RedisConfig } from '@alien-worlds/api-core';
-import { readEnvFile } from './config.utils';
-import { Environment, LeaderboardConfig, ApiConfig } from './config.types';
+
 import { AtomicAssetsApiConfig } from '@alien-worlds/alienworlds-api-common';
+import { BroadcastConfig } from '@alien-worlds/api-core';
+import { readEnvFile } from './config.utils';
 
 export const buildConfig = (): LeaderboardConfig => {
   const environment: Environment = { ...process.env } as Environment;
@@ -68,6 +69,8 @@ export const buildConfig = (): LeaderboardConfig => {
       environment.CHECK_AND_UPDATE_BATCH_SIZE || dotEnv.CHECK_AND_UPDATE_BATCH_SIZE
     ) || 0;
 
+  const decimalPrecision = Number(environment.DECIMAL_PRECISION || dotEnv.DECIMAL_PRECISION) || 4;
+
   return {
     api,
     mongo,
@@ -80,5 +83,6 @@ export const buildConfig = (): LeaderboardConfig => {
     dailyArchiveCronTime,
     weeklyArchiveCronTime,
     monthlyArchiveCronTime,
+    decimalPrecision,
   };
 };
