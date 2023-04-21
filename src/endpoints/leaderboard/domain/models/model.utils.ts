@@ -1,7 +1,10 @@
-import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { LeaderboardListOutputItem } from '../../data/leaderboard.dtos';
-import { removeUndefinedProperties } from '@alien-worlds/api-core';
 import { Leaderboard } from '../entities/leaderboard';
+import { LeaderboardListOutputItem } from '../../data/leaderboard.dtos';
+import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
+import { buildConfig } from '../../../../config';
+import { removeUndefinedProperties } from '@alien-worlds/api-core';
+
+const config = buildConfig();
 
 export const getDaysInMonth = (month: number, year: number) => {
   return new Date(year, month, 0).getDate();
@@ -163,18 +166,20 @@ export const parseLeaderboardToResult = (
     rankings,
   } = leaderboard.toStruct();
 
+  const { decimalPrecision } = config;
+
   const dto = {
     wallet_id,
     username,
-    tlm_gains_total,
-    tlm_gains_highest,
-    total_nft_points,
+    tlm_gains_total: Number(Number(tlm_gains_total) || 0).toFixed(decimalPrecision),
+    tlm_gains_highest: Number(Number(tlm_gains_highest) || 0).toFixed(decimalPrecision),
+    total_nft_points: Number(Number(total_nft_points) || 0).toFixed(decimalPrecision),
     total_charge_time,
-    avg_charge_time,
+    avg_charge_time: Number(Number(avg_charge_time) || 0).toFixed(decimalPrecision),
     total_mining_power,
-    avg_mining_power,
+    avg_mining_power: Number(Number(avg_mining_power) || 0).toFixed(decimalPrecision),
     total_nft_power,
-    avg_nft_power,
+    avg_nft_power: Number(Number(avg_nft_power) || 0).toFixed(decimalPrecision),
     lands_mined_on,
     planets_mined_on,
     unique_tools_used,
