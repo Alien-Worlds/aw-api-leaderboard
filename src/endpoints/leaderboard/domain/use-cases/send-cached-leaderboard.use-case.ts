@@ -45,8 +45,6 @@ export class SendCachedLeaderboardUseCase
       await this.updateLeaderboardUseCase.execute(updates);
 
     if (updateFailure) {
-      this.leaderboardInputRepository.addMany(updates);
-
       return Result.withFailure(updateFailure);
     }
 

@@ -86,8 +86,6 @@ export class UpdateDailyLeaderboardUseCase
       }
     }
 
-    // and as part of improvements we can send already updated data at once
-
     return this.dailyLeaderboardRepository.update(newUpdates);
   }
 
