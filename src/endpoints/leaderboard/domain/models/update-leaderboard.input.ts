@@ -3,10 +3,11 @@ import {
   LeaderboardUpdateMessage,
   LeaderboardUpdateStruct,
 } from '@alien-worlds/alienworlds-api-common';
-import { Request, parseToBigInt, BroadcastMessage } from '@alien-worlds/api-core';
-import { nanoid } from 'nanoid';
+import { BroadcastMessage, Request, parseToBigInt } from '@alien-worlds/api-core';
+import { floatToPreciseInt, getEndDateByTimeframe, getStartDateByTimeframe } from './model.utils';
+
 import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from './model.utils';
+import { nanoid } from 'nanoid';
 
 export class LeaderboardUpdate {
   public static fromStruct(struct: LeaderboardUpdateStruct): LeaderboardUpdate {
@@ -47,8 +48,8 @@ export class LeaderboardUpdate {
       toMonthEnd,
       wallet_id,
       username,
-      bounty ? Number(bounty) : 0,
-      points ? Number(points) : 0,
+      bounty ? floatToPreciseInt(bounty) : 0,
+      points ? floatToPreciseInt(points) : 0,
       land_id ? parseToBigInt(land_id) : null,
       planet_name,
       bag_items ? bag_items.map(item => parseToBigInt(item)) : []
@@ -70,7 +71,7 @@ export class LeaderboardUpdate {
     public readonly planetName: string,
     public readonly bagItems: bigint[],
     public readonly id = nanoid()
-  ) {}
+  ) { }
 }
 
 export class UpdateLeaderboardInput {
@@ -126,5 +127,5 @@ export class UpdateLeaderboardInput {
     return new UpdateLeaderboardInput([LeaderboardUpdate.fromStruct(request.body)]);
   }
 
-  private constructor(public readonly items: LeaderboardUpdate[]) {}
+  private constructor(public readonly items: LeaderboardUpdate[]) { }
 }
