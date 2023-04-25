@@ -11,20 +11,20 @@
     debug "^4.3.4"
     safe-buffer "~5.1.2"
 
-"@alien-worlds/alienworlds-api-common@0.0.61":
-  version "0.0.61"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.61/dfdc3fcb0045acdf1b199e89c6898058c9021c64#dfdc3fcb0045acdf1b199e89c6898058c9021c64"
-  integrity sha512-GuI3GihTS+v8wPjizd3eNu+SKCu5XGPBGc25wLTGOuWw3O6/QLIU4nKkzeqXiidwfD51MZN6Uv+QOh1V3NAItA==
+"@alien-worlds/alienworlds-api-common@0.0.65":
+  version "0.0.65"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/alienworlds-api-common/0.0.65/8416235939194ca56866de2b1198ab4fab9a0a9e#8416235939194ca56866de2b1198ab4fab9a0a9e"
+  integrity sha512-mTErul5tFfWJG+ZQpEAJPfCfIKi2c0OTyMBszabFkH9tCrD9xbpqfenDFz88GRx/86voAgQe6PI3xKAfHSE3qQ==
   dependencies:
-    "@alien-worlds/api-core" "0.0.95"
+    "@alien-worlds/api-core" "0.0.99"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/api-core@0.0.95":
-  version "0.0.95"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.95/84d7103bd56e325b21d552c03958bfcfa7854358#84d7103bd56e325b21d552c03958bfcfa7854358"
-  integrity sha512-JgvGe54/BXX6B8iZuK/hHX0UMjV4NQE/RENUdoPnI86SjPQtnjXCsziccuVIXHUDdncvMTgMw0S/ihD4RdIYlA==
+"@alien-worlds/api-core@0.0.99":
+  version "0.0.99"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/api-core/0.0.99/de1acfebe67a246242187fbc3078388c6baf79fe#de1acfebe67a246242187fbc3078388c6baf79fe"
+  integrity sha512-aZIZ1sva1XTrK+nMti/7V2LrzdMBKwUT8HraExDvz3c3xHAE/WkJO+RgRZZ9LEDWszzHuQQnAEHqIS1Fgb0otA==
   dependencies:
     "@google-cloud/bigquery" "^6.0.3"
     amqplib "^0.10.3"
