@@ -104,7 +104,7 @@ export class LeaderboardRedisSource {
     this.collections.get(MiningLeaderboardSort.AvgNftPower).addMany(avgNftPower);
     this.collections.get(MiningLeaderboardSort.LandsMinedOn).addMany(landsMinedOn);
     this.collections.get(MiningLeaderboardSort.PlanetsMinedOn).addMany(planetsMinedOn);
-    this.data.addMany(data);
+    this.data.addMany(data, true);
   }
 
   public async getRankings(
