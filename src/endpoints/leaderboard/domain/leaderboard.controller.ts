@@ -1,20 +1,16 @@
 import { ListLeaderboardOutput } from './models/list-leaderboard.output';
 import { inject, injectable, Result, UpdateStatus } from '@alien-worlds/api-core';
-import { buildConfig } from '../../../config';
 import { FindUserInLeaderboardInput } from './models/find-user-in-leaderboard.input';
 import { ListLeaderboardInput } from './models/list-leaderboard.input';
 import { UpdateLeaderboardInput } from './models/update-leaderboard.input';
-import { CacheOrSendLeaderboardUseCase } from './use-cases/cache-or-send-leaderboard.use-case';
 import { FindUserInLeaderboardUseCase } from './use-cases/find-user-in-leaderboard.use-case';
 import { ListLeaderboardUseCase } from './use-cases/list-leaderboard.use-case';
-import { UpdateLeaderboardUseCase } from './use-cases/update-leaderboard.use-case';
 import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case';
 import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
 import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
+import { UpdateLeaderboardUseCase } from '@alien-worlds/alienworlds-api-common';
 
 /*imports*/
-
-const config = buildConfig();
 
 /**
  * @class
@@ -30,9 +26,7 @@ export class LeaderboardController {
     @inject(UpdateLeaderboardUseCase.Token)
     private updateLeaderboardUseCase: UpdateLeaderboardUseCase,
     @inject(FindUserInLeaderboardUseCase.Token)
-    private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase,
-    @inject(CacheOrSendLeaderboardUseCase.Token)
-    private cacheOrSendLeaderboardUseCase: CacheOrSendLeaderboardUseCase
+    private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase
   ) {}
 
   /*methods*/
@@ -45,7 +39,7 @@ export class LeaderboardController {
     const listResult = await this.listLeaderboardUseCase.execute(input);
     const countResult = await this.countLeaderboardUseCase.execute(input);
 
-    return ListLeaderboardOutput.create(listResult, countResult, input.sort);
+    return ListLeaderboardOutput.create(listResult, countResult, input.sort, input.order);
   }
   /**
    *
@@ -69,12 +63,7 @@ export class LeaderboardController {
       return UpdateLeaderboardOutput.create(Result.withContent(UpdateStatus.Failure));
     }
 
-    let result: Result<UpdateStatus.Success | UpdateStatus.Failure>;
-
-    if (config.checkAndUpdateBatchSize) {
-      result = await this.cacheOrSendLeaderboardUseCase.execute(items);
-    }
-    result = await this.updateLeaderboardUseCase.execute(items);
+    const result = await this.updateLeaderboardUseCase.execute(items);
 
     return UpdateLeaderboardOutput.create(result);
   }

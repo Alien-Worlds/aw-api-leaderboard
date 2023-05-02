@@ -14,6 +14,20 @@ services:
       - common_network
     volumes:
       - ./:/var/
+  cron:
+    build:
+      context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    restart: on-failure
+    command: [ 'sh', '-c', 'yarn cron' ]
+    depends_on:
+      - redis
+      - db
+    networks:
+      - common_network
+    volumes:
+      - ./:/var/
 
   redis:
     image: 'redis:alpine'

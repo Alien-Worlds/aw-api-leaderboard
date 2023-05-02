@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { LeaderboardUpdateStruct } from '@alien-worlds/alienworlds-api-common';
+import { LeaderboardUpdateJson } from '@alien-worlds/alienworlds-api-common';
 import { PostRoute, RouteHandler, Request } from '@alien-worlds/api-core';
 import { UpdateLeaderboardInput } from '../domain/models/update-leaderboard.input';
 import { UpdateLeaderboardOutput } from '../domain/models/update-leaderboard.output';
@@ -20,25 +20,23 @@ export class UpdateLeaderboardRoute extends PostRoute {
       authorization: request => {
         const config = buildConfig();
 
-        if (!config.api.secretKey) {
+        if (!config.secretKey) {
           return true;
         }
 
-        if (config.api.secretKey && !request.headers['authorization']) {
+        if (config.secretKey && !request.headers['authorization']) {
           return false;
         }
 
         const token = request.headers['authorization'].split(' ')[1];
-        const decodedToken = jwt.verify(token, config.api.secretKey, {
-          maxAge: config.api.expirationTime,
+        const decodedToken = jwt.verify(token, config.secretKey, {
+          maxAge: config.expirationTime,
         });
 
         return !!decodedToken;
       },
       validators: {
-        request: (
-          request: Request<LeaderboardUpdateStruct | LeaderboardUpdateStruct[]>
-        ) => {
+        request: (request: Request<LeaderboardUpdateJson | LeaderboardUpdateJson[]>) => {
           let valid = true;
           if (Array.isArray(request?.body)) {
             request?.body.forEach(item => {

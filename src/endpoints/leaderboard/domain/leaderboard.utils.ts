@@ -1,11 +1,15 @@
-import { Leaderboard } from '../entities/leaderboard';
-import { LeaderboardListOutputItem } from '../../data/leaderboard.dtos';
-import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
-import { buildConfig } from '../../../../config';
+import { LeaderboardListOutputItem } from '../data/leaderboard.dtos';
+
+import { buildConfig } from '../../../config';
 import { removeUndefinedProperties } from '@alien-worlds/api-core';
+import {
+  Leaderboard,
+  LeaderboardTimeframe,
+  preciseIntToFloat,
+} from '@alien-worlds/alienworlds-api-common';
 
 const config = buildConfig();
-const { decimalPrecision: DECIMAL_PRECISION } = config;
+const { tlmDecimalPrecision } = config;
 
 export const getDaysInMonth = (month: number, year: number) => {
   return new Date(year, month, 0).getDate();
@@ -95,6 +99,9 @@ export const calculateStartOfDay = (date: Date) => {
 };
 
 export const calculateEndOfDay = (date: Date) => {
+  if (date.toISOString().includes('T23:59:59')) {
+    return date;
+  }
   const cm = date.getMonth() + 1;
   const month = cm < 10 ? `0${cm}` : cm;
   const cd = date.getDate();
@@ -109,15 +116,15 @@ export const getStartDateByTimeframe = (
 ): Date => {
   const date = typeof dateRef === 'string' ? new Date(dateRef) : dateRef;
 
-  if (timeframe === MiningLeaderboardTimeframe.Daily) {
+  if (timeframe === LeaderboardTimeframe.Daily) {
     return calculateStartOfDay(date);
   }
 
-  if (timeframe === MiningLeaderboardTimeframe.Weekly) {
+  if (timeframe === LeaderboardTimeframe.Weekly) {
     return calculateStartOfWeek(date);
   }
 
-  if (timeframe === MiningLeaderboardTimeframe.Monthly) {
+  if (timeframe === LeaderboardTimeframe.Monthly) {
     return calculateStartOfMonth(date);
   }
 
@@ -130,15 +137,15 @@ export const getEndDateByTimeframe = (
 ): Date => {
   const date = typeof dateRef === 'string' ? new Date(dateRef) : dateRef;
 
-  if (timeframe === MiningLeaderboardTimeframe.Daily) {
+  if (timeframe === LeaderboardTimeframe.Daily) {
     return calculateEndOfDay(date);
   }
 
-  if (timeframe === MiningLeaderboardTimeframe.Weekly) {
+  if (timeframe === LeaderboardTimeframe.Weekly) {
     return calculateEndOfWeek(date);
   }
 
-  if (timeframe === MiningLeaderboardTimeframe.Monthly) {
+  if (timeframe === LeaderboardTimeframe.Monthly) {
     return calculateEndOfMonth(date);
   }
 
@@ -165,21 +172,22 @@ export const parseLeaderboardToResult = (
     planets_mined_on,
     unique_tools_used,
     rankings,
-  } = leaderboard.toStruct();
-
+  } = leaderboard.toJson();
 
   const dto = {
     wallet_id,
     username,
-    tlm_gains_total: preciseIntToFloat(tlm_gains_total || 0),
-    tlm_gains_highest: preciseIntToFloat(tlm_gains_highest || 0),
-    total_nft_points: preciseIntToFloat(total_nft_points || 0),
+    tlm_gains_total: preciseIntToFloat(tlm_gains_total || 0, tlmDecimalPrecision),
+    tlm_gains_highest: preciseIntToFloat(tlm_gains_highest || 0, tlmDecimalPrecision),
+    total_nft_points: preciseIntToFloat(total_nft_points || 0, tlmDecimalPrecision),
     total_charge_time: Number(total_charge_time),
-    avg_charge_time: Number((Number(avg_charge_time) || 0).toFixed(DECIMAL_PRECISION)),
+    avg_charge_time: Number((Number(avg_charge_time) || 0).toFixed(tlmDecimalPrecision)),
     total_mining_power: Number(total_mining_power),
-    avg_mining_power: Number((Number(avg_mining_power) || 0).toFixed(DECIMAL_PRECISION)),
+    avg_mining_power: Number(
+      (Number(avg_mining_power) || 0).toFixed(tlmDecimalPrecision)
+    ),
     total_nft_power: Number(total_nft_power),
-    avg_nft_power: Number((Number(avg_nft_power) || 0).toFixed(DECIMAL_PRECISION)),
+    avg_nft_power: Number((Number(avg_nft_power) || 0).toFixed(tlmDecimalPrecision)),
     lands_mined_on: Number(lands_mined_on),
     planets_mined_on: Number(planets_mined_on),
     unique_tools_used: Number(unique_tools_used),
@@ -187,21 +195,4 @@ export const parseLeaderboardToResult = (
   };
 
   return removeUndefinedProperties<LeaderboardListOutputItem>(dto);
-};
-
-
-export const floatToPreciseInt = (input: number | string, precision: number = DECIMAL_PRECISION): number => {
-  const factor = Number(`1${'0'.repeat(precision)}`);
-
-  if (typeof input == 'string') {
-    input = Number.parseFloat(input);
-  }
-
-  return Number(Number(input * factor).toFixed());
-};
-
-export const preciseIntToFloat = (input: number, precision: number = DECIMAL_PRECISION): number => {
-  const factor = Number(`1${'0'.repeat(precision)}`);
-
-  return Number(input) / factor;
 };

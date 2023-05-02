@@ -1,12 +1,12 @@
-import {
-  MiningLeaderboardOrder,
-  MiningLeaderboardSort,
-  MiningLeaderboardTimeframe,
-} from '../mining-leaderboard.enums';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from './model.utils';
+import { getEndDateByTimeframe, getStartDateByTimeframe } from '../leaderboard.utils';
 
 import { ListLeaderboardRequest } from '../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';
+import {
+  LeaderboardOrder,
+  LeaderboardSort,
+  LeaderboardTimeframe,
+} from '@alien-worlds/alienworlds-api-common';
 
 export class ListLeaderboardInput {
   public static fromRequest(
@@ -19,7 +19,7 @@ export class ListLeaderboardInput {
     const { query } = request;
 
     const now = new Date();
-    const selectedTimeframe = query.timeframe || MiningLeaderboardTimeframe.Daily;
+    const selectedTimeframe = query.timeframe || LeaderboardTimeframe.Daily;
     const fromDate = getStartDateByTimeframe(
       query.fromDate || query.date || now,
       selectedTimeframe
@@ -31,8 +31,8 @@ export class ListLeaderboardInput {
 
     return new ListLeaderboardInput(
       selectedTimeframe,
-      query.sort || MiningLeaderboardSort.TlmGainsTotal,
-      Number(query.order) || MiningLeaderboardOrder.Desc,
+      query.sort || LeaderboardSort.TlmGainsTotal,
+      Number(query.order) || LeaderboardOrder.Desc,
       query.offset || 0,
       query.limit || 10,
       fromDate,
@@ -48,5 +48,5 @@ export class ListLeaderboardInput {
     public readonly limit: number,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) { }
+  ) {}
 }
