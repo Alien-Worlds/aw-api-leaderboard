@@ -6,7 +6,7 @@ import {
 export type LeaderboardApiConfig = LeaderboardConfig & {
   port: number;
   atomicassets: AtomicAssetsConfig;
-  decimalPrecision?: number;
+  tlmDecimalPrecision?: number;
   secretKey?: string;
   expirationTime?: string;
   dailyArchiveCronTime?: string;

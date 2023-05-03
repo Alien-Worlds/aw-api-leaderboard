@@ -45,6 +45,6 @@ export const buildConfig = (): LeaderboardApiConfig => {
     dailyArchiveCronTime,
     weeklyArchiveCronTime,
     monthlyArchiveCronTime,
-    decimalPrecision: tlmDecimalPrecision,
+    tlmDecimalPrecision,
   };
 };

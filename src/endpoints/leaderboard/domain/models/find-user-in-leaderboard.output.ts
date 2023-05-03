@@ -7,18 +7,20 @@ import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-fou
 export class FindUserInLeaderboardOutput {
   public static create(
     result: Result<Leaderboard>,
-    sort: string
+    sort: string,
+    tlmDecimalPrecision: number
   ): FindUserInLeaderboardOutput {
-    return new FindUserInLeaderboardOutput(result, sort);
+    return new FindUserInLeaderboardOutput(result, sort, tlmDecimalPrecision);
   }
 
   private constructor(
     public readonly result: Result<Leaderboard>,
-    private readonly sort: string
+    private readonly sort: string,
+    private readonly tlmDecimalPrecision: number
   ) {}
 
   public toResponse() {
-    const { result, sort } = this;
+    const { result, sort, tlmDecimalPrecision } = this;
 
     if (result.isFailure) {
       const {
@@ -43,7 +45,7 @@ export class FindUserInLeaderboardOutput {
       };
     }
 
-    const results = [parseLeaderboardToResult(result.content, sort)];
+    const results = [parseLeaderboardToResult(result.content, sort, tlmDecimalPrecision)];
 
     return {
       status: 200,

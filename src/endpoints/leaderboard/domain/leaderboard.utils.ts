@@ -1,15 +1,10 @@
 import { LeaderboardListOutputItem } from '../data/leaderboard.dtos';
-
-import { buildConfig } from '../../../config';
 import { removeUndefinedProperties } from '@alien-worlds/api-core';
 import {
   Leaderboard,
   LeaderboardTimeframe,
   preciseIntToFloat,
 } from '@alien-worlds/alienworlds-api-common';
-
-const config = buildConfig();
-const { tlmDecimalPrecision } = config;
 
 export const getDaysInMonth = (month: number, year: number) => {
   return new Date(year, month, 0).getDate();
@@ -154,7 +149,8 @@ export const getEndDateByTimeframe = (
 
 export const parseLeaderboardToResult = (
   leaderboard: Leaderboard,
-  sort: string
+  sort: string,
+  tlmDecimalPrecision: number
 ): LeaderboardListOutputItem => {
   const {
     wallet_id,

@@ -9,8 +9,11 @@ import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case'
 import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
 import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
 import { UpdateLeaderboardUseCase } from '@alien-worlds/alienworlds-api-common';
+import { buildConfig } from '../../../config';
 
 /*imports*/
+
+const config = buildConfig();
 
 /**
  * @class
@@ -39,7 +42,13 @@ export class LeaderboardController {
     const listResult = await this.listLeaderboardUseCase.execute(input);
     const countResult = await this.countLeaderboardUseCase.execute(input);
 
-    return ListLeaderboardOutput.create(listResult, countResult, input.sort, input.order);
+    return ListLeaderboardOutput.create(
+      listResult,
+      countResult,
+      input.sort,
+      input.order,
+      config.tlmDecimalPrecision
+    );
   }
   /**
    *
@@ -50,7 +59,11 @@ export class LeaderboardController {
   ): Promise<FindUserInLeaderboardOutput> {
     const result = await this.findUserInLeaderboardUseCase.execute(input);
 
-    return FindUserInLeaderboardOutput.create(result, input.sort);
+    return FindUserInLeaderboardOutput.create(
+      result,
+      input.sort,
+      config.tlmDecimalPrecision
+    );
   }
   /**
    *

@@ -7,16 +7,24 @@ export class ListLeaderboardOutput {
     listResult: Result<Leaderboard[]>,
     countResult: Result<number>,
     sort: string,
-    order: number
+    order: number,
+    tlmDecimalPrecision: number
   ): ListLeaderboardOutput {
-    return new ListLeaderboardOutput(listResult, countResult, sort, order);
+    return new ListLeaderboardOutput(
+      listResult,
+      countResult,
+      sort,
+      order,
+      tlmDecimalPrecision
+    );
   }
 
   private constructor(
     public readonly listResult: Result<Leaderboard[]>,
     public readonly countResult: Result<number>,
     public readonly sort: string,
-    public readonly order: number
+    public readonly order: number,
+    public readonly tlmDecimalPrecision: number
   ) {}
 
   public toResponse() {
@@ -25,6 +33,7 @@ export class ListLeaderboardOutput {
       countResult: { content: total, failure: countFailure },
       sort,
       order,
+      tlmDecimalPrecision,
     } = this;
     if (listFailure || countFailure) {
       const { error } = listFailure || countFailure;
@@ -40,7 +49,9 @@ export class ListLeaderboardOutput {
       status: 200,
       body: {
         results: list
-          .map(leaderboard => parseLeaderboardToResult(leaderboard, sort))
+          .map(leaderboard =>
+            parseLeaderboardToResult(leaderboard, sort, tlmDecimalPrecision)
+          )
           .sort((a, b) => (a.position < b.position ? order : -order)),
         total: total,
       },
