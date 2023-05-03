@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import cron from 'cron';
-import { Container } from '@alien-worlds/api-core';
+import { Container, log } from '@alien-worlds/api-core';
 import { buildConfig } from '../config';
 import { setupDependencies } from '../endpoints';
 import { archiveDailyLeaderboard } from './archive-daily-leaderboard';
@@ -9,6 +9,7 @@ import { archiveWeeklyLeaderboard } from './archive-weekly-leaderboard';
 import { archiveMonthlyLeaderboard } from './archive-monthly-leaderboard';
 
 export const start = async () => {
+  log(`Leaderboard API Cron jobs:`);
   const config = buildConfig();
   const { dailyArchiveCronTime, weeklyArchiveCronTime, monthlyArchiveCronTime } = config;
   const container = new Container();
@@ -25,6 +26,7 @@ export const start = async () => {
     );
 
     dailyArchiveCronJob.start();
+    log(`[archive-daily-leaderboard] cron job added.`);
   }
 
   if (weeklyArchiveCronTime) {
@@ -33,6 +35,7 @@ export const start = async () => {
     );
 
     weeklyArchiveCronJob.start();
+    log(`[archive-weekly-leaderboard] cron job added.`);
   }
 
   if (monthlyArchiveCronTime) {
@@ -41,6 +44,7 @@ export const start = async () => {
     );
 
     monthlyArchiveCronJob.start();
+    log(`[archive-monthly-leaderboard] cron job added.`);
   }
 };
 
