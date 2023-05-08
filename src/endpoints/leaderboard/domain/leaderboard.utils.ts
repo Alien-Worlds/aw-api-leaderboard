@@ -1,150 +1,80 @@
 import { LeaderboardListOutputItem } from '../data/leaderboard.dtos';
 import { removeUndefinedProperties } from '@alien-worlds/api-core';
-import {
-  Leaderboard,
-  LeaderboardTimeframe,
-  preciseIntToFloat,
-} from '@alien-worlds/alienworlds-api-common';
+import { Leaderboard, preciseIntToFloat } from '@alien-worlds/alienworlds-api-common';
 
-export const getDaysInMonth = (month: number, year: number) => {
-  return new Date(year, month, 0).getDate();
+export const isIsoDateFormat = value => {
+  return (
+    typeof value === 'string' && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(value)
+  );
 };
 
-export const calculateStartOfWeek = (date: Date) => {
-  const dayOfWeek = date.getDay();
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const dayOfMonth = date.getDate();
-  const tempFirstDayOfWeek = dayOfMonth - dayOfWeek + 1;
+export const createTimeRange = (options: {
+  date?: Date | string;
+  fromDate?: Date | string;
+  toDate?: Date | string;
+}): { fromDate: Date; toDate: Date } => {
+  const now = new Date();
+  const day = now.getDate();
+  const month = now.getMonth() + 1;
+  let fromDate = new Date(
+    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${
+      day < 10 ? '0' + day : day
+    }T00:00:00.000Z`
+  );
+  let toDate = new Date(
+    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${
+      day < 10 ? '0' + day : day
+    }T23:59:59.000Z`
+  );
 
-  let monthValue;
-  let yearValue;
-  let firstDayOfWeek;
-
-  if (tempFirstDayOfWeek < 0 && month === 0) {
-    monthValue = 11;
-    yearValue = year - 1;
-    const lastDayOfDecember = getDaysInMonth(monthValue, year - 1);
-
-    firstDayOfWeek = lastDayOfDecember + tempFirstDayOfWeek;
-  } else if (tempFirstDayOfWeek < 0 && month > 0) {
-    yearValue = year;
-    monthValue = month - 1;
-    const lastDayOfPrevMonth = getDaysInMonth(monthValue, year);
-    firstDayOfWeek = lastDayOfPrevMonth + tempFirstDayOfWeek;
+  if (options.date) {
+    const dateRef =
+      typeof options.date === 'string' ? new Date(options.date) : options.date;
+    const day = dateRef.getDate();
+    const month = dateRef.getMonth() + 1;
+    fromDate = new Date(
+      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
+        day < 10 ? '0' + day : day
+      }T00:00:00.000Z`
+    );
+    toDate = new Date(
+      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
+        day < 10 ? '0' + day : day
+      }T23:59:59.000Z`
+    );
   } else {
-    yearValue = year;
-    monthValue = month;
-    firstDayOfWeek = tempFirstDayOfWeek;
+    if (options.fromDate && isIsoDateFormat(options.fromDate)) {
+      fromDate = new Date(options.fromDate);
+    } else if (options.fromDate && isIsoDateFormat(options.fromDate) === false) {
+      const dateRef =
+        typeof options.fromDate === 'string'
+          ? new Date(options.fromDate)
+          : options.fromDate;
+      const day = dateRef.getDate();
+      const month = dateRef.getMonth() + 1;
+      fromDate = new Date(
+        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
+          day < 10 ? '0' + day : day
+        }T00:00:00.000Z`
+      );
+    }
+
+    if (options.toDate && isIsoDateFormat(options.fromDate)) {
+      toDate = new Date(options.toDate);
+    } else if (options.toDate && isIsoDateFormat(options.fromDate) === false) {
+      const dateRef =
+        typeof options.toDate === 'string' ? new Date(options.toDate) : options.toDate;
+      const day = dateRef.getDate();
+      const month = dateRef.getMonth() + 1;
+      toDate = new Date(
+        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
+          day < 10 ? '0' + day : day
+        }T23:59:59.000Z`
+      );
+    }
   }
 
-  monthValue += 1;
-  const monthStr = monthValue < 10 ? `0${monthValue}` : monthValue;
-  const dayStr = firstDayOfWeek < 10 ? `0${firstDayOfWeek}` : firstDayOfWeek;
-
-  return new Date(`${yearValue}-${monthStr}-${dayStr}T00:00:00.000Z`);
-};
-
-export const calculateEndOfWeek = (date: Date) => {
-  const dayOfWeek = date.getDay();
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const dayOfMonth = date.getDate();
-  const lastDayOfMonth = getDaysInMonth(month, year);
-  const tempLastDayOfWeek = dayOfMonth - dayOfWeek + 7;
-
-  let monthValue = month;
-  let lastDayOfWeek = tempLastDayOfWeek;
-
-  if (lastDayOfMonth < lastDayOfWeek) {
-    monthValue += 1;
-    lastDayOfWeek = tempLastDayOfWeek - lastDayOfMonth;
-  }
-
-  // index from 1
-  monthValue += 1;
-
-  const monthStr = monthValue < 10 ? `0${monthValue}` : monthValue;
-  const dayStr = lastDayOfWeek < 10 ? `0${lastDayOfWeek}` : lastDayOfWeek;
-
-  return new Date(`${year}-${monthStr}-${dayStr}T23:59:59.999Z`);
-};
-
-export const calculateStartOfMonth = (date: Date) => {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-
-  return new Date(Date.UTC(year, month, 1));
-};
-
-export const calculateEndOfMonth = (date: Date) => {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-
-  return new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
-};
-
-export const calculateStartOfDay = (date: Date) => {
-  const cm = date.getMonth() + 1;
-  const month = cm < 10 ? `0${cm}` : cm;
-  const cd = date.getDate();
-  const day = cd < 10 ? `0${cd}` : cd;
-
-  return new Date(`${date.getFullYear()}-${month}-${day}T00:00:00.000Z`);
-};
-
-export const calculateEndOfDay = (date: Date) => {
-  if (date.toISOString().includes('T23:59:59')) {
-    return date;
-  }
-  const cm = date.getMonth() + 1;
-  const month = cm < 10 ? `0${cm}` : cm;
-  const cd = date.getDate();
-  const day = cd < 10 ? `0${cd}` : cd;
-
-  return new Date(`${date.getFullYear()}-${month}-${day}T23:59:59.999Z`);
-};
-
-export const getStartDateByTimeframe = (
-  dateRef: string | Date,
-  timeframe: string
-): Date => {
-  const date = typeof dateRef === 'string' ? new Date(dateRef) : dateRef;
-
-  if (timeframe === LeaderboardTimeframe.Daily) {
-    return calculateStartOfDay(date);
-  }
-
-  if (timeframe === LeaderboardTimeframe.Weekly) {
-    return calculateStartOfWeek(date);
-  }
-
-  if (timeframe === LeaderboardTimeframe.Monthly) {
-    return calculateStartOfMonth(date);
-  }
-
-  throw new Error(`Unknown timeframe: ${timeframe}`);
-};
-
-export const getEndDateByTimeframe = (
-  dateRef: string | Date,
-  timeframe: string
-): Date => {
-  const date = typeof dateRef === 'string' ? new Date(dateRef) : dateRef;
-
-  if (timeframe === LeaderboardTimeframe.Daily) {
-    return calculateEndOfDay(date);
-  }
-
-  if (timeframe === LeaderboardTimeframe.Weekly) {
-    return calculateEndOfWeek(date);
-  }
-
-  if (timeframe === LeaderboardTimeframe.Monthly) {
-    return calculateEndOfMonth(date);
-  }
-
-  throw new Error(`Unknown timeframe: ${timeframe}`);
+  return { fromDate, toDate };
 };
 
 export const parseLeaderboardToResult = (
@@ -175,7 +105,7 @@ export const parseLeaderboardToResult = (
     username,
     tlm_gains_total: preciseIntToFloat(tlm_gains_total || 0, tlmDecimalPrecision),
     tlm_gains_highest: preciseIntToFloat(tlm_gains_highest || 0, tlmDecimalPrecision),
-    total_nft_points: preciseIntToFloat(total_nft_points || 0, tlmDecimalPrecision),
+    total_nft_points,
     total_charge_time: Number(total_charge_time),
     avg_charge_time: Number((Number(avg_charge_time) || 0).toFixed(tlmDecimalPrecision)),
     total_mining_power: Number(total_mining_power),

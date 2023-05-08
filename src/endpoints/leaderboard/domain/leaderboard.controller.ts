@@ -8,7 +8,10 @@ import { ListLeaderboardUseCase } from './use-cases/list-leaderboard.use-case';
 import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case';
 import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
 import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
-import { UpdateLeaderboardUseCase } from '@alien-worlds/alienworlds-api-common';
+import {
+  GetAtomicAssetsUseCase,
+  UpdateLeaderboardUseCase,
+} from '@alien-worlds/alienworlds-api-common';
 import { buildConfig } from '../../../config';
 
 /*imports*/
@@ -29,7 +32,9 @@ export class LeaderboardController {
     @inject(UpdateLeaderboardUseCase.Token)
     private updateLeaderboardUseCase: UpdateLeaderboardUseCase,
     @inject(FindUserInLeaderboardUseCase.Token)
-    private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase
+    private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase,
+    @inject(GetAtomicAssetsUseCase.Token)
+    private getAtomicAssetsUseCase: GetAtomicAssetsUseCase
   ) {}
 
   /*methods*/
@@ -70,13 +75,29 @@ export class LeaderboardController {
    * @returns {Promise<Result<UpdateStatus.Success | UpdateStatus.Failure, Error>>}
    */
   public async update(input: UpdateLeaderboardInput): Promise<UpdateLeaderboardOutput> {
-    const { items } = input;
+    const { items: updates } = input;
 
-    if (items.length === 0) {
+    if (updates.length === 0) {
       return UpdateLeaderboardOutput.create(Result.withContent(UpdateStatus.Failure));
     }
 
-    const result = await this.updateLeaderboardUseCase.execute(items);
+    const assetIds = updates.reduce((list, update) => {
+      if (update.bagItems) {
+        list.push(...update.bagItems);
+      }
+      return list;
+    }, []);
+
+    const assetsResult = await this.getAtomicAssetsUseCase.execute(assetIds, 10);
+
+    if (assetsResult.isFailure) {
+      return UpdateLeaderboardOutput.create(Result.withFailure(assetsResult.failure));
+    }
+
+    const result = await this.updateLeaderboardUseCase.execute(
+      updates,
+      assetsResult.content
+    );
 
     return UpdateLeaderboardOutput.create(result);
   }

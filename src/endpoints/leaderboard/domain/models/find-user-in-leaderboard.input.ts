@@ -1,5 +1,8 @@
-import { LeaderboardSort, LeaderboardTimeframe } from '@alien-worlds/alienworlds-api-common';
-import { getEndDateByTimeframe, getStartDateByTimeframe } from '../leaderboard.utils';
+import {
+  LeaderboardSort,
+  LeaderboardTimeframe,
+} from '@alien-worlds/alienworlds-api-common';
+import { createTimeRange } from '../leaderboard.utils';
 
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';
@@ -13,17 +16,8 @@ export class FindUserInLeaderboardInput {
     >
   ): FindUserInLeaderboardInput {
     const { query } = request;
-
-    const now = new Date();
     const selectedTimeframe = query.timeframe || LeaderboardTimeframe.Daily;
-    const fromDate = getStartDateByTimeframe(
-      query.fromDate || query.date || now,
-      selectedTimeframe
-    );
-    const toDate = getEndDateByTimeframe(
-      query.toDate || query.date || now,
-      selectedTimeframe
-    );
+    const { fromDate, toDate } = createTimeRange(query);
 
     return new FindUserInLeaderboardInput(
       query.user,

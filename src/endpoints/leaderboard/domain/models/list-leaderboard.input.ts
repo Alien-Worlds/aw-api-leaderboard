@@ -1,5 +1,3 @@
-import { getEndDateByTimeframe, getStartDateByTimeframe } from '../leaderboard.utils';
-
 import { ListLeaderboardRequest } from '../../data/leaderboard.dtos';
 import { Request } from '@alien-worlds/api-core';
 import {
@@ -7,6 +5,7 @@ import {
   LeaderboardSort,
   LeaderboardTimeframe,
 } from '@alien-worlds/alienworlds-api-common';
+import { createTimeRange } from '../leaderboard.utils';
 
 export class ListLeaderboardInput {
   public static fromRequest(
@@ -18,16 +17,8 @@ export class ListLeaderboardInput {
   ): ListLeaderboardInput {
     const { query } = request;
 
-    const now = new Date();
     const selectedTimeframe = query.timeframe || LeaderboardTimeframe.Daily;
-    const fromDate = getStartDateByTimeframe(
-      query.fromDate || query.date || now,
-      selectedTimeframe
-    );
-    const toDate = getEndDateByTimeframe(
-      query.toDate || query.date || now,
-      selectedTimeframe
-    );
+    const { fromDate, toDate } = createTimeRange(query);
 
     return new ListLeaderboardInput(
       selectedTimeframe,
