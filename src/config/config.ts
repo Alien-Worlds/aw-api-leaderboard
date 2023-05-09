@@ -1,4 +1,3 @@
-import { LeaderboardApiConfig } from './config.types';
 import {
   ConfigVars,
   MongoConfig,
@@ -6,6 +5,7 @@ import {
   buildMongoConfig,
   buildRedisConfig,
 } from '@alien-worlds/api-core';
+import { LeaderboardApiConfig, NewRelicConfig } from './config.types';
 
 import { AtomicAssetsConfig } from '@alien-worlds/alienworlds-api-common';
 
@@ -33,6 +33,12 @@ export const buildConfig = (): LeaderboardApiConfig => {
   const updateBatchSize = 1;
   const tlmDecimalPrecision = vars.getNumberEnv('TLM_DECIMAL_PRECISION') || 4;
 
+  const newRelic: NewRelicConfig = {
+    newRelicEnabled: vars.getBooleanEnv('NEW_RELIC_ENABLED'),
+    appName: vars.getStringEnv('NEW_RELIC_APP_NAME') || `${process.env.npm_package_name}`,
+    licenseKey: vars.getStringEnv('NEW_RELIC_LICENSE_KEY'),
+  };
+
   return {
     port,
     secretKey,
@@ -46,5 +52,6 @@ export const buildConfig = (): LeaderboardApiConfig => {
     weeklyArchiveCronTime,
     monthlyArchiveCronTime,
     tlmDecimalPrecision,
+    newRelic,
   };
 };

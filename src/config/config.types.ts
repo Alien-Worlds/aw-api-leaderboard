@@ -12,4 +12,11 @@ export type LeaderboardApiConfig = LeaderboardConfig & {
   dailyArchiveCronTime?: string;
   weeklyArchiveCronTime?: string;
   monthlyArchiveCronTime?: string;
+  newRelic?: NewRelicConfig;
+};
+
+export type NewRelicConfig = {
+  newRelicEnabled: boolean;
+  appName: string;
+  licenseKey: string;
 };
