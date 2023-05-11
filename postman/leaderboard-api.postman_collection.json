@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "5fcba9c2-a34d-4430-bcd7-d541f62a0dbe",
+		"_postman_id": "49a1004c-fe31-470e-9104-872c136aeffb",
 		"name": "leaderboard-api",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "2870003"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -1307,6 +1306,89 @@
 					"path": [
 						"{{api_version}}",
 						"leaderboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard",
+						"health"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "healthy status response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"health"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": null,
+					"cookie": [],
+					"body": "{\n    \"status\": \"OK\",\n    \"version\": \"0.0.1\",\n    \"timestamp\": 1683807457996,\n    \"uptimeSeconds\": 149,\n    \"nodeVersion\": \"v17.4.0\",\n    \"dependencies\": {\n        \"@alien-worlds/api-core\": \"^0.0.101\",\n        \"@alien-worlds/dao-api-common\": \"^0.0.82\"\n    },\n    \"databases\": {\n        \"mongo\": \"OK\",\n        \"redis\": \"OK\"\n    }\n}"
+				},
+				{
+					"name": "unavailable database response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"health"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": null,
+					"cookie": [],
+					"body": "{\n    \"status\": \"OK\",\n    \"version\": \"0.0.1\",\n    \"timestamp\": 1683807457996,\n    \"uptimeSeconds\": 149,\n    \"nodeVersion\": \"v17.4.0\",\n    \"dependencies\": {\n        \"@alien-worlds/api-core\": \"^0.0.101\",\n        \"@alien-worlds/dao-api-common\": \"^0.0.82\"\n    },\n    \"databases\": {\n        \"mongo\": \"OK\",\n        \"redis\": \"OK\"\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "/docs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard/docs",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard",
+						"docs"
 					]
 				}
 			},

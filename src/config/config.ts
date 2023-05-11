@@ -8,8 +8,9 @@ import {
 import { LeaderboardApiConfig, NewRelicConfig } from './config.types';
 
 import { AtomicAssetsConfig } from '@alien-worlds/alienworlds-api-common';
+import { readFileSync } from 'fs';
 
-export const buildConfig = (): LeaderboardApiConfig => {
+export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
   const vars = new ConfigVars();
   const port = vars.getNumberEnv('LEADERBOARD_API_PORT');
   const secretKey = vars.getStringEnv('LEADERBOARD_API_TOKEN_SECRET_KEY');
@@ -39,7 +40,20 @@ export const buildConfig = (): LeaderboardApiConfig => {
     licenseKey: vars.getStringEnv('NEW_RELIC_LICENSE_KEY'),
   };
 
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+  const leaderboardMajor = Number(packageJson.version.split('.')[0]);
+  const leaderboardUrlVersion = leaderboardMajor < 2 ? `v1` : `v${leaderboardMajor}`;
+
+  const versions = {
+    leaderboard: packageJson.version,
+    leaderboardUrlVersion,
+    apiCore: packageJson.dependencies['@alien-worlds/api-core'],
+    alienworldsApiCommon:
+      packageJson.dependencies['@alien-worlds/alienworlds-api-common'],
+  };
+
   return {
+    versions,
     port,
     secretKey,
     expirationTime,

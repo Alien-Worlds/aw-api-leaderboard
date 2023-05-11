@@ -3,7 +3,15 @@ import {
   LeaderboardConfig,
 } from '@alien-worlds/alienworlds-api-common';
 
+export type Versions = {
+  leaderboard: string;
+  leaderboardUrlVersion: string;
+  apiCore: string;
+  alienworldsApiCommon: string;
+};
+
 export type LeaderboardApiConfig = LeaderboardConfig & {
+  versions: Versions;
   port: number;
   atomicassets: AtomicAssetsConfig;
   tlmDecimalPrecision?: number;

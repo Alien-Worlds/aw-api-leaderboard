@@ -92,6 +92,20 @@ Find leaderboard data for a specific user.
 - `toDate`
   - Fixed timeframe end value in ISO 8601 format e.g. `2023-02-12T00:00:00.000Z`.
   - If `date` is also specified, then `toDate` will override it
+
+### Health
+
+HTTP Method: `GET`
+Endpoint: `/v1/leaderboard/health`
+
+Displays the current state of the api.
+### Docs
+
+HTTP Method: `GET`
+Endpoint: `/v1/leaderboard/docs`
+
+Swagger API Documentation
+
 ## Local development environment
 
 #### Prerequisites
@@ -164,3 +178,14 @@ The respective environment files for *local*, *dev*, *stage* and *prod* are also
 ```
 .postman/environments/leaderboard-local.postman_environment.json
 ```
+## Generate Swagger Document
+
+Swagger document is automatically generated based on Postman API collection using [postman-to-openapi](https://joolfe.github.io/postman-to-openapi) library.
+
+After update in Postman collection _[(leaderboard-api.postman_collection.json)](https://github.com/Alien-Worlds/leaderboard-api/blob/develop/postman/leaderboard-api.postman_collection.json)_, run the following command to update the Swagger document.
+
+```
+yarn docs:generate
+```
+
+Latest swagger document can be found at _[./docs/leaderboard-api-oas.yaml](https://github.com/Alien-Worlds/leaderboard-api/blob/develop/docs/leaderboard-api-oas.yaml)_.

@@ -5,9 +5,10 @@ import { LeaderboardApi } from './api';
 import { setupDependencies } from './endpoints';
 import { mountRoutes } from './routes';
 import { buildConfig } from './config';
+import { join } from 'path';
 
 export const start = async () => {
-  const config = buildConfig();
+  const config = buildConfig(join(__dirname, '../package.json'));
   const container = new Container();
 
   await setupDependencies(config, container);

@@ -12,11 +12,9 @@ import {
   GetAtomicAssetsUseCase,
   UpdateLeaderboardUseCase,
 } from '@alien-worlds/alienworlds-api-common';
-import { buildConfig } from '../../../config';
+import { LeaderboardApiConfig } from '../../../config';
 
 /*imports*/
-
-const config = buildConfig();
 
 /**
  * @class
@@ -34,16 +32,19 @@ export class LeaderboardController {
     @inject(FindUserInLeaderboardUseCase.Token)
     private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase,
     @inject(GetAtomicAssetsUseCase.Token)
-    private getAtomicAssetsUseCase: GetAtomicAssetsUseCase
+    private getAtomicAssetsUseCase: GetAtomicAssetsUseCase,
+    @inject('CONFIG')
+    private config: LeaderboardApiConfig
   ) {}
 
   /*methods*/
 
   /**
    *
-   * @returns {Promise<Result<Leaderboard[], Error>>}
+   * @returns {Promise<ListLeaderboardOutput>}
    */
   public async list(input: ListLeaderboardInput): Promise<ListLeaderboardOutput> {
+    const { config } = this;
     const listResult = await this.listLeaderboardUseCase.execute(input);
     const countResult = await this.countLeaderboardUseCase.execute(input);
 
@@ -57,13 +58,13 @@ export class LeaderboardController {
   }
   /**
    *
-   * @returns {Promise<Result<Leaderboard, Error>>}
+   * @returns {Promise<FindUserInLeaderboardOutput>}
    */
   public async findUser(
     input: FindUserInLeaderboardInput
   ): Promise<FindUserInLeaderboardOutput> {
+    const { config } = this;
     const result = await this.findUserInLeaderboardUseCase.execute(input);
-
     return FindUserInLeaderboardOutput.create(
       result,
       input.sort,
@@ -72,7 +73,7 @@ export class LeaderboardController {
   }
   /**
    *
-   * @returns {Promise<Result<UpdateStatus.Success | UpdateStatus.Failure, Error>>}
+   * @returns {Promise<UpdateLeaderboardOutput>}
    */
   public async update(input: UpdateLeaderboardInput): Promise<UpdateLeaderboardOutput> {
     const { items: updates } = input;

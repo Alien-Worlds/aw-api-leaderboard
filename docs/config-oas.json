@@ -1,0 +1,21 @@
+{
+    "responseHeaders": false,
+    "disabledParams": {
+        "includeQuery": true
+    },
+    "pathDepth": 2,
+    "servers": [
+        {
+            "description": "Test server",
+            "url": "https://leaderboard-api-test.alienworlds.io/v1/leaderboard"
+        },
+        {
+            "description": "Production leaderboard API server",
+            "url": "https://leaderboard-api.alienworlds.io/v1/leaderboard"
+        },
+        {
+            "description": "Producton API server",
+            "url": "https://api.alienworlds.io/v1/leaderboard"
+        }
+    ]
+}

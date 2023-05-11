@@ -7,10 +7,11 @@ import { setupDependencies } from '../endpoints';
 import { archiveDailyLeaderboard } from './archive-daily-leaderboard';
 import { archiveWeeklyLeaderboard } from './archive-weekly-leaderboard';
 import { archiveMonthlyLeaderboard } from './archive-monthly-leaderboard';
+import { join } from 'path';
 
 export const start = async () => {
   log(`Leaderboard API Cron jobs:`);
-  const config = buildConfig();
+  const config = buildConfig(join(__dirname, '../../package.json'));
   const { dailyArchiveCronTime, weeklyArchiveCronTime, monthlyArchiveCronTime } = config;
   const container = new Container();
 

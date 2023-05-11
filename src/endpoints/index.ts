@@ -1,4 +1,4 @@
-export * from './leaderboard/ioc.config';
+export * from './ioc.config';
 export * from './leaderboard/domain/leaderboard.controller';
 export * from './leaderboard/routes/find-user-in-leaderboard.route';
 export * from './leaderboard/routes/list-leaderboard.route';
