@@ -16,6 +16,10 @@
         {
             "description": "Producton API server",
             "url": "https://api.alienworlds.io/v1/leaderboard"
+        },
+        {
+            "description": "Local API server",
+            "url": "http://localhost:8800/v1/leaderboard"
         }
     ]
 }

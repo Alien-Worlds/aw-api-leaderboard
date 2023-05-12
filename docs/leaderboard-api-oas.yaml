@@ -9,6 +9,9 @@ servers:
     description: Production leaderboard API server
   - url: https://api.alienworlds.io/v1/leaderboard
     description: Producton API server
+  - url: http://localhost:8800/v1/leaderboard
+    description: Local API server
+
 paths:
   /list:
     get:
@@ -420,7 +423,7 @@ paths:
         - default
       summary: /health
       responses:
-        undefined:
+        '200':
           content:
             application/json:
               schema:

@@ -25,9 +25,8 @@ export class LeaderboardApi {
       'utf8'
     );
     const swaggerDocument = YAML.parse(file);
-    swaggerDocument.basePath = `${config.versions.leaderboardUrlVersion}/leaderboard/`;
     this.app.use(
-      `${config.versions.leaderboardUrlVersion}/leaderboard/docs`,
+      `/${config.versions.leaderboardUrlVersion}/leaderboard/docs`,
       swaggerUi.serve,
       swaggerUi.setup(swaggerDocument)
     );
