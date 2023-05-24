@@ -1,17 +1,14 @@
 import 'reflect-metadata';
 
-import cron from 'cron';
 import { Container } from '@alien-worlds/api-core';
 import { LeaderboardApi } from './api';
-import { setupDependencies } from './endpoints/leaderboard';
+import { setupDependencies } from './endpoints';
 import { mountRoutes } from './routes';
 import { buildConfig } from './config';
-import { LeaderboardBroadcast } from './broadcast';
-import { checkAndUpdateLeaderboard } from './cron';
+import { join } from 'path';
 
 export const start = async () => {
-  const config = buildConfig();
-  const { updatesBatchSize, cronTime } = config;
+  const config = buildConfig(join(__dirname, '../package.json'));
   const container = new Container();
 
   await setupDependencies(config, container);
@@ -22,23 +19,6 @@ export const start = async () => {
   const api = new LeaderboardApi(config);
   mountRoutes(api, container);
   api.start();
-
-  /*
-   * SOCKET CLIENT
-   */
-  const broadcast = new LeaderboardBroadcast(config, container);
-  broadcast.start();
-
-  /*
-   * CRON
-   */
-  if (updatesBatchSize && cronTime) {
-    const leaderboardCronJob = new cron.CronJob(cronTime, () =>
-      checkAndUpdateLeaderboard(container)
-    );
-
-    leaderboardCronJob.start();
-  }
 };
 
 start();

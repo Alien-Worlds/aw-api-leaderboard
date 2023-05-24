@@ -1,20 +1,20 @@
 import { ListLeaderboardOutput } from './models/list-leaderboard.output';
 import { inject, injectable, Result, UpdateStatus } from '@alien-worlds/api-core';
-import { buildConfig } from '../../../config';
 import { FindUserInLeaderboardInput } from './models/find-user-in-leaderboard.input';
 import { ListLeaderboardInput } from './models/list-leaderboard.input';
 import { UpdateLeaderboardInput } from './models/update-leaderboard.input';
-import { CacheOrSendLeaderboardUseCase } from './use-cases/cache-or-send-leaderboard.use-case';
 import { FindUserInLeaderboardUseCase } from './use-cases/find-user-in-leaderboard.use-case';
 import { ListLeaderboardUseCase } from './use-cases/list-leaderboard.use-case';
-import { UpdateLeaderboardUseCase } from './use-cases/update-leaderboard.use-case';
 import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case';
 import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
 import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
+import {
+  GetAtomicAssetsUseCase,
+  UpdateLeaderboardUseCase,
+} from '@alien-worlds/alienworlds-api-common';
+import { LeaderboardApiConfig } from '../../../config';
 
 /*imports*/
-
-const config = buildConfig();
 
 /**
  * @class
@@ -31,46 +31,74 @@ export class LeaderboardController {
     private updateLeaderboardUseCase: UpdateLeaderboardUseCase,
     @inject(FindUserInLeaderboardUseCase.Token)
     private findUserInLeaderboardUseCase: FindUserInLeaderboardUseCase,
-    @inject(CacheOrSendLeaderboardUseCase.Token)
-    private cacheOrSendLeaderboardUseCase: CacheOrSendLeaderboardUseCase
+    @inject(GetAtomicAssetsUseCase.Token)
+    private getAtomicAssetsUseCase: GetAtomicAssetsUseCase,
+    @inject('CONFIG')
+    private config: LeaderboardApiConfig
   ) {}
 
   /*methods*/
 
   /**
    *
-   * @returns {Promise<Result<Leaderboard[], Error>>}
+   * @returns {Promise<ListLeaderboardOutput>}
    */
   public async list(input: ListLeaderboardInput): Promise<ListLeaderboardOutput> {
+    const { config } = this;
     const listResult = await this.listLeaderboardUseCase.execute(input);
     const countResult = await this.countLeaderboardUseCase.execute(input);
 
-    return ListLeaderboardOutput.create(listResult, countResult);
+    return ListLeaderboardOutput.create(
+      listResult,
+      countResult,
+      input.sort,
+      input.order,
+      config.tlmDecimalPrecision
+    );
   }
   /**
    *
-   * @returns {Promise<Result<Leaderboard, Error>>}
+   * @returns {Promise<FindUserInLeaderboardOutput>}
    */
   public async findUser(
     input: FindUserInLeaderboardInput
   ): Promise<FindUserInLeaderboardOutput> {
+    const { config } = this;
     const result = await this.findUserInLeaderboardUseCase.execute(input);
-
-    return FindUserInLeaderboardOutput.create(result);
+    return FindUserInLeaderboardOutput.create(
+      result,
+      input.sort,
+      config.tlmDecimalPrecision
+    );
   }
   /**
    *
-   * @returns {Promise<Result<UpdateStatus.Success | UpdateStatus.Failure, Error>>}
+   * @returns {Promise<UpdateLeaderboardOutput>}
    */
   public async update(input: UpdateLeaderboardInput): Promise<UpdateLeaderboardOutput> {
-    const { items } = input;
-    let result: Result<UpdateStatus.Success | UpdateStatus.Failure>;
+    const { items: updates } = input;
 
-    if (config.updatesBatchSize) {
-      result = await this.cacheOrSendLeaderboardUseCase.execute(items);
+    if (updates.length === 0) {
+      return UpdateLeaderboardOutput.create(Result.withContent(UpdateStatus.Failure));
     }
 
-    result = await this.updateLeaderboardUseCase.execute(items);
+    const assetIds = updates.reduce((list, update) => {
+      if (update.bagItems) {
+        list.push(...update.bagItems);
+      }
+      return list;
+    }, []);
+
+    const assetsResult = await this.getAtomicAssetsUseCase.execute(assetIds, 10);
+
+    if (assetsResult.isFailure) {
+      return UpdateLeaderboardOutput.create(Result.withFailure(assetsResult.failure));
+    }
+
+    const result = await this.updateLeaderboardUseCase.execute(
+      updates,
+      assetsResult.content
+    );
 
     return UpdateLeaderboardOutput.create(result);
   }

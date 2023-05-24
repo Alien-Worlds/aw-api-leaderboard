@@ -1,18 +1,26 @@
 import { log, Result } from '@alien-worlds/api-core';
 
-import { Leaderboard } from '../entities/leaderboard';
+import { parseLeaderboardToResult } from '../leaderboard.utils';
+import { Leaderboard } from '@alien-worlds/alienworlds-api-common';
 import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
-import { parseLeaderboardToResult } from './query-model.utils';
 
 export class FindUserInLeaderboardOutput {
-  public static create(result: Result<Leaderboard>): FindUserInLeaderboardOutput {
-    return new FindUserInLeaderboardOutput(result);
+  public static create(
+    result: Result<Leaderboard>,
+    sort: string,
+    tlmDecimalPrecision: number
+  ): FindUserInLeaderboardOutput {
+    return new FindUserInLeaderboardOutput(result, sort, tlmDecimalPrecision);
   }
 
-  private constructor(public readonly result: Result<Leaderboard>) {}
+  private constructor(
+    public readonly result: Result<Leaderboard>,
+    private readonly sort: string,
+    private readonly tlmDecimalPrecision: number
+  ) {}
 
   public toResponse() {
-    const { result } = this;
+    const { result, sort, tlmDecimalPrecision } = this;
 
     if (result.isFailure) {
       const {
@@ -37,7 +45,7 @@ export class FindUserInLeaderboardOutput {
       };
     }
 
-    const results = [parseLeaderboardToResult(result.content)];
+    const results = [parseLeaderboardToResult(result.content, sort, tlmDecimalPrecision)];
 
     return {
       status: 200,

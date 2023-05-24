@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
-import { LeaderboardUpdateStruct } from '@alien-worlds/alienworlds-api-common';
+import { LeaderboardUpdateJson } from '@alien-worlds/alienworlds-api-common';
 import { PostRoute, RouteHandler, Request } from '@alien-worlds/api-core';
 import { UpdateLeaderboardInput } from '../domain/models/update-leaderboard.input';
 import { UpdateLeaderboardOutput } from '../domain/models/update-leaderboard.output';
-import { buildConfig } from '../../../config';
+import { LeaderboardApiConfig } from '../../../config';
 
 /*imports*/
 
@@ -11,34 +11,30 @@ import { buildConfig } from '../../../config';
  * @class
  */
 export class UpdateLeaderboardRoute extends PostRoute {
-  public static create(handler: RouteHandler) {
-    return new UpdateLeaderboardRoute(handler);
+  public static create(handler: RouteHandler, config: LeaderboardApiConfig) {
+    return new UpdateLeaderboardRoute(handler, config);
   }
 
-  private constructor(handler: RouteHandler) {
-    super('/v1/leaderboard', handler, {
+  private constructor(handler: RouteHandler, config: LeaderboardApiConfig) {
+    super(`/${config.versions.leaderboardUrlVersion}/leaderboard`, handler, {
       authorization: request => {
-        const config = buildConfig();
-
-        if (!config.api.secretKey) {
+        if (!config.secretKey) {
           return true;
         }
 
-        if (config.api.secretKey && !request.headers['authorization']) {
+        if (config.secretKey && !request.headers['authorization']) {
           return false;
         }
 
         const token = request.headers['authorization'].split(' ')[1];
-        const decodedToken = jwt.verify(token, config.api.secretKey, {
-          maxAge: config.api.expirationTime,
+        const decodedToken = jwt.verify(token, config.secretKey, {
+          maxAge: config.expirationTime,
         });
 
         return !!decodedToken;
       },
       validators: {
-        request: (
-          request: Request<LeaderboardUpdateStruct | LeaderboardUpdateStruct[]>
-        ) => {
+        request: (request: Request<LeaderboardUpdateJson | LeaderboardUpdateJson[]>) => {
           let valid = true;
           if (Array.isArray(request?.body)) {
             request?.body.forEach(item => {

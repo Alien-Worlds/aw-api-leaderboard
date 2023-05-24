@@ -1,10 +1,12 @@
 import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
-import { Leaderboard } from '../entities/leaderboard';
-import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { ListLeaderboardInput } from '../models/list-leaderboard.input';
-import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
-import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
-import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
+import {
+  DailyLeaderboardRepository,
+  Leaderboard,
+  LeaderboardTimeframe,
+  MonthlyLeaderboardRepository,
+  WeeklyLeaderboardRepository,
+} from '@alien-worlds/alienworlds-api-common';
 
 /*imports*/
 /**
@@ -15,12 +17,12 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
   public static Token = 'LIST_LEADERBOARD_USE_CASE';
 
   constructor(
-    @inject(MiningDailyLeaderboardRepository.Token)
-    private dailyLeaderboardRepository: MiningDailyLeaderboardRepository,
-    @inject(MiningWeeklyLeaderboardRepository.Token)
-    private weeklyLeaderboardRepository: MiningWeeklyLeaderboardRepository,
-    @inject(MiningMonthlyLeaderboardRepository.Token)
-    private monthlyLeaderboardRepository: MiningMonthlyLeaderboardRepository
+    @inject(DailyLeaderboardRepository.Token)
+    private dailyLeaderboardRepository: DailyLeaderboardRepository,
+    @inject(WeeklyLeaderboardRepository.Token)
+    private weeklyLeaderboardRepository: WeeklyLeaderboardRepository,
+    @inject(MonthlyLeaderboardRepository.Token)
+    private monthlyLeaderboardRepository: MonthlyLeaderboardRepository
   ) {}
 
   /**
@@ -31,7 +33,7 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
     //
     const { timeframe, sort, fromDate, toDate, offset, limit, order } = input;
 
-    if (timeframe === MiningLeaderboardTimeframe.Daily) {
+    if (timeframe === LeaderboardTimeframe.Daily) {
       return this.dailyLeaderboardRepository.list(
         sort,
         offset,
@@ -42,7 +44,7 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
       );
     }
 
-    if (timeframe === MiningLeaderboardTimeframe.Weekly) {
+    if (timeframe === LeaderboardTimeframe.Weekly) {
       return this.weeklyLeaderboardRepository.list(
         sort,
         offset,
@@ -53,7 +55,7 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
       );
     }
 
-    if (timeframe === MiningLeaderboardTimeframe.Monthly) {
+    if (timeframe === LeaderboardTimeframe.Monthly) {
       return this.monthlyLeaderboardRepository.list(
         sort,
         offset,
