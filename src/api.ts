@@ -1,14 +1,35 @@
 import { log } from '@alien-worlds/api-core';
 import bodyParser from 'body-parser';
 import express, { Express } from 'express';
+import cors from 'cors';
+import YAML from 'yaml';
+import swaggerUi from 'swagger-ui-express';
 import { LeaderboardApiConfig } from './config/config.types';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export class LeaderboardApi {
   private app: Express;
 
   constructor(private config: LeaderboardApiConfig) {
     this.app = express();
+    this.app.use(
+      cors({
+        origin: '*',
+      })
+    );
     this.app.use(bodyParser.json());
+
+    const file = readFileSync(
+      join(__dirname, '../docs/leaderboard-api-oas.yaml'),
+      'utf8'
+    );
+    const swaggerDocument = YAML.parse(file);
+    this.app.use(
+      `/${config.versions.leaderboardUrlVersion}/leaderboard/docs`,
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument)
+    );
   }
 
   public async start() {

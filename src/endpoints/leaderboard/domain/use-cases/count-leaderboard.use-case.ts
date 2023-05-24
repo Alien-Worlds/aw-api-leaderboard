@@ -2,7 +2,6 @@ import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-
 import { ListLeaderboardInput } from '../models/list-leaderboard.input';
 import {
   DailyLeaderboardRepository,
-  Leaderboard,
   LeaderboardTimeframe,
   MonthlyLeaderboardRepository,
   WeeklyLeaderboardRepository,
@@ -13,8 +12,8 @@ import {
  * @class
  */
 @injectable()
-export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
-  public static Token = 'LIST_LEADERBOARD_USE_CASE';
+export class CountLeaderboardUseCase implements UseCase<number> {
+  public static Token = 'COUNT_LEADERBOARD_USE_CASE';
 
   constructor(
     @inject(DailyLeaderboardRepository.Token)
@@ -27,43 +26,21 @@ export class ListLeaderboardUseCase implements UseCase<Leaderboard[]> {
 
   /**
    * @async
-   * @returns {Promise<Result<Leaderboard[]>>}
+   * @returns {Promise<Result<number>>}
    */
-  public async execute(input: ListLeaderboardInput): Promise<Result<Leaderboard[]>> {
-    //
-    const { timeframe, sort, fromDate, toDate, offset, limit, order } = input;
+  public async execute(input: ListLeaderboardInput): Promise<Result<number>> {
+    const { timeframe, fromDate, toDate } = input;
 
     if (timeframe === LeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.list(
-        sort,
-        offset,
-        limit,
-        order,
-        fromDate,
-        toDate
-      );
+      return this.dailyLeaderboardRepository.count(fromDate, toDate);
     }
 
     if (timeframe === LeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.list(
-        sort,
-        offset,
-        limit,
-        order,
-        fromDate,
-        toDate
-      );
+      return this.weeklyLeaderboardRepository.count(fromDate, toDate);
     }
 
     if (timeframe === LeaderboardTimeframe.Monthly) {
-      return this.monthlyLeaderboardRepository.list(
-        sort,
-        offset,
-        limit,
-        order,
-        fromDate,
-        toDate
-      );
+      return this.monthlyLeaderboardRepository.count(fromDate, toDate);
     }
 
     return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));

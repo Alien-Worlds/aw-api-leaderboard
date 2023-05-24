@@ -1,10 +1,7 @@
 import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
-import { Leaderboard } from '../entities/leaderboard';
-import { MiningLeaderboardTimeframe } from '../mining-leaderboard.enums';
 import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.input';
-import { MiningDailyLeaderboardRepository } from '../repositories/mining-daily-leaderboard.repository';
-import { MiningMonthlyLeaderboardRepository } from '../repositories/mining-monthly-leaderboard.repository';
-import { MiningWeeklyLeaderboardRepository } from '../repositories/mining-weekly-leaderboard.repository';
+import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
+import { DailyLeaderboardRepository, Leaderboard, LeaderboardTimeframe, MonthlyLeaderboardRepository, WeeklyLeaderboardRepository } from '@alien-worlds/alienworlds-api-common';
 
 /*imports*/
 /**
@@ -15,49 +12,55 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
   public static Token = 'FIND_USER_IN_LEADERBOARD_USE_CASE';
 
   constructor(
-    @inject(MiningDailyLeaderboardRepository.Token)
-    private dailyLeaderboardRepository: MiningDailyLeaderboardRepository,
-    @inject(MiningWeeklyLeaderboardRepository.Token)
-    private weeklyLeaderboardRepository: MiningWeeklyLeaderboardRepository,
-    @inject(MiningMonthlyLeaderboardRepository.Token)
-    private monthlyLeaderboardRepository: MiningMonthlyLeaderboardRepository
-  ) {}
+    @inject(DailyLeaderboardRepository.Token)
+    private dailyLeaderboardRepository: DailyLeaderboardRepository,
+    @inject(WeeklyLeaderboardRepository.Token)
+    private weeklyLeaderboardRepository: WeeklyLeaderboardRepository,
+    @inject(MonthlyLeaderboardRepository.Token)
+    private monthlyLeaderboardRepository: MonthlyLeaderboardRepository
+  ) { }
 
   /**
    * @async
    * @returns {Promise<Result<Leaderboard>>}
    */
   public async execute(input: FindUserInLeaderboardInput): Promise<Result<Leaderboard>> {
-    const { username, walletId, fromDate, toDate, timeframe } = input;
-
-    if (timeframe === MiningLeaderboardTimeframe.Daily) {
-      return this.dailyLeaderboardRepository.findUser(
-        username,
-        walletId,
+    const { user, fromDate, toDate, timeframe } = input;
+    let usersSearch: Result<Leaderboard[]>;
+    if (timeframe === LeaderboardTimeframe.Daily) {
+      usersSearch = await this.dailyLeaderboardRepository.findUsers(
+        [user],
+        true,
         fromDate,
         toDate
       );
-    }
-
-    if (timeframe === MiningLeaderboardTimeframe.Weekly) {
-      return this.weeklyLeaderboardRepository.findUser(
-        username,
-        walletId,
+    } else if (timeframe === LeaderboardTimeframe.Weekly) {
+      usersSearch = await this.weeklyLeaderboardRepository.findUsers(
+        [user],
+        true,
         fromDate,
         toDate
       );
-    }
-
-    if (timeframe === MiningLeaderboardTimeframe.Monthly) {
-      return this.monthlyLeaderboardRepository.findUser(
-        username,
-        walletId,
+    } else if (timeframe === LeaderboardTimeframe.Monthly) {
+      usersSearch = await this.monthlyLeaderboardRepository.findUsers(
+        [user],
+        true,
         fromDate,
         toDate
       );
+    } else {
+      return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));
     }
 
-    return Result.withFailure(Failure.withMessage(`Unhandled timeframe ${timeframe}`));
+    if (usersSearch.isFailure) {
+      return Result.withFailure(usersSearch.failure);
+    }
+
+    if (!usersSearch.content.length) {
+      return Result.withFailure(Failure.fromError(new UserLeaderboardNotFoundError(user)));
+    }
+
+    return Result.withContent(usersSearch.content[0]);
   }
 
   /*methods*/

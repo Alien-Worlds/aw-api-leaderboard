@@ -1,0 +1,1425 @@
+{
+	"info": {
+		"_postman_id": "49a1004c-fe31-470e-9104-872c136aeffb",
+		"name": "leaderboard-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard/list?timeframe=daily&sort=tlm_gains_total&order=1&offset=0&limit=3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard",
+						"list"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2023-04-27T00:00:00.000Z",
+							"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+							"disabled": true
+						},
+						{
+							"key": "fromDate",
+							"value": "2022-04-25T00:00:00.000Z",
+							"description": "(optional) Fixed timeframe start value.",
+							"disabled": true
+						},
+						{
+							"key": "toDate",
+							"value": "2023-04-26T23:59:59.999Z",
+							"description": "(optional) Fixed timeframe end value.",
+							"disabled": true
+						},
+						{
+							"key": "timeframe",
+							"value": "daily",
+							"description": "timeframe (daily / weekly / monthly)"
+						},
+						{
+							"key": "sort",
+							"value": "tlm_gains_total",
+							"description": "Possible values (tlm_gains_total, total_nft_points, avg_charge_time, avg_mining_power, avg_nft_power, lands_mined_on, planets_mined_on, unique_tools_used)"
+						},
+						{
+							"key": "order",
+							"value": "1",
+							"description": "Desc = -1, Asc = 1"
+						},
+						{
+							"key": "offset",
+							"value": "0",
+							"description": "Number of items to skip before starting to return result set"
+						},
+						{
+							"key": "limit",
+							"value": "3",
+							"description": "Number of result items to return"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "daily leaderboard",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/list?timeframe=daily&sort=tlm_gains_total&order=-1&offset=0&limit=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"list"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2023-03-06T22:07:26.480Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2022-04-17T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-04-17T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								},
+								{
+									"key": "timeframe",
+									"value": "daily",
+									"description": "daily / weekly / monthly"
+								},
+								{
+									"key": "sort",
+									"value": "tlm_gains_total",
+									"description": "Possible values (tlm_gains_total, total_nft_points, avg_charge_time, avg_mining_power, avg_nft_power, lands_mined_on, planets_mined_on, unique_tools_used)"
+								},
+								{
+									"key": "order",
+									"value": "-1",
+									"description": "Desc = -1, Asc = 1"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Number of items to skip before starting to return result set"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "Number of result items to return"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 13:59:41 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be79661addb5902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"421-uKmiHqDn+lO+TRFDnl6HckwU4eU\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \"eamom.c.wam\",\n            \"username\": \"mkdkzD\",\n            \"tlm_gains_total\": 630.9882,\n            \"tlm_gains_highest\": 7.9861,\n            \"total_nft_points\": 4480,\n            \"total_charge_time\": 34500,\n            \"avg_charge_time\": 34500,\n            \"total_mining_power\": 5750,\n            \"avg_mining_power\": 5750,\n            \"total_nft_power\": 690,\n            \"avg_nft_power\": 690,\n            \"lands_mined_on\": 6,\n            \"planets_mined_on\": 6,\n            \"unique_tools_used\": 0,\n            \"position\": 1\n        },\n        {\n            \"wallet_id\": \"eimom.c.wam\",\n            \"username\": \"kEpQDi\",\n            \"tlm_gains_total\": 593.6424,\n            \"tlm_gains_highest\": 6.9157,\n            \"total_nft_points\": 4520,\n            \"total_charge_time\": 35100,\n            \"avg_charge_time\": 35100,\n            \"total_mining_power\": 5850,\n            \"avg_mining_power\": 5850,\n            \"total_nft_power\": 702,\n            \"avg_nft_power\": 702,\n            \"lands_mined_on\": 6,\n            \"planets_mined_on\": 6,\n            \"unique_tools_used\": 0,\n            \"position\": 2\n        },\n        {\n            \"wallet_id\": \"dumom.c.wam\",\n            \"username\": \"ktdfyp\",\n            \"tlm_gains_total\": 593.2855,\n            \"tlm_gains_highest\": 7.3974,\n            \"total_nft_points\": 4560,\n            \"total_charge_time\": 33900,\n            \"avg_charge_time\": 33900,\n            \"total_mining_power\": 5650,\n            \"avg_mining_power\": 5650,\n            \"total_nft_power\": 678,\n            \"avg_nft_power\": 678,\n            \"lands_mined_on\": 6,\n            \"planets_mined_on\": 6,\n            \"unique_tools_used\": 0,\n            \"position\": 3\n        }\n    ],\n    \"total\": 234375\n}"
+				},
+				{
+					"name": "ascending order",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/list?timeframe=daily&sort=tlm_gains_total&order=1&offset=0&limit=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"list"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2023-03-06T22:07:26.480Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2022-04-17T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-04-17T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								},
+								{
+									"key": "timeframe",
+									"value": "daily",
+									"description": "daily / weekly / monthly"
+								},
+								{
+									"key": "sort",
+									"value": "tlm_gains_total",
+									"description": "Possible values (tlm_gains_total, total_nft_points, avg_charge_time, avg_mining_power, avg_nft_power, lands_mined_on, planets_mined_on, unique_tools_used)"
+								},
+								{
+									"key": "order",
+									"value": "1",
+									"description": "Desc = -1, Asc = 1"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Number of items to skip before starting to return result set"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "Number of result items to return"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:01:21 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be798d30ed75902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"393-wVLJl4Kl3FLA2nloKK9d9qnLm14\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \".cs2q.c.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 88,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": 234455\n        },\n        {\n            \"wallet_id\": \".ggr.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 532,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": 234454\n        },\n        {\n            \"wallet_id\": \".grog.c.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 138,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": 234453\n        }\n    ],\n    \"total\": 234455\n}"
+				},
+				{
+					"name": "by date",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/list?date=2023-04-27T00:00:00.000Z&timeframe=daily&sort=tlm_gains_total&order=1&offset=0&limit=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"list"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2023-04-27T00:00:00.000Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated"
+								},
+								{
+									"key": "fromDate",
+									"value": "2022-04-17T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-04-17T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								},
+								{
+									"key": "timeframe",
+									"value": "daily",
+									"description": "daily / weekly / monthly"
+								},
+								{
+									"key": "sort",
+									"value": "tlm_gains_total",
+									"description": "Possible values (tlm_gains_total, total_nft_points, avg_charge_time, avg_mining_power, avg_nft_power, lands_mined_on, planets_mined_on, unique_tools_used)"
+								},
+								{
+									"key": "order",
+									"value": "1",
+									"description": "Desc = -1, Asc = 1"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Number of items to skip before starting to return result set"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "Number of result items to return"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:02:42 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be79ad04a325902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"393-OKxxCgwij30GtIHQtZ5nqkNo1aQ\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \".cs2q.c.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 88,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": 234475\n        },\n        {\n            \"wallet_id\": \".ggr.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 532,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": 234474\n        },\n        {\n            \"wallet_id\": \".grog.c.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 138,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": 234473\n        }\n    ],\n    \"total\": 234475\n}"
+				},
+				{
+					"name": "fromDate - toDate",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/list?timeframe=daily&sort=tlm_gains_total&order=1&offset=0&limit=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"list"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2023-04-27T00:00:00.000Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2022-04-25T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-04-26T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								},
+								{
+									"key": "timeframe",
+									"value": "daily",
+									"description": "daily / weekly / monthly"
+								},
+								{
+									"key": "sort",
+									"value": "tlm_gains_total",
+									"description": "Possible values (tlm_gains_total, total_nft_points, avg_charge_time, avg_mining_power, avg_nft_power, lands_mined_on, planets_mined_on, unique_tools_used)"
+								},
+								{
+									"key": "order",
+									"value": "1",
+									"description": "Desc = -1, Asc = 1"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Number of items to skip before starting to return result set"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "Number of result items to return"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:04:44 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be79dcb19075902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"389-fJ8DO9PyzWB5cOjHkXNfxh8Ys/s\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \"nujrc.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 2970,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": -1\n        },\n        {\n            \"wallet_id\": \"v.x3q.c.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 2160,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": -1\n        },\n        {\n            \"wallet_id\": \"vttvs.wam\",\n            \"tlm_gains_total\": 0,\n            \"tlm_gains_highest\": 0,\n            \"total_nft_points\": 1500,\n            \"total_charge_time\": 0,\n            \"avg_charge_time\": 0,\n            \"total_mining_power\": 0,\n            \"avg_mining_power\": 0,\n            \"total_nft_power\": 0,\n            \"avg_nft_power\": 0,\n            \"lands_mined_on\": 0,\n            \"planets_mined_on\": 0,\n            \"unique_tools_used\": 0,\n            \"position\": -1\n        }\n    ],\n    \"total\": 21150\n}"
+				}
+			]
+		},
+		{
+			"name": "/find",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard/find?user=uzv4m.c.wam",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard",
+						"find"
+					],
+					"query": [
+						{
+							"key": "user",
+							"value": "uzv4m.c.wam",
+							"description": "[required] user's wallet id"
+						},
+						{
+							"key": "timeframe",
+							"value": "monthly",
+							"description": "(optional) timeframe (daily / weekly / monthly)",
+							"disabled": true
+						},
+						{
+							"key": "date",
+							"value": "2023-04-27T00:00:00.000Z",
+							"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+							"disabled": true
+						},
+						{
+							"key": "fromDate",
+							"value": "2023-04-20T00:00:00.000Z",
+							"description": "(optional) Fixed timeframe start value.",
+							"disabled": true
+						},
+						{
+							"key": "toDate",
+							"value": "2023-04-26T23:59:59.000Z",
+							"description": "(optional) Fixed timeframe end value.",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success - user found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/find?user=uzv4m.c.wam",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"find"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "uzv4m.c.wam",
+									"description": "[required] user's wallet id"
+								},
+								{
+									"key": "timeframe",
+									"value": "daily",
+									"description": "(optional) timeframe (daily / weekly / monthly)",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2023-03-06T22:07:26.480Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2023-03-06T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-03-06T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:11:26 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be7a79c698e5902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"15a-oB23cd5dU37iE/H9tZ2tWhOKzPg\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \"uzv4m.c.wam\",\n            \"tlm_gains_total\": 297.597,\n            \"tlm_gains_highest\": 6.7293,\n            \"total_nft_points\": 2800,\n            \"total_charge_time\": 16500,\n            \"avg_charge_time\": 16500,\n            \"total_mining_power\": 2750,\n            \"avg_mining_power\": 2750,\n            \"total_nft_power\": 330,\n            \"avg_nft_power\": 330,\n            \"lands_mined_on\": 1,\n            \"planets_mined_on\": 1,\n            \"unique_tools_used\": 0,\n            \"position\": 10\n        }\n    ],\n    \"total\": 1\n}"
+				},
+				{
+					"name": "user not found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/find?user=dummy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"find"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "dummy",
+									"description": "[required] user's wallet id"
+								},
+								{
+									"key": "timeframe",
+									"value": "daily",
+									"description": "(optional) timeframe (daily / weekly / monthly)",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2023-03-06T22:07:26.480Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2023-03-06T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-03-06T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:11:51 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "24"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be7a8372cbb5902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"18-/KV2zkmweBVJofwaq7dO70zq2zQ\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [],\n    \"total\": 0\n}"
+				},
+				{
+					"name": "timeframe param",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/find?user=uzv4m.c.wam&timeframe=monthly",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"find"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "uzv4m.c.wam",
+									"description": "[required] user's wallet id"
+								},
+								{
+									"key": "timeframe",
+									"value": "monthly",
+									"description": "(optional) timeframe (daily / weekly / monthly)"
+								},
+								{
+									"key": "date",
+									"value": "2023-03-06T22:07:26.480Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2023-03-06T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-03-06T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:13:19 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be7aa5e3def5902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"161-Jx+WJaRTDbEfbl8M5432SPTS6os\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \"uzv4m.c.wam\",\n            \"tlm_gains_total\": 1176.7619,\n            \"tlm_gains_highest\": 7.7467,\n            \"total_nft_points\": 10800,\n            \"total_charge_time\": 63600,\n            \"avg_charge_time\": 63600,\n            \"total_mining_power\": 10600,\n            \"avg_mining_power\": 10600,\n            \"total_nft_power\": 1272,\n            \"avg_nft_power\": 1272,\n            \"lands_mined_on\": 1,\n            \"planets_mined_on\": 1,\n            \"unique_tools_used\": 0,\n            \"position\": 11\n        }\n    ],\n    \"total\": 1\n}"
+				},
+				{
+					"name": "date param",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/find?user=uzv4m.c.wam&date=2023-04-27T00:00:00.000Z",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"find"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "uzv4m.c.wam",
+									"description": "[required] user's wallet id"
+								},
+								{
+									"key": "timeframe",
+									"value": "monthly",
+									"description": "(optional) timeframe (daily / weekly / monthly)",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2023-04-27T00:00:00.000Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated"
+								},
+								{
+									"key": "fromDate",
+									"value": "2023-03-06T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value.",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-03-06T23:59:59.999Z",
+									"description": "(optional) Fixed timeframe end value.",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:16:09 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be7ae82b9405902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"15a-oB23cd5dU37iE/H9tZ2tWhOKzPg\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \"uzv4m.c.wam\",\n            \"tlm_gains_total\": 297.597,\n            \"tlm_gains_highest\": 6.7293,\n            \"total_nft_points\": 2800,\n            \"total_charge_time\": 16500,\n            \"avg_charge_time\": 16500,\n            \"total_mining_power\": 2750,\n            \"avg_mining_power\": 2750,\n            \"total_nft_power\": 330,\n            \"avg_nft_power\": 330,\n            \"lands_mined_on\": 1,\n            \"planets_mined_on\": 1,\n            \"unique_tools_used\": 0,\n            \"position\": 10\n        }\n    ],\n    \"total\": 1\n}"
+				},
+				{
+					"name": "fromDate - toDate",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/find?user=uzv4m.c.wam&fromDate=2023-04-20T00:00:00.000Z&toDate=2023-04-26T23:59:59.000Z",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"find"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "uzv4m.c.wam",
+									"description": "[required] user's wallet id"
+								},
+								{
+									"key": "timeframe",
+									"value": "monthly",
+									"description": "(optional) timeframe (daily / weekly / monthly)",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2023-04-27T00:00:00.000Z",
+									"description": "(optional) Date within the defined timeframe. Based on this value, the start and end of the timeframe will be calculated",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2023-04-20T00:00:00.000Z",
+									"description": "(optional) Fixed timeframe start value."
+								},
+								{
+									"key": "toDate",
+									"value": "2023-04-26T23:59:59.000Z",
+									"description": "(optional) Fixed timeframe end value."
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 27 Apr 2023 14:17:14 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "7be7b01839765902-TXL"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"156-PYEqfptO2UmXK0Vz2zmumMqRj5I\""
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15552000; includeSubDomains"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "cf-apo-via",
+							"value": "origin,host"
+						},
+						{
+							"key": "Content-Security-Policy",
+							"value": "script-src 'self' ajax.cloudflare.com;"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"results\": [\n        {\n            \"wallet_id\": \"uzv4m.c.wam\",\n            \"tlm_gains_total\": 101.0361,\n            \"tlm_gains_highest\": 7.1121,\n            \"total_nft_points\": 950,\n            \"total_charge_time\": 5400,\n            \"avg_charge_time\": 5400,\n            \"total_mining_power\": 900,\n            \"avg_mining_power\": 900,\n            \"total_nft_power\": 108,\n            \"avg_nft_power\": 108,\n            \"lands_mined_on\": 1,\n            \"planets_mined_on\": 1,\n            \"unique_tools_used\": 0,\n            \"position\": 10\n        }\n    ],\n    \"total\": 1\n}"
+				}
+			]
+		},
+		{
+			"name": "update leaderboard",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"wallet_id\": \"foo.bar.wam\",\n    \"username\": \"FooBar\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard",
+						"health"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "healthy status response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"health"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": null,
+					"cookie": [],
+					"body": "{\n    \"status\": \"OK\",\n    \"version\": \"0.0.1\",\n    \"timestamp\": 1683807457996,\n    \"uptimeSeconds\": 149,\n    \"nodeVersion\": \"v17.4.0\",\n    \"dependencies\": {\n        \"@alien-worlds/api-core\": \"^0.0.101\",\n        \"@alien-worlds/dao-api-common\": \"^0.0.82\"\n    },\n    \"databases\": {\n        \"mongo\": \"OK\",\n        \"redis\": \"OK\"\n    }\n}"
+				},
+				{
+					"name": "unavailable database response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_version}}/leaderboard/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_version}}",
+								"leaderboard",
+								"health"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": null,
+					"cookie": [],
+					"body": "{\n    \"status\": \"OK\",\n    \"version\": \"0.0.1\",\n    \"timestamp\": 1683807457996,\n    \"uptimeSeconds\": 149,\n    \"nodeVersion\": \"v17.4.0\",\n    \"dependencies\": {\n        \"@alien-worlds/api-core\": \"^0.0.101\",\n        \"@alien-worlds/dao-api-common\": \"^0.0.82\"\n    },\n    \"databases\": {\n        \"mongo\": \"OK\",\n        \"redis\": \"OK\"\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "/docs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{api_version}}/leaderboard/docs",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_version}}",
+						"leaderboard",
+						"docs"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api_version",
+			"value": "v1",
+			"type": "string"
+		}
+	]
+}
