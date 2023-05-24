@@ -4,29 +4,25 @@ FROM node:17-alpine3.15 AS leaderboard-api-builder
 
 ARG GITHUB_TOKEN
 
-RUN apk add --no-cache --virtual build-dependencies g++ make curl
+RUN apk add --no-cache --virtual build-dependencies python3 g++ make curl
 
-RUN mkdir -p /var/leaderboard-api
+WORKDIR /var/www/api
 
-WORKDIR /var/leaderboard-api
+ADD scripts /var/www/api/scripts
+ADD src /var/www/api/src
+ADD docs /var/www/api/docs
 
-ADD scripts /var/leaderboard-api/scripts
-ADD src /var/leaderboard-api/src
+COPY package.json .npmrc tsconfig.json tsconfig.build.json yarn.lock /var/www/api/
+COPY .env-example /var/www/api/.env
 
-COPY package.json .npmrc tsconfig.json tsconfig.build.json yarn.lock /var/leaderboard-api/
-
-RUN yarn
+RUN yarn --production
 RUN yarn build
 
 # PRODUCTION
 
 FROM node:17-alpine3.15 AS leaderboard-api
 
-ARG GITHUB_TOKEN
+WORKDIR /var/www/api
 
-WORKDIR /var/leaderboard-api
-
-COPY package.json .npmrc ./
-COPY --from=leaderboard-api-builder /var/leaderboard-api/build ./build
-
-RUN yarn --production
+COPY --from=leaderboard-api-builder /var/www/api /var/www/api
+CMD [ "yarn", "api" ]
