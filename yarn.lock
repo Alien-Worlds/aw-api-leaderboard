@@ -36,6 +36,28 @@
     redis "^4.6.5"
     reflect-metadata "^0.1.13"
 
+"@alien-worlds/atomicassets-api-common@^0.0.2":
+  version "0.0.2"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/atomicassets-api-common/0.0.2/d2758ee0dbf9c237a6ad47c9fdb98d8c33b27244#d2758ee0dbf9c237a6ad47c9fdb98d8c33b27244"
+  integrity sha512-4dOC1t5vBLH0Iov8W8LjQ3kEEfAOrrj+RsUvTH6pH+C97xYapxaTbmonelnxXH71XSvawDB9a7eDVUrt+L1jsg==
+  dependencies:
+    "@alien-worlds/api-core" "^0.0.101"
+    atomicassets "^1.5.1"
+    crypto "^1.0.1"
+    eosjs "^22.1.0"
+
+"@alien-worlds/leaderboard-api-common@^0.0.1":
+  version "0.0.1"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/leaderboard-api-common/0.0.1/2740224f698d341d7c97bb29b8f87c5c8262323b#2740224f698d341d7c97bb29b8f87c5c8262323b"
+  integrity sha512-oiJwF7dCXtTNFv2pHRlvZChXEYltWU+sjMdCEELmwCIHuUa3cqUd2gyruWSfQWuISMJMvZRIbhM+KvV1ARjLvw==
+  dependencies:
+    "@alien-worlds/alienworlds-api-common" "^0.0.82"
+    "@alien-worlds/api-core" "^0.0.101"
+    "@alien-worlds/atomicassets-api-common" "^0.0.2"
+    atomicassets "^1.5.1"
+    crypto "^1.0.1"
+    eosjs "^22.1.0"
+
 "@ampproject/remapping@^2.1.0":
   version "2.2.0"
   resolved "https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.2.0.tgz"
