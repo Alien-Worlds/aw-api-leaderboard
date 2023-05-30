@@ -1,26 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import cron from 'cron';
-import {
-  Broadcast,
-  BroadcastConfig,
-  BroadcastMessage,
-  log,
-} from '@alien-worlds/api-core';
+import { log } from '@alien-worlds/api-core';
 import { LeaderboardTimeframe } from '@alien-worlds/alienworlds-api-common';
 import { archiveLeaderboard } from './archive-leaderboard';
 import { LeaderboardApiConfig } from '../config';
 
 let inMaintenanceMode = false;
 
-export const startArchive = async (
-  config: LeaderboardApiConfig,
-  broadcastConfig: BroadcastConfig
-) => {
+export const startArchive = async (config: LeaderboardApiConfig) => {
   log(`Leaderboard archive ... [starting]`);
   const { dailyArchiveCronTime, weeklyArchiveCronTime, monthlyArchiveCronTime } = config;
-  const server = await Broadcast.startServer(broadcastConfig, async client => {
-    server.sendMessageToClients([client], inMaintenanceMode);
-  });
 
   if (dailyArchiveCronTime) {
     const dailyArchiveCronJob = new cron.CronJob(dailyArchiveCronTime, async () => {
