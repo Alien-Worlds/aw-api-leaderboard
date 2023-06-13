@@ -1,77 +1,81 @@
+import { Failure, MongoSource, RedisSource, Result, log } from '@alien-worlds/api-core';
 import {
   LeaderboardArchiveMongoSource,
   LeaderboardRankingsRedisSource,
   LeaderboardSnapshotMongoSource,
   LeaderboardSort,
 } from '@alien-worlds/alienworlds-api-common';
-import { Failure, log, MongoSource, RedisSource, Result } from '@alien-worlds/api-core';
 
 export const createRankingsMigrationSets = async (
   redis: RedisSource,
-  timeframe: string
+  timeframe: string,
+  date: string
 ) => {
   await Promise.all([
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.AvgChargeTime}`,
-      `migration_${timeframe}_${LeaderboardSort.AvgChargeTime}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.AvgMiningPower}`,
-      `migration_${timeframe}_${LeaderboardSort.AvgMiningPower}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.AvgNftPower}`,
-      `migration_${timeframe}_${LeaderboardSort.AvgNftPower}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.LandsMinedOn}`,
-      `migration_${timeframe}_${LeaderboardSort.LandsMinedOn}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.LandsMinedOn}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
-      `migration_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
-      `migration_${timeframe}_${LeaderboardSort.TlmGainsTotal}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.TlmGainsTotal}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.TotalNftPoints}`,
-      `migration_${timeframe}_${LeaderboardSort.TotalNftPoints}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.TotalNftPoints}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
-      `migration_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`
+      `migration_${date}_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`
     ),
   ]);
-  log(`[archive-${timeframe}-leaderboard] Created migration ranking sets...`);
+  log(`[archive-${date}-${timeframe}-leaderboard] Created migration ranking sets...`);
 };
 
 export const removeRankingsMigrationSets = async (
   redis: RedisSource,
-  timeframe: string
+  timeframe: string,
+  date: string
 ) => {
   await redis.client.DEL([
-    `migration_${timeframe}_${LeaderboardSort.AvgChargeTime}`,
-    `migration_${timeframe}_${LeaderboardSort.AvgMiningPower}`,
-    `migration_${timeframe}_${LeaderboardSort.AvgNftPower}`,
-    `migration_${timeframe}_${LeaderboardSort.LandsMinedOn}`,
-    `migration_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
-    `migration_${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
-    `migration_${timeframe}_${LeaderboardSort.TotalNftPoints}`,
-    `migration_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.LandsMinedOn}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.TotalNftPoints}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
   ]);
   log(`[archive-${timeframe}-leaderboard] Removed migration ranking sets...`);
 };
 
 export const createSnapshotMigrationCollection = async (
   mongo: MongoSource,
-  timeframe: string
+  timeframe: string,
+  date: string
 ) => {
   await mongo.database.renameCollection(
     `leaderboard_snapshot_${timeframe}`,
-    `leaderboard_snapshot_migration_${timeframe}`
+    `leaderboard_snapshot_migration_${date}_${timeframe}`
   );
+
   log(`[archive-${timeframe}-leaderboard] Created migration snapshot collection...`);
 };
 
@@ -85,9 +89,12 @@ export const createEmptySnapshotCollection = async (
 
 export const removeSnapshotMigrationCollection = async (
   mongo: MongoSource,
-  timeframe: string
+  timeframe: string,
+  date: string
 ) => {
-  await mongo.database.collection(`leaderboard_snapshot_migration_${timeframe}`).drop();
+  await mongo.database
+    .collection(`leaderboard_snapshot_migration_${date}_${timeframe}`)
+    .drop();
   log(`[archive-${timeframe}-leaderboard] Removed migration snapshot collection...`);
 };
 
@@ -95,46 +102,90 @@ export const archive = async (
   mongo: MongoSource,
   redis: RedisSource,
   timeframe: string,
-  batchSize = 1000
+  date: string,
+  batchSize = 1000,
+  maxAttemptsPerBatch: number
 ): Promise<Result> => {
   try {
     const rankingsSource = new LeaderboardRankingsRedisSource(
       redis,
-      `migration_${timeframe}`
+      `migration_${date}_${timeframe}`
     );
+
     const snapshotSource = new LeaderboardSnapshotMongoSource(
       mongo,
-      `migration_${timeframe}`
+      `migration_${date}_${timeframe}`
     );
+
     const archiveSource = new LeaderboardArchiveMongoSource(mongo, timeframe);
 
     const size = await rankingsSource.count();
-    const rounds = Math.ceil(size / batchSize);
-    let round = 0;
-
+    const totalBatches = Math.ceil(size / batchSize);
     log(
-      `[archive-${timeframe}-leaderboard] The archiving process is divided into ${rounds} rounds...`
+      `[archive-${timeframe}-leaderboard] The archiving process is divided into ${totalBatches} batches...`
     );
-    let inserted = 0;
 
-    while (round < rounds) {
-      const snapshots = await snapshotSource.find({
+    let currBatch = 0,
+      failedBatchCount = 0,
+      inserted = 0;
+
+    while (currBatch < totalBatches) {
+      let attempts = 0;
+
+      const snapshotFindParams = {
         filter: {},
-        options: { skip: round * batchSize, limit: batchSize },
-      });
-      const wallets = snapshots.map(snapshot => snapshot.wallet_id);
-      const rankings = await rankingsSource.getRankings(wallets);
-      const documents = snapshots.map(document => {
-        document.rankings = rankings[document.wallet_id];
-        return document;
-      });
-      await archiveSource.insertMany(documents);
-      inserted += snapshots.length;
-      round++;
+        options: { skip: failedBatchCount * batchSize, limit: batchSize },
+      };
+
+      while (attempts < maxAttemptsPerBatch) {
+        try {
+          const snapshots = await snapshotSource.find(snapshotFindParams);
+
+          const wallets = snapshots.map(snapshot => snapshot.wallet_id);
+          const rankings = await rankingsSource.getRankings(wallets);
+
+          const documents = snapshots.map(document => {
+            document.rankings = rankings[document.wallet_id];
+            return document;
+          });
+          if (documents && documents.length) {
+            await archiveSource.insertMany(documents);
+          }
+
+          // Remove processed snapshot entries
+          const processedSnapshotIds = snapshots.map(snp => snp._id);
+          await snapshotSource.removeMany(processedSnapshotIds);
+
+          inserted += snapshots.length;
+          break;
+        } catch (error) {
+          attempts++;
+
+          if (attempts === maxAttemptsPerBatch) {
+            failedBatchCount++;
+            console.error(
+              `Failed to process batch ${currBatch} after ${attempts} attempts due to an error. Continuing to process next batch`,
+              error
+            );
+            break;
+          }
+        }
+      }
+
+      currBatch++;
       log(
         `[archive-${timeframe}-leaderboard] ${inserted} out of ${size} leaderboards have been archived...`
       );
     }
+
+    if (failedBatchCount) {
+      return Result.withFailure(
+        Failure.withMessage(
+          `${failedBatchCount} out of ${totalBatches} failed to process.`
+        )
+      );
+    }
+
     return Result.withoutContent();
   } catch (error) {
     return Result.withFailure(Failure.fromError(error));
@@ -153,16 +204,25 @@ export const archiveLeaderboard = async (
     const mongo = await MongoSource.create(config.mongo);
     const redis = await RedisSource.create(config.redis);
 
+    const today = getFormattedDateString(new Date());
+
     if (attempt === 1) {
       await Promise.all([
-        createRankingsMigrationSets(redis, timeframe),
-        createSnapshotMigrationCollection(mongo, timeframe),
+        createRankingsMigrationSets(redis, timeframe, today),
+        createSnapshotMigrationCollection(mongo, timeframe, today),
       ]);
       await createEmptySnapshotCollection(mongo, timeframe);
       onMaintenanceComplete();
     }
 
-    const archiveResult = await archive(mongo, redis, timeframe, 1000);
+    const archiveResult = await archive(
+      mongo,
+      redis,
+      timeframe,
+      today,
+      1000,
+      config.maxAttemptsPerBatch
+    );
 
     if (archiveResult.isFailure) {
       log(
@@ -172,8 +232,8 @@ export const archiveLeaderboard = async (
       return Result.withFailure(archiveResult.failure);
     } else {
       await Promise.all([
-        removeRankingsMigrationSets(redis, timeframe),
-        removeSnapshotMigrationCollection(mongo, timeframe),
+        removeRankingsMigrationSets(redis, timeframe, today),
+        removeSnapshotMigrationCollection(mongo, timeframe, today),
       ]);
       log(`[archive-${timeframe}-leaderboard] Archiving was successful.`);
     }
@@ -183,4 +243,12 @@ export const archiveLeaderboard = async (
     log(error);
     return Result.withFailure(Failure.fromError(error));
   }
+};
+
+const getFormattedDateString = (date: Date): string => {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear().toString();
+
+  return `${day}${month}${year}`;
 };
