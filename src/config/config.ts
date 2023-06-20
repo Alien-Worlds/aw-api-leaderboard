@@ -31,6 +31,8 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
   const monthlyArchiveCronTime = vars.getStringEnv('MONTHLY_ARCHIVE_CRON_TIME');
 
   const archiveBatchSize = vars.getNumberEnv('ARCHIVE_BATCH_SIZE');
+  const maxAttemptsPerBatch = vars.getNumberEnv('MAX_ATTEMPTS_PER_BATCH') || 10;
+
   const updateBatchSize = 1;
   const tlmDecimalPrecision = vars.getNumberEnv('TLM_DECIMAL_PRECISION') || 4;
 
@@ -61,6 +63,7 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
     redis,
     atomicassets,
     archiveBatchSize,
+    maxAttemptsPerBatch,
     updateBatchSize,
     dailyArchiveCronTime,
     weeklyArchiveCronTime,

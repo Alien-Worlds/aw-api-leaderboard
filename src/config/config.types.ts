@@ -17,6 +17,7 @@ export type LeaderboardApiConfig = LeaderboardConfig & {
   tlmDecimalPrecision?: number;
   secretKey?: string;
   expirationTime?: string;
+  maxAttemptsPerBatch?: number;
   dailyArchiveCronTime?: string;
   weeklyArchiveCronTime?: string;
   monthlyArchiveCronTime?: string;
