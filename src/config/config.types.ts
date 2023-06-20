@@ -1,13 +1,12 @@
-import {
-  AtomicAssetsConfig,
-  LeaderboardConfig,
-} from '@alien-worlds/alienworlds-api-common';
+import { AtomicAssetsConfig } from '@alien-worlds/atomicassets-api-common';
+import { LeaderboardConfig } from '@alien-worlds/leaderboard-api-common';
 
 export type Versions = {
   leaderboard: string;
   leaderboardUrlVersion: string;
   apiCore: string;
-  alienworldsApiCommon: string;
+  atomicassetsApiCommon: string;
+  leaderboardApiCommon: string;
 };
 
 export type LeaderboardApiConfig = LeaderboardConfig & {

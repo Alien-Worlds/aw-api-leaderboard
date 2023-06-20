@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { LeaderboardUpdateJson } from '@alien-worlds/alienworlds-api-common';
+import { LeaderboardUpdateJson } from '@alien-worlds/leaderboard-api-common';
 import { PostRoute, RouteHandler, Request } from '@alien-worlds/api-core';
 import { UpdateLeaderboardInput } from '../domain/models/update-leaderboard.input';
 import { UpdateLeaderboardOutput } from '../domain/models/update-leaderboard.output';

@@ -7,7 +7,7 @@ import {
 } from '@alien-worlds/api-core';
 import { LeaderboardApiConfig, NewRelicConfig } from './config.types';
 
-import { AtomicAssetsConfig } from '@alien-worlds/alienworlds-api-common';
+import { AtomicAssetsConfig } from '@alien-worlds/atomicassets-api-common';
 import { readFileSync } from 'fs';
 
 export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
@@ -50,8 +50,10 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
     leaderboard: packageJson.version,
     leaderboardUrlVersion,
     apiCore: packageJson.dependencies['@alien-worlds/api-core'],
-    alienworldsApiCommon:
-      packageJson.dependencies['@alien-worlds/alienworlds-api-common'],
+    atomicassetsApiCommon:
+      packageJson.dependencies['@alien-worlds/atomicassets-api-common'],
+    leaderboardApiCommon:
+      packageJson.dependencies['@alien-worlds/leaderboard-api-common'],
   };
 
   return {

@@ -4,12 +4,10 @@ import { LeaderboardApiConfig } from '../config/config.types';
 import { LeaderboardController } from './leaderboard/domain/leaderboard.controller';
 import { ListLeaderboardUseCase } from './leaderboard/domain/use-cases/list-leaderboard.use-case';
 import { CountLeaderboardUseCase } from './leaderboard/domain/use-cases/count-leaderboard.use-case';
-import {
-  setupAtomicAssets,
-  setupLeaderboard,
-} from '@alien-worlds/alienworlds-api-common';
+import { setupAtomicAssets } from '@alien-worlds/atomicassets-api-common';
 import { CheckHealthUseCase, HealthController } from './health';
 import { PingController } from './ping';
+import { setupLeaderboard } from '@alien-worlds/leaderboard-api-common';
 
 export const setupDependencies = async (
   config: LeaderboardApiConfig,

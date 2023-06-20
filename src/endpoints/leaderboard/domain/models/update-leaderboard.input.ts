@@ -1,7 +1,7 @@
 import {
   LeaderboardUpdate,
   LeaderboardUpdateJson,
-} from '@alien-worlds/alienworlds-api-common';
+} from '@alien-worlds/leaderboard-api-common';
 import { Request } from '@alien-worlds/api-core';
 
 export class UpdateLeaderboardInput {

@@ -1,6 +1,6 @@
 import { LeaderboardListOutputItem } from '../data/leaderboard.dtos';
 import { removeUndefinedProperties } from '@alien-worlds/api-core';
-import { Leaderboard, preciseIntToFloat } from '@alien-worlds/alienworlds-api-common';
+import { Leaderboard, preciseIntToFloat } from '@alien-worlds/leaderboard-api-common';
 
 export const isIsoDateFormat = value => {
   return (
@@ -94,7 +94,8 @@ export const parseLeaderboardToResult = (
     avg_mining_power,
     total_nft_power,
     avg_nft_power,
-    avg_tool_power,
+    avg_tool_mining_power,
+    avg_tool_nft_power,
     lands_mined_on,
     planets_mined_on,
     unique_tools_used,
@@ -115,7 +116,12 @@ export const parseLeaderboardToResult = (
     ),
     total_nft_power: Number(total_nft_power),
     avg_nft_power: Number((Number(avg_nft_power) || 0).toFixed(tlmDecimalPrecision)),
-    avg_tool_power: Number((Number(avg_tool_power) || 0).toFixed(tlmDecimalPrecision)),
+    avg_tool_mining_power: Number(
+      (Number(avg_tool_mining_power) || 0).toFixed(tlmDecimalPrecision)
+    ),
+    avg_tool_nft_power: Number(
+      (Number(avg_tool_nft_power) || 0).toFixed(tlmDecimalPrecision)
+    ),
     lands_mined_on: Number(lands_mined_on),
     planets_mined_on: Number(planets_mined_on),
     unique_tools_used: Number(unique_tools_used),

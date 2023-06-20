@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import cron from 'cron';
 import { log } from '@alien-worlds/api-core';
-import { LeaderboardTimeframe } from '@alien-worlds/alienworlds-api-common';
+import { LeaderboardTimeframe } from '@alien-worlds/leaderboard-api-common';
 import { archiveLeaderboard } from './archive-leaderboard';
 import { LeaderboardApiConfig } from '../config';
 

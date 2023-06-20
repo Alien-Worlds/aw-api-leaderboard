@@ -1,5 +1,17 @@
-import { DataSourceBulkWriteError, Failure, MongoSource, RedisSource, Result, log } from '@alien-worlds/api-core';
-import { LeaderboardArchiveMongoSource, LeaderboardRankingsRedisSource, LeaderboardSnapshotMongoSource, LeaderboardSort } from '@alien-worlds/leaderboard-api-common';
+import {
+  DataSourceBulkWriteError,
+  Failure,
+  MongoSource,
+  RedisSource,
+  Result,
+  log,
+} from '@alien-worlds/api-core';
+import {
+  LeaderboardArchiveMongoSource,
+  LeaderboardRankingsRedisSource,
+  LeaderboardSnapshotMongoSource,
+  LeaderboardSort,
+} from '@alien-worlds/leaderboard-api-common';
 
 export const createRankingsMigrationSets = async (
   redis: RedisSource,
@@ -20,8 +32,12 @@ export const createRankingsMigrationSets = async (
       `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`
     ),
     redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgToolPower}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolPower}`
+      `${timeframe}_${LeaderboardSort.AvgToolMiningPower}`,
+      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolMiningPower}`
+    ),
+    redis.client.RENAME(
+      `${timeframe}_${LeaderboardSort.AvgToolNftPower}`,
+      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolNftPower}`
     ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.LandsMinedOn}`,
@@ -56,7 +72,8 @@ export const removeRankingsMigrationSets = async (
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`,
-    `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolPower}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolMiningPower}`,
+    `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolNftPower}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.LandsMinedOn}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
@@ -152,7 +169,10 @@ export const archive = async (
             try {
               await archiveSource.insertMany(documents);
             } catch (error) {
-              if (error instanceof DataSourceBulkWriteError && error.onlyDuplicateErrors === true) {
+              if (
+                error instanceof DataSourceBulkWriteError &&
+                error.onlyDuplicateErrors === true
+              ) {
                 log(error);
                 log(`Archiving continues...`);
               } else {

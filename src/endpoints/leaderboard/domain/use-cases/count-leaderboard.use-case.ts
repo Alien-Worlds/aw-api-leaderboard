@@ -5,7 +5,7 @@ import {
   LeaderboardTimeframe,
   MonthlyLeaderboardRepository,
   WeeklyLeaderboardRepository,
-} from '@alien-worlds/alienworlds-api-common';
+} from '@alien-worlds/leaderboard-api-common';
 
 /*imports*/
 /**
