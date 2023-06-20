@@ -4,12 +4,14 @@ import {
   FindUserInLeaderboardRoute,
   LeaderboardController,
   ListLeaderboardRoute,
+  PingController,
   UpdateLeaderboardRoute,
 } from './endpoints';
 
 import { LeaderboardApi } from './api';
 import { HealthController } from './endpoints/health';
 import { GetHealthRoute } from './endpoints/health/routes/health.route';
+import { GetPingRoute } from './endpoints/ping/routes/ping.route';
 
 export const mountRoutes = (api: LeaderboardApi, container: Container) => {
   const config = container.get<LeaderboardApiConfig>('CONFIG');
@@ -17,6 +19,7 @@ export const mountRoutes = (api: LeaderboardApi, container: Container) => {
     LeaderboardController.Token
   );
   const healthController = container.get<HealthController>(HealthController.Token);
+  const pingController = container.get<PingController>(PingController.Token);
 
   Route.mount(
     api.framework,
@@ -42,5 +45,9 @@ export const mountRoutes = (api: LeaderboardApi, container: Container) => {
   Route.mount(
     api.framework,
     GetHealthRoute.create(healthController.health.bind(healthController), config)
+  );
+  Route.mount(
+    api.framework,
+    GetPingRoute.create(pingController.ping.bind(pingController), config)
   );
 };

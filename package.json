@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@alien-worlds/api-core": "^0.0.101",
-    "@alien-worlds/leaderboard-api-common": "^0.0.1",
+    "@alien-worlds/leaderboard-api-common": "^0.0.3",
     "@types/cron": "^2.0.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/ms": "^0.7.31",

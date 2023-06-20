@@ -33,6 +33,7 @@ export type LeaderboardListOutputItem = Pick<
   | 'avg_mining_power'
   | 'total_nft_power'
   | 'avg_nft_power'
+  | 'avg_tool_power'
   | 'lands_mined_on'
   | 'planets_mined_on'
   | 'unique_tools_used'

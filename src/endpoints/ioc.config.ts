@@ -9,6 +9,7 @@ import {
   setupLeaderboard,
 } from '@alien-worlds/alienworlds-api-common';
 import { CheckHealthUseCase, HealthController } from './health';
+import { PingController } from './ping';
 
 export const setupDependencies = async (
   config: LeaderboardApiConfig,
@@ -38,4 +39,7 @@ export const setupDependencies = async (
   // health
   container.bind<CheckHealthUseCase>(CheckHealthUseCase.Token).to(CheckHealthUseCase);
   container.bind<HealthController>(HealthController.Token).to(HealthController);
+
+  // ping
+  container.bind<PingController>(PingController.Token).to(PingController);
 };
