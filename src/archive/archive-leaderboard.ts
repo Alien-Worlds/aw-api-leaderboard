@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   DataSourceBulkWriteError,
   Failure,
@@ -19,6 +20,10 @@ export const createRankingsMigrationSets = async (
   date: string
 ) => {
   await Promise.all([
+    redis.client.RENAME(
+      `${timeframe}_${LeaderboardSort.AvgToolChargeTime}`,
+      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolChargeTime}`
+    ),
     redis.client.RENAME(
       `${timeframe}_${LeaderboardSort.AvgChargeTime}`,
       `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`
@@ -69,6 +74,7 @@ export const removeRankingsMigrationSets = async (
   date: string
 ) => {
   await redis.client.DEL([
+    `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolChargeTime}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`,
