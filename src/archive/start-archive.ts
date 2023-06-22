@@ -1,9 +1,9 @@
+import { LeaderboardApiConfig } from '../config';
+import { LeaderboardTimeframe } from '@alien-worlds/leaderboard-api-common';
+import { archiveLeaderboard } from './archive-leaderboard';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import cron from 'cron';
 import { log } from '@alien-worlds/api-core';
-import { LeaderboardTimeframe } from '@alien-worlds/leaderboard-api-common';
-import { archiveLeaderboard } from './archive-leaderboard';
-import { LeaderboardApiConfig } from '../config';
 
 let inMaintenanceMode = false;
 
@@ -14,9 +14,21 @@ export const startArchive = async (config: LeaderboardApiConfig) => {
   if (dailyArchiveCronTime) {
     const dailyArchiveCronJob = new cron.CronJob(dailyArchiveCronTime, async () => {
       inMaintenanceMode = true;
-      await archiveLeaderboard(config, LeaderboardTimeframe.Daily, () => {
-        inMaintenanceMode = false;
-      });
+
+      const resultDaily = await archiveLeaderboard(
+        config,
+        LeaderboardTimeframe.Daily,
+        () => {
+          inMaintenanceMode = false;
+        }
+      );
+
+      if (resultDaily.isFailure) {
+        log(
+          `An error occured during daily leaderboard archival. `,
+          resultDaily.failure.error
+        );
+      }
     });
 
     dailyArchiveCronJob.start();
@@ -26,9 +38,20 @@ export const startArchive = async (config: LeaderboardApiConfig) => {
   if (weeklyArchiveCronTime) {
     const weeklyArchiveCronJob = new cron.CronJob(weeklyArchiveCronTime, async () => {
       inMaintenanceMode = true;
-      await archiveLeaderboard(config, LeaderboardTimeframe.Weekly, () => {
-        inMaintenanceMode = false;
-      });
+      const resultWeekly = await archiveLeaderboard(
+        config,
+        LeaderboardTimeframe.Weekly,
+        () => {
+          inMaintenanceMode = false;
+        }
+      );
+
+      if (resultWeekly.isFailure) {
+        log(
+          `An error occured during weekly leaderboard archival. `,
+          resultWeekly.failure.error
+        );
+      }
     });
 
     weeklyArchiveCronJob.start();
@@ -38,9 +61,20 @@ export const startArchive = async (config: LeaderboardApiConfig) => {
   if (monthlyArchiveCronTime) {
     const monthlyArchiveCronJob = new cron.CronJob(monthlyArchiveCronTime, async () => {
       inMaintenanceMode = true;
-      await archiveLeaderboard(config, LeaderboardTimeframe.Monthly, () => {
-        inMaintenanceMode = false;
-      });
+      const resultMonthly = await archiveLeaderboard(
+        config,
+        LeaderboardTimeframe.Monthly,
+        () => {
+          inMaintenanceMode = false;
+        }
+      );
+
+      if (resultMonthly.isFailure) {
+        log(
+          `An error occured during weekly leaderboard archival. `,
+          resultMonthly.failure.error
+        );
+      }
     });
 
     monthlyArchiveCronJob.start();

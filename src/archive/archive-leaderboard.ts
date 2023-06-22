@@ -14,58 +14,107 @@ import {
   LeaderboardSort,
 } from '@alien-worlds/leaderboard-api-common';
 
+const RedisRenameSortedSet = async (redis: RedisSource, key: string, newKey: string) => {
+  log(`Attempt to rename Redis set '${key}' to '${newKey}'`);
+  return await redis.client.RENAME(key, newKey);
+};
+
+const RedisDeleteSortedSet = async (redis: RedisSource, key: string) => {
+  log(`Attempt to delete Redis set ${key}`);
+  return await redis.client.DEL(key);
+};
+
+const RedisCheckIfKeyExists = async (
+  redis: RedisSource,
+  key: string
+): Promise<number> => {
+  const result = await redis.client.EXISTS(key);
+
+  if (result == 0) {
+    log(`[ERR] Redis set '${key}' does NOT exist`);
+  }
+  return result;
+};
+
 export const createRankingsMigrationSets = async (
   redis: RedisSource,
   timeframe: string,
   date: string
 ) => {
-  await Promise.all([
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgToolChargeTime}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolChargeTime}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgChargeTime}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgMiningPower}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgNftPower}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgToolMiningPower}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolMiningPower}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.AvgToolNftPower}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolNftPower}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.LandsMinedOn}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.LandsMinedOn}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.TlmGainsTotal}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.TotalNftPoints}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.TotalNftPoints}`
-    ),
-    redis.client.RENAME(
-      `${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
-      `migration_${date}_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`
-    ),
-  ]);
-  log(`[archive-${date}-${timeframe}-leaderboard] Created migration ranking sets...`);
+  log(
+    `[archive-${date}-${timeframe}-leaderboard] Attempt to create migration ranking sets.`
+  );
+
+  const rankingsMigrationSets = [
+    {
+      key: `${timeframe}_${LeaderboardSort.AvgToolChargeTime}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolChargeTime}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.AvgChargeTime}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.AvgMiningPower}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.AvgNftPower}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.AvgNftPower}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.AvgToolMiningPower}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolMiningPower}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.AvgToolNftPower}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolNftPower}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.LandsMinedOn}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.LandsMinedOn}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.PlanetsMinedOn}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.TotalNftPoints}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.TotalNftPoints}`,
+    },
+    {
+      key: `${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
+      newKey: `migration_${date}_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
+    },
+  ];
+
+  const RedisSetsNotFound: string[] = [];
+  const renameSetsPromises = rankingsMigrationSets.map(async set => {
+    const exists = await RedisCheckIfKeyExists(redis, set.key);
+    if (exists) {
+      await RedisRenameSortedSet(redis, set.key, set.newKey);
+    } else {
+      RedisSetsNotFound.push(set.key);
+    }
+  });
+
+  await Promise.all(renameSetsPromises);
+
+  log(
+    `[archive-${date}-${timeframe}-leaderboard] Created migration ranking sets (${
+      rankingsMigrationSets.length - RedisSetsNotFound.length
+    }/${rankingsMigrationSets.length})`
+  );
+
+  if (RedisSetsNotFound.length) {
+    throw new Error(
+      `Redis set(s) to rename not found (${RedisSetsNotFound.join(', ')}})`
+    );
+  }
 };
 
 export const removeRankingsMigrationSets = async (
@@ -73,7 +122,11 @@ export const removeRankingsMigrationSets = async (
   timeframe: string,
   date: string
 ) => {
-  await redis.client.DEL([
+  log(
+    `[archive-${date}-${timeframe}-leaderboard] Attempt to delete migration ranking sets.`
+  );
+
+  const rankingsMigrationSets = [
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgToolChargeTime}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgChargeTime}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.AvgMiningPower}`,
@@ -85,8 +138,31 @@ export const removeRankingsMigrationSets = async (
     `migration_${date}_${timeframe}_${LeaderboardSort.TlmGainsTotal}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.TotalNftPoints}`,
     `migration_${date}_${timeframe}_${LeaderboardSort.UniqueToolsUsed}`,
-  ]);
-  log(`[archive-${timeframe}-leaderboard] Removed migration ranking sets...`);
+  ];
+
+  const RedisSetsNotFound: string[] = [];
+  const deleteSetsPromises = rankingsMigrationSets.map(async key => {
+    const exists = await RedisCheckIfKeyExists(redis, key);
+    if (exists) {
+      await RedisDeleteSortedSet(redis, key);
+    } else {
+      RedisSetsNotFound.push(key);
+    }
+  });
+
+  await Promise.all(deleteSetsPromises);
+
+  log(
+    `[archive-${date}-${timeframe}-leaderboard] Deleted migration ranking sets (${
+      rankingsMigrationSets.length - RedisSetsNotFound.length
+    }/${rankingsMigrationSets.length})`
+  );
+
+  if (RedisSetsNotFound.length) {
+    throw new Error(
+      `Redis set(s) to delete not found (${RedisSetsNotFound.join(', ')}})`
+    );
+  }
 };
 
 export const createSnapshotMigrationCollection = async (
@@ -94,10 +170,11 @@ export const createSnapshotMigrationCollection = async (
   timeframe: string,
   date: string
 ) => {
-  await mongo.database.renameCollection(
-    `leaderboard_snapshot_${timeframe}`,
-    `leaderboard_snapshot_migration_${date}_${timeframe}`
-  );
+  const currentName = `leaderboard_snapshot_${timeframe}`;
+  const newName = `leaderboard_snapshot_migration_${date}_${timeframe}`;
+
+  log(`Attempt to rename Mongo collection '${currentName}' to '${newName}'`);
+  await mongo.database.renameCollection(currentName, newName);
 
   log(`[archive-${timeframe}-leaderboard] Created migration snapshot collection...`);
 };
@@ -106,7 +183,10 @@ export const createEmptySnapshotCollection = async (
   mongo: MongoSource,
   timeframe: string
 ) => {
+  log(`[archive-${timeframe}-leaderboard] Attempt to create empty snapshot collection`);
+
   const repository = new LeaderboardSnapshotMongoSource(mongo, timeframe);
+
   log(`[archive-${timeframe}-leaderboard] Created empty snapshot collection...`);
 };
 
@@ -115,10 +195,17 @@ export const removeSnapshotMigrationCollection = async (
   timeframe: string,
   date: string
 ) => {
-  await mongo.database
-    .collection(`leaderboard_snapshot_migration_${date}_${timeframe}`)
-    .drop();
-  log(`[archive-${timeframe}-leaderboard] Removed migration snapshot collection...`);
+  const collectionToRemove = `leaderboard_snapshot_migration_${date}_${timeframe}`;
+
+  log(
+    `[archive-${timeframe}-leaderboard] Attempt to remove Mongo collection '${collectionToRemove}'`
+  );
+
+  await mongo.database.collection(collectionToRemove).drop();
+
+  log(
+    `[archive-${timeframe}-leaderboard] Removed migration snapshot collection '${collectionToRemove}'`
+  );
 };
 
 export const archive = async (
@@ -246,7 +333,9 @@ export const archiveLeaderboard = async (
         createRankingsMigrationSets(redis, timeframe, today),
         createSnapshotMigrationCollection(mongo, timeframe, today),
       ]);
+
       await createEmptySnapshotCollection(mongo, timeframe);
+
       onMaintenanceComplete();
     }
 
