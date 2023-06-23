@@ -46,10 +46,10 @@
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/leaderboard-api-common@^0.0.6":
-  version "0.0.6"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/leaderboard-api-common/0.0.6/3eb7769c4647995b88cd4a93e65d3e0771329efe#3eb7769c4647995b88cd4a93e65d3e0771329efe"
-  integrity sha512-/j6t3/xV3GWDLpetHm8AgoP22M+Safxz7jQ5853cO98YXQB+0bThG5g728I3oRhN6AP2Z+HxrdvodlPY5xI2WQ==
+"@alien-worlds/leaderboard-api-common@^0.0.9":
+  version "0.0.9"
+  resolved "https://npm.pkg.github.com/download/@alien-worlds/leaderboard-api-common/0.0.9/75a50fa1c3a1b44fbb3e28650a23ea54644eb884#75a50fa1c3a1b44fbb3e28650a23ea54644eb884"
+  integrity sha512-kNK2kwE3n/Ix1Oi5gLT/al7fGC1nPbUGiT587DcU+TTZq7BAkp/JxXJaddijfp0wFQjqjAG2MlnzycBZjRQZJw==
   dependencies:
     "@alien-worlds/alienworlds-api-common" "^0.0.82"
     "@alien-worlds/api-core" "^0.0.101"
