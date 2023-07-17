@@ -1,30 +1,58 @@
-import { Result } from '@alien-worlds/api-core';
-import { LeaderboardStruct } from '../../data/leaderboard.dtos';
-import { Leaderboard } from '../entities/leaderboard';
+import { log, Result } from '@alien-worlds/api-core';
+
+import { parseLeaderboardToResult } from '../leaderboard.utils';
+import { Leaderboard } from '@alien-worlds/leaderboard-api-common';
+import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
 
 export class FindUserInLeaderboardOutput {
-  public static create(result: Result<Leaderboard>): FindUserInLeaderboardOutput {
+  public static create(
+    result: Result<Leaderboard>,
+    sort: string,
+    tlmDecimalPrecision: number
+  ): FindUserInLeaderboardOutput {
+    return new FindUserInLeaderboardOutput(result, sort, tlmDecimalPrecision);
+  }
+
+  private constructor(
+    public readonly result: Result<Leaderboard>,
+    private readonly sort: string,
+    private readonly tlmDecimalPrecision: number
+  ) {}
+
+  public toResponse() {
+    const { result, sort, tlmDecimalPrecision } = this;
+
     if (result.isFailure) {
       const {
         failure: { error },
       } = result;
-      if (error) {
-        console.log(error);
+
+      if (error instanceof UserLeaderboardNotFoundError) {
         return {
-          status: 500,
-          body: null,
+          status: 200,
+          body: {
+            results: [],
+            total: 0,
+          },
         };
       }
+
+      log(error);
+
+      return {
+        status: 500,
+        body: null,
+      };
     }
+
+    const results = [parseLeaderboardToResult(result.content, sort, tlmDecimalPrecision)];
 
     return {
       status: 200,
-      body: result.content.toStruct(),
+      body: {
+        results,
+        total: results.length,
+      },
     };
   }
-
-  private constructor(
-    public readonly status: number,
-    public readonly body: LeaderboardStruct
-  ) {}
 }
