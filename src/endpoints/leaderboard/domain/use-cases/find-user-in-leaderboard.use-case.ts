@@ -1,7 +1,13 @@
 import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.input';
 import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
-import { DailyLeaderboardRepository, Leaderboard, LeaderboardTimeframe, MonthlyLeaderboardRepository, WeeklyLeaderboardRepository } from '@alien-worlds/alienworlds-api-common';
+import {
+  DailyLeaderboardRepository,
+  Leaderboard,
+  LeaderboardTimeframe,
+  MonthlyLeaderboardRepository,
+  WeeklyLeaderboardRepository,
+} from '@alien-worlds/leaderboard-api-common';
 
 /*imports*/
 /**
@@ -18,7 +24,7 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
     private weeklyLeaderboardRepository: WeeklyLeaderboardRepository,
     @inject(MonthlyLeaderboardRepository.Token)
     private monthlyLeaderboardRepository: MonthlyLeaderboardRepository
-  ) { }
+  ) {}
 
   /**
    * @async
@@ -57,7 +63,9 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
     }
 
     if (!usersSearch.content.length) {
-      return Result.withFailure(Failure.fromError(new UserLeaderboardNotFoundError(user)));
+      return Result.withFailure(
+        Failure.fromError(new UserLeaderboardNotFoundError(user))
+      );
     }
 
     return Result.withContent(usersSearch.content[0]);

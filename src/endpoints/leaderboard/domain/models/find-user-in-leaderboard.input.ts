@@ -1,7 +1,7 @@
 import {
   LeaderboardSort,
   LeaderboardTimeframe,
-} from '@alien-worlds/alienworlds-api-common';
+} from '@alien-worlds/leaderboard-api-common';
 import { createTimeRange } from '../leaderboard.utils';
 
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';

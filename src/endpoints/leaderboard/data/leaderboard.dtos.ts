@@ -1,4 +1,4 @@
-import { LeaderboardUpdateJson } from '@alien-worlds/alienworlds-api-common';
+import { LeaderboardUpdateJson } from '@alien-worlds/leaderboard-api-common';
 
 export type ListLeaderboardRequest = {
   timeframe?: string;
@@ -33,6 +33,8 @@ export type LeaderboardListOutputItem = Pick<
   | 'avg_mining_power'
   | 'total_nft_power'
   | 'avg_nft_power'
+  | 'avg_tool_mining_power'
+  | 'avg_tool_nft_power'
   | 'lands_mined_on'
   | 'planets_mined_on'
   | 'unique_tools_used'

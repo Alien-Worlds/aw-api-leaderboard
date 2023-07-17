@@ -9,10 +9,14 @@ import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case'
 import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
 import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
 import {
+  AtomicAsset,
   GetAtomicAssetsUseCase,
-  UpdateLeaderboardUseCase,
-} from '@alien-worlds/alienworlds-api-common';
+} from '@alien-worlds/atomicassets-api-common';
 import { LeaderboardApiConfig } from '../../../config';
+import {
+  MinigToolData,
+  UpdateLeaderboardUseCase,
+} from '@alien-worlds/leaderboard-api-common';
 
 /*imports*/
 
@@ -97,7 +101,7 @@ export class LeaderboardController {
 
     const result = await this.updateLeaderboardUseCase.execute(
       updates,
-      assetsResult.content
+      assetsResult.content as AtomicAsset<MinigToolData>[]
     );
 
     return UpdateLeaderboardOutput.create(result);

@@ -1,6 +1,6 @@
 import { log, Result } from '@alien-worlds/api-core';
 import { parseLeaderboardToResult } from '../leaderboard.utils';
-import { Leaderboard } from '@alien-worlds/alienworlds-api-common';
+import { Leaderboard } from '@alien-worlds/leaderboard-api-common';
 
 export class ListLeaderboardOutput {
   public static create(

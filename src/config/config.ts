@@ -7,7 +7,7 @@ import {
 } from '@alien-worlds/api-core';
 import { LeaderboardApiConfig, NewRelicConfig } from './config.types';
 
-import { AtomicAssetsConfig } from '@alien-worlds/alienworlds-api-common';
+import { AtomicAssetsConfig } from '@alien-worlds/atomicassets-api-common';
 import { readFileSync } from 'fs';
 
 export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
@@ -31,6 +31,8 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
   const monthlyArchiveCronTime = vars.getStringEnv('MONTHLY_ARCHIVE_CRON_TIME');
 
   const archiveBatchSize = vars.getNumberEnv('ARCHIVE_BATCH_SIZE');
+  const maxAttemptsPerBatch = vars.getNumberEnv('MAX_ATTEMPTS_PER_BATCH') || 10;
+
   const updateBatchSize = 1;
   const tlmDecimalPrecision = vars.getNumberEnv('TLM_DECIMAL_PRECISION') || 4;
 
@@ -48,8 +50,10 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
     leaderboard: packageJson.version,
     leaderboardUrlVersion,
     apiCore: packageJson.dependencies['@alien-worlds/api-core'],
-    alienworldsApiCommon:
-      packageJson.dependencies['@alien-worlds/alienworlds-api-common'],
+    atomicassetsApiCommon:
+      packageJson.dependencies['@alien-worlds/atomicassets-api-common'],
+    leaderboardApiCommon:
+      packageJson.dependencies['@alien-worlds/leaderboard-api-common'],
   };
 
   return {
@@ -61,6 +65,7 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
     redis,
     atomicassets,
     archiveBatchSize,
+    maxAttemptsPerBatch,
     updateBatchSize,
     dailyArchiveCronTime,
     weeklyArchiveCronTime,

@@ -1,8 +1,8 @@
 import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
 
 import { HealthJson } from '../../data/dtos/health.dto';
-import { DailyLeaderboardRepository } from '@alien-worlds/alienworlds-api-common';
 import { LeaderboardApiConfig } from '../../../../config';
+import { DailyLeaderboardRepository } from '@alien-worlds/leaderboard-api-common';
 
 /*imports*/
 /**
@@ -48,8 +48,12 @@ export class CheckHealthUseCase implements UseCase<HealthJson> {
           version: config.versions.apiCore,
         },
         {
-          name: '@alien-worlds/dao-api-common',
-          version: config.versions.alienworldsApiCommon,
+          name: '@alien-worlds/atomicassets-api-common',
+          version: config.versions.atomicassetsApiCommon,
+        },
+        {
+          name: '@alien-worlds/leaderboard-api-common',
+          version: config.versions.leaderboardApiCommon,
         },
       ],
 

@@ -1,7 +1,7 @@
 import { log, Result } from '@alien-worlds/api-core';
 
 import { parseLeaderboardToResult } from '../leaderboard.utils';
-import { Leaderboard } from '@alien-worlds/alienworlds-api-common';
+import { Leaderboard } from '@alien-worlds/leaderboard-api-common';
 import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
 
 export class FindUserInLeaderboardOutput {

@@ -4,7 +4,7 @@ import {
   LeaderboardOrder,
   LeaderboardSort,
   LeaderboardTimeframe,
-} from '@alien-worlds/alienworlds-api-common';
+} from '@alien-worlds/leaderboard-api-common';
 import { createTimeRange } from '../leaderboard.utils';
 
 export class ListLeaderboardInput {

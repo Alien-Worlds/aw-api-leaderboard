@@ -13,7 +13,7 @@
     "clean": "rm -rf ./build",
     "build": "yarn clean && tsc -b",
     "start": "node -r dotenv/config -r newrelic build/index.js",
-    "cron": "node build/cron/index.js",
+    "archive": "node build/archive/index.js",
     "start:local": "yarn build && node -r dotenv/config -r newrelic build/index.js",
     "prepublish": "yarn clean && tsc --project tsconfig.build.json",
     "lint": "eslint . --ext .ts",
@@ -41,8 +41,9 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@alien-worlds/alienworlds-api-common": "^0.0.82",
     "@alien-worlds/api-core": "^0.0.101",
+    "@alien-worlds/atomicassets-api-common": "^0.0.2",
+    "@alien-worlds/leaderboard-api-common": "^0.0.12",
     "@types/cron": "^2.0.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/ms": "^0.7.31",
