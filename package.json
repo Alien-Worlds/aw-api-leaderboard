@@ -1,10 +1,14 @@
 {
-  "name": "@alien-worlds/leaderboard-api",
+  "name": "@alien-worlds/aw-api-leaderboard",
   "version": "0.0.1",
   "description": "",
   "packageManager": "yarn@3.2.3",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alien-Worlds/aw-api-leaderboard.git"
+  },
   "files": [
     "build"
   ],
