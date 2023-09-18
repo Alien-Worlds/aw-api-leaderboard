@@ -24,18 +24,18 @@
         "dependencies": {
             "type": "object",
             "properties": {
-                "@alien-worlds/api-core": {
+                "@alien-worlds/aw-core": {
                     "$ref": "#/$defs/semanticVerString"
                 },
                 "@alien-worlds/atomicassets-api-common": {
                     "$ref": "#/$defs/semanticVerString"
                 },
-                "@alien-worlds/leaderboard-api-common": {
+                "@alien-worlds/aw-api-common-leaderboard": {
                     "$ref": "#/$defs/semanticVerString"
                 }
             },
             "required": [
-                "@alien-worlds/api-core",
+                "@alien-worlds/aw-core",
                 "@alien-worlds/dao-api-common"
             ]
         },

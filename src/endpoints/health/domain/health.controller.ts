@@ -1,6 +1,8 @@
-import { inject, injectable } from '@alien-worlds/api-core';
+import { inject, injectable } from '@alien-worlds/aw-core';
+
 import { HealthOutput } from './models/health.output';
 import { CheckHealthUseCase } from './use-cases/check-health.use-case';
+
 /*imports*/
 
 /**
@@ -15,7 +17,7 @@ export class HealthController {
   constructor(
     @inject(CheckHealthUseCase.Token)
     private checkHealthUseCase: CheckHealthUseCase /*injections*/
-  ) {}
+  ) { }
 
   /*methods*/
 

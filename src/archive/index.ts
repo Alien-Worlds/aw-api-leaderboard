@@ -1,8 +1,9 @@
-import { log } from '@alien-worlds/api-core';
+import { log } from '@alien-worlds/aw-core';
 import { Command } from 'commander';
-import { startArchive } from './start-archive';
-import { buildConfig } from '../config';
 import { join } from 'path';
+
+import { buildConfig } from '../config';
+import { startArchive } from './start-archive';
 
 const program = new Command();
 

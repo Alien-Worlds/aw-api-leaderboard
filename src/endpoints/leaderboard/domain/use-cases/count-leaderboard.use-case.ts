@@ -1,11 +1,7 @@
-import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import { DailyLeaderboardRepository, LeaderboardTimeframe, MonthlyLeaderboardRepository, WeeklyLeaderboardRepository } from '@alien-worlds/aw-api-common-leaderboard';
+import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/aw-core';
+
 import { ListLeaderboardInput } from '../models/list-leaderboard.input';
-import {
-  DailyLeaderboardRepository,
-  LeaderboardTimeframe,
-  MonthlyLeaderboardRepository,
-  WeeklyLeaderboardRepository,
-} from '@alien-worlds/leaderboard-api-common';
 
 /*imports*/
 /**
@@ -22,7 +18,7 @@ export class CountLeaderboardUseCase implements UseCase<number> {
     private weeklyLeaderboardRepository: WeeklyLeaderboardRepository,
     @inject(MonthlyLeaderboardRepository.Token)
     private monthlyLeaderboardRepository: MonthlyLeaderboardRepository
-  ) {}
+  ) { }
 
   /**
    * @async

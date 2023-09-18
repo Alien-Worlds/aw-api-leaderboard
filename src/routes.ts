@@ -1,14 +1,8 @@
-import { LeaderboardApiConfig } from './config/config.types';
-import { Container, Route } from '@alien-worlds/api-core';
-import {
-  FindUserInLeaderboardRoute,
-  LeaderboardController,
-  ListLeaderboardRoute,
-  PingController,
-  UpdateLeaderboardRoute,
-} from './endpoints';
+import { Container, Route } from '@alien-worlds/aw-core';
 
 import { LeaderboardApi } from './api';
+import { LeaderboardApiConfig } from './config/config.types';
+import { FindUserInLeaderboardRoute, LeaderboardController, ListLeaderboardRoute, PingController, UpdateLeaderboardRoute } from './endpoints';
 import { HealthController } from './endpoints/health';
 import { GetHealthRoute } from './endpoints/health/routes/health.route';
 import { GetPingRoute } from './endpoints/ping/routes/ping.route';

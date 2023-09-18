@@ -1,9 +1,11 @@
-import jwt from 'jsonwebtoken';
-import { LeaderboardUpdateJson } from '@alien-worlds/leaderboard-api-common';
-import { PostRoute, RouteHandler, Request } from '@alien-worlds/api-core';
+import { PostRoute, Request, RouteHandler } from '@alien-worlds/aw-core';
+
+import { LeaderboardApiConfig } from '../../../config';
+import { LeaderboardUpdateJson } from '@alien-worlds/aw-api-common-leaderboard';
 import { UpdateLeaderboardInput } from '../domain/models/update-leaderboard.input';
 import { UpdateLeaderboardOutput } from '../domain/models/update-leaderboard.output';
-import { LeaderboardApiConfig } from '../../../config';
+import { UpdateLeaderboardRouteIO } from './update-leaderboard.route-io';
+import jwt from 'jsonwebtoken';
 
 /*imports*/
 
@@ -53,10 +55,7 @@ export class UpdateLeaderboardRoute extends PostRoute {
           };
         },
       },
-      hooks: {
-        pre: UpdateLeaderboardInput.fromRequest,
-        post: (output: UpdateLeaderboardOutput) => output.toResponse(),
-      },
+      io: new UpdateLeaderboardRouteIO(),
     });
   }
 }

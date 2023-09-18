@@ -1,14 +1,11 @@
-import {
-  LeaderboardSort,
-  LeaderboardTimeframe,
-} from '@alien-worlds/leaderboard-api-common';
-import { createTimeRange } from '../leaderboard.utils';
+import { IO, Request } from '@alien-worlds/aw-core';
+import { LeaderboardSort, LeaderboardTimeframe } from '@alien-worlds/aw-api-common-leaderboard';
 
 import { FindUserInLeaderboardRequest } from './../../data/leaderboard.dtos';
-import { Request } from '@alien-worlds/api-core';
+import { createTimeRange } from '../leaderboard.utils';
 
-export class FindUserInLeaderboardInput {
-  public static fromRequest(
+export class FindUserInLeaderboardInput implements IO {
+  public static create(
     request: Request<
       FindUserInLeaderboardRequest,
       FindUserInLeaderboardRequest,
@@ -34,5 +31,8 @@ export class FindUserInLeaderboardInput {
     public readonly sort: string,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) {}
+  ) { }
+  toJSON(): unknown {
+    throw new Error('Method not implemented.');
+  }
 }

@@ -1,9 +1,10 @@
-import { LeaderboardApiConfig } from '../config';
-import { LeaderboardTimeframe } from '@alien-worlds/leaderboard-api-common';
-import { archiveLeaderboard } from './archive-leaderboard';
+import { LeaderboardTimeframe } from '@alien-worlds/aw-api-common-leaderboard';
+import { log } from '@alien-worlds/aw-core';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import cron from 'cron';
-import { log } from '@alien-worlds/api-core';
+
+import { LeaderboardApiConfig } from '../config';
+import { archiveLeaderboard } from './archive-leaderboard';
 
 let inMaintenanceMode = false;
 

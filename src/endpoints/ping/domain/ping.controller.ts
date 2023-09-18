@@ -1,4 +1,5 @@
-import { Result, injectable } from '@alien-worlds/api-core';
+import { injectable, Result } from '@alien-worlds/aw-core';
+
 import { PingOutput } from './models/ping.output';
 
 @injectable()

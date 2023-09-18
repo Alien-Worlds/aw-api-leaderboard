@@ -1,10 +1,7 @@
-import { GetRoute, RouteHandler } from '@alien-worlds/api-core';
+import { GetRoute, RouteHandler } from '@alien-worlds/aw-core';
 
-import { ListLeaderboardInput } from '../domain/models/list-leaderboard.input';
-import { ListLeaderboardOutput } from '../domain/models/list-leaderboard.output';
 import { LeaderboardApiConfig } from '../../../config';
-
-/*imports*/
+import { ListLeaderboardRouteIO } from './list-leaderboard.route-io';
 
 /**
  * @class
@@ -16,10 +13,7 @@ export class ListLeaderboardRoute extends GetRoute {
 
   private constructor(handler: RouteHandler, config: LeaderboardApiConfig) {
     super(`/${config.versions.leaderboardUrlVersion}/leaderboard/list`, handler, {
-      hooks: {
-        pre: ListLeaderboardInput.fromRequest,
-        post: (output: ListLeaderboardOutput) => output.toResponse(),
-      },
+      io: new ListLeaderboardRouteIO(),
     });
   }
 }

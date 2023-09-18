@@ -1,6 +1,7 @@
-import { GetRoute, RouteHandler } from '@alien-worlds/api-core';
-import { PingOutput } from '../domain/models/ping.output';
+import { GetRoute, RouteHandler } from '@alien-worlds/aw-core';
+
 import { LeaderboardApiConfig } from '../../../config';
+import { PingRouteIO } from './ping.route-io';
 
 export class GetPingRoute extends GetRoute {
   public static create(handler: RouteHandler, config: LeaderboardApiConfig) {
@@ -9,9 +10,7 @@ export class GetPingRoute extends GetRoute {
 
   private constructor(handler: RouteHandler, config: LeaderboardApiConfig) {
     super(`/${config.versions.leaderboardUrlVersion}/leaderboard/ping`, handler, {
-      hooks: {
-        post: (output: PingOutput) => output.toResponse(),
-      },
+      io: new PingRouteIO(),
     });
   }
 }

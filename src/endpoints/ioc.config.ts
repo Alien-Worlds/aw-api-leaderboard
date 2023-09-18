@@ -1,13 +1,15 @@
-import { Container, MongoSource } from '@alien-worlds/api-core';
-import { FindUserInLeaderboardUseCase } from './leaderboard/domain/use-cases/find-user-in-leaderboard.use-case';
-import { LeaderboardApiConfig } from '../config/config.types';
-import { LeaderboardController } from './leaderboard/domain/leaderboard.controller';
-import { ListLeaderboardUseCase } from './leaderboard/domain/use-cases/list-leaderboard.use-case';
-import { CountLeaderboardUseCase } from './leaderboard/domain/use-cases/count-leaderboard.use-case';
 import { setupAtomicAssets } from '@alien-worlds/atomicassets-api-common';
+import { setupLeaderboard } from '@alien-worlds/aw-api-common-leaderboard';
+import { Container } from '@alien-worlds/aw-core';
+import { MongoSource } from '@alien-worlds/aw-storage-mongodb';
+
+import { LeaderboardApiConfig } from '../config/config.types';
 import { CheckHealthUseCase, HealthController } from './health';
+import { LeaderboardController } from './leaderboard/domain/leaderboard.controller';
+import { CountLeaderboardUseCase } from './leaderboard/domain/use-cases/count-leaderboard.use-case';
+import { FindUserInLeaderboardUseCase } from './leaderboard/domain/use-cases/find-user-in-leaderboard.use-case';
+import { ListLeaderboardUseCase } from './leaderboard/domain/use-cases/list-leaderboard.use-case';
 import { PingController } from './ping';
-import { setupLeaderboard } from '@alien-worlds/leaderboard-api-common';
 
 export const setupDependencies = async (
   config: LeaderboardApiConfig,

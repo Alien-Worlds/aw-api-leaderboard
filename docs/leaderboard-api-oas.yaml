@@ -438,7 +438,7 @@ paths:
                     uptimeSeconds: 149
                     nodeVersion: v17.4.0
                     dependencies:
-                      '@alien-worlds/api-core': ^0.0.101
+                      '@alien-worlds/aw-core': ^0.0.101
                       '@alien-worlds/dao-api-common': ^0.0.82
                     databases:
                       mongo: OK
@@ -452,7 +452,7 @@ paths:
                     uptimeSeconds: 149
                     nodeVersion: v17.4.0
                     dependencies:
-                      '@alien-worlds/api-core': ^0.0.101
+                      '@alien-worlds/aw-core': ^0.0.101
                       '@alien-worlds/dao-api-common': ^0.0.82
                     databases:
                       mongo: OK

@@ -1,12 +1,13 @@
-import { log } from '@alien-worlds/api-core';
+import { log } from '@alien-worlds/aw-core';
 import bodyParser from 'body-parser';
-import express, { Express } from 'express';
 import cors from 'cors';
-import YAML from 'yaml';
-import swaggerUi from 'swagger-ui-express';
-import { LeaderboardApiConfig } from './config/config.types';
+import express, { Express } from 'express';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yaml';
+
+import { LeaderboardApiConfig } from './config/config.types';
 
 export class LeaderboardApi {
   private app: Express;

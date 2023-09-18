@@ -1,8 +1,8 @@
-import { log, Result } from '@alien-worlds/api-core';
+import { Result, log } from '@alien-worlds/aw-core';
 
-import { parseLeaderboardToResult } from '../leaderboard.utils';
-import { Leaderboard } from '@alien-worlds/leaderboard-api-common';
+import { Leaderboard } from '@alien-worlds/aw-api-common-leaderboard';
 import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
+import { parseLeaderboardToResult } from '../leaderboard.utils';
 
 export class FindUserInLeaderboardOutput {
   public static create(
@@ -15,9 +15,9 @@ export class FindUserInLeaderboardOutput {
 
   private constructor(
     public readonly result: Result<Leaderboard>,
-    private readonly sort: string,
-    private readonly tlmDecimalPrecision: number
-  ) {}
+    public readonly sort: string,
+    public readonly tlmDecimalPrecision: number
+  ) { }
 
   public toResponse() {
     const { result, sort, tlmDecimalPrecision } = this;

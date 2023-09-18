@@ -1,5 +1,5 @@
 import { AtomicAssetsConfig } from '@alien-worlds/atomicassets-api-common';
-import { LeaderboardConfig } from '@alien-worlds/leaderboard-api-common';
+import { LeaderboardConfig } from '@alien-worlds/aw-api-common-leaderboard';
 
 export type Versions = {
   leaderboard: string;

@@ -1,18 +1,15 @@
-import { ListLeaderboardRequest } from '../../data/leaderboard.dtos';
-import { Request } from '@alien-worlds/api-core';
-import {
-  LeaderboardOrder,
-  LeaderboardSort,
-  LeaderboardTimeframe,
-} from '@alien-worlds/leaderboard-api-common';
+import { LeaderboardOrder, LeaderboardSort, LeaderboardTimeframe } from '@alien-worlds/aw-api-common-leaderboard';
+import { IO, Request } from '@alien-worlds/aw-core';
+
+import { ListLeaderboardRequest, ListLeaderboardRequestQueryParams } from '../../data/leaderboard.dtos';
 import { createTimeRange } from '../leaderboard.utils';
 
-export class ListLeaderboardInput {
-  public static fromRequest(
+export class ListLeaderboardInput implements IO {
+  public static create(
     request: Request<
       ListLeaderboardRequest,
-      ListLeaderboardRequest,
-      ListLeaderboardRequest
+      unknown,
+      ListLeaderboardRequestQueryParams
     >
   ): ListLeaderboardInput {
     const { query } = request;
@@ -39,5 +36,9 @@ export class ListLeaderboardInput {
     public readonly limit: number,
     public readonly fromDate: Date,
     public readonly toDate: Date
-  ) {}
+  ) { }
+
+  toJSON(): unknown {
+    throw new Error('Method not implemented.');
+  }
 }

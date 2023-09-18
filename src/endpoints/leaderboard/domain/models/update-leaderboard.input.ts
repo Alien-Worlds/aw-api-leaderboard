@@ -1,10 +1,7 @@
-import {
-  LeaderboardUpdate,
-  LeaderboardUpdateJson,
-} from '@alien-worlds/leaderboard-api-common';
-import { Request } from '@alien-worlds/api-core';
+import { IO, Request } from '@alien-worlds/aw-core';
+import { LeaderboardUpdate, LeaderboardUpdateJson } from '@alien-worlds/aw-api-common-leaderboard';
 
-export class UpdateLeaderboardInput {
+export class UpdateLeaderboardInput implements IO {
   public static create(items: LeaderboardUpdateJson[]): UpdateLeaderboardInput {
     return new UpdateLeaderboardInput(items.map(LeaderboardUpdate.fromJson));
   }
@@ -19,5 +16,8 @@ export class UpdateLeaderboardInput {
     return new UpdateLeaderboardInput([LeaderboardUpdate.fromJson(request.body)]);
   }
 
-  private constructor(public readonly items: LeaderboardUpdate[]) {}
+  private constructor(public readonly items: LeaderboardUpdate[]) { }
+  toJSON(): unknown {
+    throw new Error('Method not implemented.');
+  }
 }
