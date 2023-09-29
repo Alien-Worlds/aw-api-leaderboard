@@ -27,7 +27,7 @@
                 "@alien-worlds/aw-core": {
                     "$ref": "#/$defs/semanticVerString"
                 },
-                "@alien-worlds/atomicassets-api-common": {
+                "@alien-worlds/aw-api-common-atomicassets": {
                     "$ref": "#/$defs/semanticVerString"
                 },
                 "@alien-worlds/aw-api-common-leaderboard": {

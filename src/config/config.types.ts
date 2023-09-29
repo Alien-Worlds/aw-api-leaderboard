@@ -1,4 +1,4 @@
-import { AtomicAssetsConfig } from '@alien-worlds/atomicassets-api-common';
+import { AtomicAssetsConfig } from '@alien-worlds/aw-api-common-atomicassets';
 import { LeaderboardConfig } from '@alien-worlds/aw-api-common-leaderboard';
 
 export type Versions = {

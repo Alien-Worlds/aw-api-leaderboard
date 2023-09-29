@@ -48,7 +48,7 @@ export class CheckHealthUseCase implements UseCase<HealthJson> {
           version: config.versions.apiCore,
         },
         {
-          name: '@alien-worlds/atomicassets-api-common',
+          name: '@alien-worlds/aw-api-common-atomicassets',
           version: config.versions.atomicassetsApiCommon,
         },
         {

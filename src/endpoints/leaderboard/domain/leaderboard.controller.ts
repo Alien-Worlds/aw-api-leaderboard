@@ -1,4 +1,4 @@
-import { AtomicAsset, GetAtomicAssetsUseCase } from '@alien-worlds/atomicassets-api-common';
+import { AtomicAsset, GetAtomicAssetsUseCase } from '@alien-worlds/aw-api-common-atomicassets';
 import { MinigToolData, UpdateLeaderboardUseCase } from '@alien-worlds/aw-api-common-leaderboard';
 import { inject, injectable, OperationStatus, Result } from '@alien-worlds/aw-core';
 

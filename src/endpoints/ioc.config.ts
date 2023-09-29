@@ -1,15 +1,15 @@
-import { setupAtomicAssets } from '@alien-worlds/atomicassets-api-common';
-import { setupLeaderboard } from '@alien-worlds/aw-api-common-leaderboard';
-import { Container } from '@alien-worlds/aw-core';
-import { MongoSource } from '@alien-worlds/aw-storage-mongodb';
-
-import { LeaderboardApiConfig } from '../config/config.types';
 import { CheckHealthUseCase, HealthController } from './health';
-import { LeaderboardController } from './leaderboard/domain/leaderboard.controller';
+
+import { Container } from '@alien-worlds/aw-core';
 import { CountLeaderboardUseCase } from './leaderboard/domain/use-cases/count-leaderboard.use-case';
 import { FindUserInLeaderboardUseCase } from './leaderboard/domain/use-cases/find-user-in-leaderboard.use-case';
+import { LeaderboardApiConfig } from '../config/config.types';
+import { LeaderboardController } from './leaderboard/domain/leaderboard.controller';
 import { ListLeaderboardUseCase } from './leaderboard/domain/use-cases/list-leaderboard.use-case';
+import { MongoSource } from '@alien-worlds/aw-storage-mongodb';
 import { PingController } from './ping';
+import { setupAtomicAssets } from '@alien-worlds/aw-api-common-atomicassets';
+import { setupLeaderboard } from '@alien-worlds/aw-api-common-leaderboard';
 
 export const setupDependencies = async (
   config: LeaderboardApiConfig,
