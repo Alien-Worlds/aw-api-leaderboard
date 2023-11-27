@@ -45,7 +45,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@alien-worlds/aw-api-common-leaderboard": "^0.0.18",
+    "@alien-worlds/aw-api-common-leaderboard": "^0.0.19",
     "@alien-worlds/aw-core": "^0.0.21",
     "@alien-worlds/aw-storage-mongodb": "^0.0.16",
     "@alien-worlds/aw-storage-redis": "^0.0.7",
