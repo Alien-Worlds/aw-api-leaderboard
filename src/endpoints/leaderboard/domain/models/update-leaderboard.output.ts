@@ -1,15 +1,15 @@
-import { log, Result, UpdateStatus } from '@alien-worlds/api-core';
+import { log, OperationStatus, Result } from '@alien-worlds/aw-core';
 
 export class UpdateLeaderboardOutput {
   public static create(
-    result: Result<UpdateStatus.Success | UpdateStatus.Failure>
+    result: Result<OperationStatus.Success | OperationStatus.Failure>
   ): UpdateLeaderboardOutput {
     return new UpdateLeaderboardOutput(result);
   }
 
   private constructor(
-    public readonly result: Result<UpdateStatus.Success | UpdateStatus.Failure>
-  ) {}
+    public readonly result: Result<OperationStatus.Success | OperationStatus.Failure>
+  ) { }
 
   public toResponse() {
     const { result } = this;

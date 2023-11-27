@@ -1,9 +1,7 @@
-import { GetRoute, RouteHandler } from '@alien-worlds/api-core';
+import { GetRoute, RouteHandler } from '@alien-worlds/aw-core';
 
-import { HealthOutput } from '../domain/models/health.output';
+import { GetHealthRouteIO } from './health.route-io';
 import { LeaderboardApiConfig } from '../../../config';
-
-/*imports*/
 
 /**
  * @class
@@ -17,9 +15,7 @@ export class GetHealthRoute extends GetRoute {
 
   private constructor(handler: RouteHandler, config: LeaderboardApiConfig) {
     super(`/${config.versions.leaderboardUrlVersion}/leaderboard/health`, handler, {
-      hooks: {
-        post: (output: HealthOutput) => output.toResponse(),
-      },
+      io: new GetHealthRouteIO(),
     });
   }
 }

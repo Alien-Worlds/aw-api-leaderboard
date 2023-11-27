@@ -1,13 +1,9 @@
-import {
-  ConfigVars,
-  MongoConfig,
-  RedisConfig,
-  buildMongoConfig,
-  buildRedisConfig,
-} from '@alien-worlds/api-core';
 import { LeaderboardApiConfig, NewRelicConfig } from './config.types';
+import { MongoConfig, buildMongoConfig } from '@alien-worlds/aw-storage-mongodb';
+import { RedisConfig, buildRedisConfig } from '@alien-worlds/aw-storage-redis';
 
-import { AtomicAssetsConfig } from '@alien-worlds/atomicassets-api-common';
+import { AtomicAssetsConfig } from '@alien-worlds/aw-api-common-atomicassets';
+import { ConfigVars } from '@alien-worlds/aw-core';
 import { readFileSync } from 'fs';
 
 export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
@@ -49,11 +45,11 @@ export const buildConfig = (packageJsonPath: string): LeaderboardApiConfig => {
   const versions = {
     leaderboard: packageJson.version,
     leaderboardUrlVersion,
-    apiCore: packageJson.dependencies['@alien-worlds/api-core'],
+    apiCore: packageJson.dependencies['@alien-worlds/aw-core'],
     atomicassetsApiCommon:
-      packageJson.dependencies['@alien-worlds/atomicassets-api-common'],
+      packageJson.dependencies['@alien-worlds/aw-api-common-atomicassets'],
     leaderboardApiCommon:
-      packageJson.dependencies['@alien-worlds/leaderboard-api-common'],
+      packageJson.dependencies['@alien-worlds/aw-api-common-leaderboard'],
   };
 
   return {

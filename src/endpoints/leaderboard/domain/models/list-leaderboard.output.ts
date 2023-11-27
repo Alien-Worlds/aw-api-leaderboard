@@ -1,8 +1,7 @@
-import { log, Result } from '@alien-worlds/api-core';
-import { parseLeaderboardToResult } from '../leaderboard.utils';
-import { Leaderboard } from '@alien-worlds/leaderboard-api-common';
+import { Leaderboard } from '@alien-worlds/aw-api-common-leaderboard';
+import { IO, Result } from '@alien-worlds/aw-core';
 
-export class ListLeaderboardOutput {
+export class ListLeaderboardOutput implements IO {
   public static create(
     listResult: Result<Leaderboard[]>,
     countResult: Result<number>,
@@ -25,36 +24,9 @@ export class ListLeaderboardOutput {
     public readonly sort: string,
     public readonly order: number,
     public readonly tlmDecimalPrecision: number
-  ) {}
+  ) { }
 
-  public toResponse() {
-    const {
-      listResult: { content: list, failure: listFailure },
-      countResult: { content: total, failure: countFailure },
-      sort,
-      order,
-      tlmDecimalPrecision,
-    } = this;
-    if (listFailure || countFailure) {
-      const { error } = listFailure || countFailure;
-
-      log(error);
-      return {
-        status: 500,
-        body: null,
-      };
-    }
-
-    return {
-      status: 200,
-      body: {
-        results: list
-          .map(leaderboard =>
-            parseLeaderboardToResult(leaderboard, sort, tlmDecimalPrecision)
-          )
-          .sort((a, b) => (a.position < b.position ? order : -order)),
-        total: total,
-      },
-    };
+  toJSON(): unknown {
+    throw new Error('Method not implemented.');
   }
 }

@@ -1,6 +1,7 @@
+import { Leaderboard, preciseIntToFloat } from '@alien-worlds/aw-api-common-leaderboard';
+import { removeUndefinedProperties } from '@alien-worlds/aw-core';
+
 import { LeaderboardListOutputItem } from '../data/leaderboard.dtos';
-import { removeUndefinedProperties } from '@alien-worlds/api-core';
-import { Leaderboard, preciseIntToFloat } from '@alien-worlds/leaderboard-api-common';
 
 export const isIsoDateFormat = value => {
   return (
@@ -17,13 +18,11 @@ export const createTimeRange = (options: {
   const day = now.getDate();
   const month = now.getMonth() + 1;
   let fromDate = new Date(
-    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${
-      day < 10 ? '0' + day : day
+    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
     }T00:00:00.000Z`
   );
   let toDate = new Date(
-    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${
-      day < 10 ? '0' + day : day
+    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
     }T23:59:59.000Z`
   );
 
@@ -33,13 +32,11 @@ export const createTimeRange = (options: {
     const day = dateRef.getDate();
     const month = dateRef.getMonth() + 1;
     fromDate = new Date(
-      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
-        day < 10 ? '0' + day : day
+      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
       }T00:00:00.000Z`
     );
     toDate = new Date(
-      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
-        day < 10 ? '0' + day : day
+      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
       }T23:59:59.000Z`
     );
   } else {
@@ -53,8 +50,7 @@ export const createTimeRange = (options: {
       const day = dateRef.getDate();
       const month = dateRef.getMonth() + 1;
       fromDate = new Date(
-        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
-          day < 10 ? '0' + day : day
+        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
         }T00:00:00.000Z`
       );
     }
@@ -67,8 +63,7 @@ export const createTimeRange = (options: {
       const day = dateRef.getDate();
       const month = dateRef.getMonth() + 1;
       toDate = new Date(
-        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${
-          day < 10 ? '0' + day : day
+        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
         }T23:59:59.000Z`
       );
     }

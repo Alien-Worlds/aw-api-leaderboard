@@ -1,8 +1,8 @@
-import { inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
+import { DailyLeaderboardRepository } from '@alien-worlds/aw-api-common-leaderboard';
+import { inject, injectable, Result, UseCase } from '@alien-worlds/aw-core';
 
-import { HealthJson } from '../../data/dtos/health.dto';
 import { LeaderboardApiConfig } from '../../../../config';
-import { DailyLeaderboardRepository } from '@alien-worlds/leaderboard-api-common';
+import { HealthJson } from '../../data/dtos/health.dto';
 
 /*imports*/
 /**
@@ -18,7 +18,7 @@ export class CheckHealthUseCase implements UseCase<HealthJson> {
     private leaderboardRepository: DailyLeaderboardRepository,
     @inject('CONFIG')
     private config: LeaderboardApiConfig
-  ) {}
+  ) { }
 
   /**
    * @async
@@ -44,15 +44,15 @@ export class CheckHealthUseCase implements UseCase<HealthJson> {
 
       dependencies: [
         {
-          name: '@alien-worlds/api-core',
+          name: '@alien-worlds/aw-core',
           version: config.versions.apiCore,
         },
         {
-          name: '@alien-worlds/atomicassets-api-common',
+          name: '@alien-worlds/aw-api-common-atomicassets',
           version: config.versions.atomicassetsApiCommon,
         },
         {
-          name: '@alien-worlds/leaderboard-api-common',
+          name: '@alien-worlds/aw-api-common-leaderboard',
           version: config.versions.leaderboardApiCommon,
         },
       ],

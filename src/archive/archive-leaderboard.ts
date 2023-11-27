@@ -1,18 +1,9 @@
+import { BulkUpdateOperationsError, MongoSource, isDuplicateError } from '@alien-worlds/aw-storage-mongodb';
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  DataSourceBulkWriteError,
-  Failure,
-  MongoSource,
-  RedisSource,
-  Result,
-  log,
-} from '@alien-worlds/api-core';
-import {
-  LeaderboardArchiveMongoSource,
-  LeaderboardRankingsRedisSource,
-  LeaderboardSnapshotMongoSource,
-  LeaderboardSort,
-} from '@alien-worlds/leaderboard-api-common';
+import { Failure, Result, log } from '@alien-worlds/aw-core';
+import { LeaderboardArchiveMongoSource, LeaderboardRankingsRedisSource, LeaderboardSnapshotMongoSource, LeaderboardSort } from '@alien-worlds/aw-api-common-leaderboard';
+
+import { RedisSource } from '@alien-worlds/aw-storage-redis';
 
 const RedisRenameSortedSet = async (redis: RedisSource, key: string, newKey: string) => {
   log(`Attempt to rename Redis set '${key}' to '${newKey}'`);
@@ -105,8 +96,7 @@ export const createRankingsMigrationSets = async (
   await Promise.all(renameSetsPromises);
 
   log(
-    `[archive-${date}-${timeframe}-leaderboard] Created migration ranking sets (${
-      rankingsMigrationSets.length - RedisSetsNotFound.length
+    `[archive-${date}-${timeframe}-leaderboard] Created migration ranking sets (${rankingsMigrationSets.length - RedisSetsNotFound.length
     }/${rankingsMigrationSets.length})`
   );
 
@@ -153,8 +143,7 @@ export const removeRankingsMigrationSets = async (
   await Promise.all(deleteSetsPromises);
 
   log(
-    `[archive-${date}-${timeframe}-leaderboard] Deleted migration ranking sets (${
-      rankingsMigrationSets.length - RedisSetsNotFound.length
+    `[archive-${date}-${timeframe}-leaderboard] Deleted migration ranking sets (${rankingsMigrationSets.length - RedisSetsNotFound.length
     }/${rankingsMigrationSets.length})`
   );
 
@@ -258,13 +247,13 @@ export const archive = async (
             document.rankings = rankings[document.wallet_id];
             return document;
           });
+
           if (documents && documents.length) {
             try {
-              await archiveSource.insertMany(documents);
+              await archiveSource.insert(documents);
             } catch (error) {
               if (
-                error instanceof DataSourceBulkWriteError &&
-                error.onlyDuplicateErrors === true
+                error instanceof BulkUpdateOperationsError && isDuplicateError(error)
               ) {
                 log(error);
                 log(`Archiving continues...`);
@@ -276,7 +265,11 @@ export const archive = async (
 
           // Remove processed snapshot entries
           const processedSnapshotIds = snapshots.map(snp => snp._id);
-          await snapshotSource.removeMany(processedSnapshotIds);
+          await snapshotSource.remove({
+            filter: {
+              _id: processedSnapshotIds,
+            }
+          });
 
           inserted += snapshots.length;
           break;

@@ -1,4 +1,14 @@
-import { LeaderboardUpdateJson } from '@alien-worlds/leaderboard-api-common';
+import { LeaderboardUpdateJson } from '@alien-worlds/aw-api-common-leaderboard';
+
+export type ListLeaderboardRequestQueryParams = {
+  timeframe?: string,
+  sort?: string,
+  order?: number,
+  offset?: number,
+  limit?: number,
+  fromDate?: Date,
+  toDate?: Date
+};
 
 export type ListLeaderboardRequest = {
   timeframe?: string;

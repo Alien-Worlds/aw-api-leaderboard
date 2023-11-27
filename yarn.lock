@@ -36,27 +36,55 @@
     redis "^4.6.5"
     reflect-metadata "^0.1.13"
 
-"@alien-worlds/atomicassets-api-common@^0.0.2":
-  version "0.0.2"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/atomicassets-api-common/0.0.2/d2758ee0dbf9c237a6ad47c9fdb98d8c33b27244#d2758ee0dbf9c237a6ad47c9fdb98d8c33b27244"
-  integrity sha512-4dOC1t5vBLH0Iov8W8LjQ3kEEfAOrrj+RsUvTH6pH+C97xYapxaTbmonelnxXH71XSvawDB9a7eDVUrt+L1jsg==
+"@alien-worlds/aw-api-common-atomicassets@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-atomicassets/-/aw-api-common-atomicassets-0.0.6.tgz#a3bd4d1cf2ae8371293048184502d470b06606da"
+  integrity sha512-SrIrSYlOk/lkOB3LdUEE+tIojsnKKPkVvhnj6FYSOXaaJ7L9iTm/BJbmx/CHYlRfr+ILcTpQnj62JEu0Ajr7HA==
   dependencies:
-    "@alien-worlds/api-core" "^0.0.101"
+    "@alien-worlds/aw-core" "^0.0.21"
+    "@alien-worlds/aw-storage-mongodb" "^0.0.16"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/leaderboard-api-common@^0.0.12":
-  version "0.0.12"
-  resolved "https://npm.pkg.github.com/download/@alien-worlds/leaderboard-api-common/0.0.12/57e7ef1e3c05bad4e09cb95e90770736e3d12831#57e7ef1e3c05bad4e09cb95e90770736e3d12831"
-  integrity sha512-oEQuK8bqhMGw1GV7Kc7BTvZuvS7Lto+D/1S11/7L420dUTDaAffc93rkB3SPItrj4dW1FDpLpxZhzePMoVqfUg==
+"@alien-worlds/aw-api-common-leaderboard@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-leaderboard/-/aw-api-common-leaderboard-0.0.17.tgz#98a19c6d2ec24cff35160a3ee612ae8b8d015d25"
+  integrity sha512-QdcdIopTJCKBuJ6MFEoUUU0Pw2ZGsO1BU9rtwrvvjlSNj0wjufqT+MaHL8fwY/1dUYn6Ty/61AFTkSAiCWZgtQ==
   dependencies:
     "@alien-worlds/alienworlds-api-common" "^0.0.82"
-    "@alien-worlds/api-core" "^0.0.101"
-    "@alien-worlds/atomicassets-api-common" "^0.0.2"
+    "@alien-worlds/aw-api-common-atomicassets" "^0.0.6"
+    "@alien-worlds/aw-core" "^0.0.21"
+    "@alien-worlds/aw-storage-mongodb" "^0.0.16"
+    "@alien-worlds/aw-storage-redis" "^0.0.7"
     atomicassets "^1.5.1"
     crypto "^1.0.1"
     eosjs "^22.1.0"
+
+"@alien-worlds/aw-core@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-core/-/aw-core-0.0.21.tgz#f98d105adae0685a014a831c81eec56f1c691c7b"
+  integrity sha512-WP6ludtofCphRdZkdcke91wZv03BJGMGHWuW5RG7wjHfhc4u5X4bnojkIZ9lA9F5ihpMAzdmieH1xo6n/M3EkQ==
+  dependencies:
+    inversify "^6.0.1"
+    node-fetch "2.6.6"
+    reflect-metadata "^0.1.13"
+
+"@alien-worlds/aw-storage-mongodb@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-storage-mongodb/-/aw-storage-mongodb-0.0.16.tgz#5475a041b02517796348256b688319f46ac887cf"
+  integrity sha512-l0eqrtdb9OclW6Y7jSetf2FyfcrPs8deLDHL0AA4vfkfp5CfUlErJXxSoWabLvjjwohcNbQAu6dmw2yQyGrXAw==
+  dependencies:
+    "@alien-worlds/aw-core" "^0.0.21"
+    mongodb "4.9.1"
+
+"@alien-worlds/aw-storage-redis@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-storage-redis/-/aw-storage-redis-0.0.7.tgz#cddfe3c340683fb0bfe3131a52efeabb7d0cf514"
+  integrity sha512-tCU4Q0bAxaSgYWLrMSJ0gexgTymOQWdq61p3w10kaA9lPZPhYqsUkTOGxZlHupIt39kwRGPD3tjn36E2UodyGQ==
+  dependencies:
+    "@alien-worlds/aw-core" "^0.0.21"
+    redis "^4.6.7"
 
 "@ampproject/remapping@^2.1.0":
   version "2.2.0"
@@ -821,6 +849,15 @@
     generic-pool "3.9.0"
     yallist "4.0.0"
 
+"@redis/client@1.5.9":
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/@redis/client/-/client-1.5.9.tgz#c4ee81bbfedb4f1d9c7c5e9859661b9388fb4021"
+  integrity sha512-SffgN+P1zdWJWSXBvJeynvEnmnZrYmtKSRW00xl8pOPFOMJjxRR9u0frSxJpPR6Y4V+k54blJjGW7FgxbTI7bQ==
+  dependencies:
+    cluster-key-slot "1.1.2"
+    generic-pool "3.9.0"
+    yallist "4.0.0"
+
 "@redis/graph@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@redis/graph/-/graph-1.1.0.tgz#cc2b82e5141a29ada2cce7d267a6b74baa6dd519"
@@ -836,10 +873,20 @@
   resolved "https://registry.yarnpkg.com/@redis/search/-/search-1.1.2.tgz#6a8f66ba90812d39c2457420f859ce8fbd8f3838"
   integrity sha512-/cMfstG/fOh/SsE+4/BQGeuH/JJloeWuH+qJzM8dbxuWvdWibWAOAHHCZTMPhV3xIlH4/cUEIA8OV5QnYpaVoA==
 
+"@redis/search@1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@redis/search/-/search-1.1.3.tgz#b5a6837522ce9028267fe6f50762a8bcfd2e998b"
+  integrity sha512-4Dg1JjvCevdiCBTZqjhKkGoC5/BcB7k9j99kdMnaXFXg8x4eyOIVg9487CMv7/BUVkFLZCaIh8ead9mU15DNng==
+
 "@redis/time-series@1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@redis/time-series/-/time-series-1.0.4.tgz#af85eb080f6934580e4d3b58046026b6c2b18717"
   integrity sha512-ThUIgo2U/g7cCuZavucQTQzA9g9JbDDY2f64u3AbAoz/8vE2lt2U37LamDUVChhaDA3IRT9R6VvJwqnUfTJzng==
+
+"@redis/time-series@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@redis/time-series/-/time-series-1.0.5.tgz#a6d70ef7a0e71e083ea09b967df0a0ed742bc6ad"
+  integrity sha512-IFjIgTusQym2B5IZJG3XKr5llka7ey84fw/NOYqESP5WUfQs9zz1ww/9+qoz4ka/S6KcGBodzlCeZ5UImKbscg==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
@@ -4096,6 +4143,18 @@ redis@^4.6.5:
     "@redis/json" "1.0.4"
     "@redis/search" "1.1.2"
     "@redis/time-series" "1.0.4"
+
+redis@^4.6.7:
+  version "4.6.8"
+  resolved "https://registry.yarnpkg.com/redis/-/redis-4.6.8.tgz#54c5992e8a5ba512506fe9f53142cadc405547e7"
+  integrity sha512-S7qNkPUYrsofQ0ztWlTHSaK0Qqfl1y+WMIxrzeAGNG+9iUZB4HGeBgkHxE6uJJ6iXrkvLd1RVJ2nvu6H1sAzfQ==
+  dependencies:
+    "@redis/bloom" "1.2.0"
+    "@redis/client" "1.5.9"
+    "@redis/graph" "1.1.0"
+    "@redis/json" "1.0.4"
+    "@redis/search" "1.1.3"
+    "@redis/time-series" "1.0.5"
 
 reflect-metadata@^0.1.13:
   version "0.1.13"

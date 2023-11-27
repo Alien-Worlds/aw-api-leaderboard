@@ -1,22 +1,17 @@
-import { ListLeaderboardOutput } from './models/list-leaderboard.output';
-import { inject, injectable, Result, UpdateStatus } from '@alien-worlds/api-core';
+import { AtomicAsset, GetAtomicAssetsUseCase } from '@alien-worlds/aw-api-common-atomicassets';
+import { MinigToolData, UpdateLeaderboardUseCase } from '@alien-worlds/aw-api-common-leaderboard';
+import { inject, injectable, OperationStatus, Result } from '@alien-worlds/aw-core';
+
+import { LeaderboardApiConfig } from '../../../config';
 import { FindUserInLeaderboardInput } from './models/find-user-in-leaderboard.input';
+import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
 import { ListLeaderboardInput } from './models/list-leaderboard.input';
+import { ListLeaderboardOutput } from './models/list-leaderboard.output';
 import { UpdateLeaderboardInput } from './models/update-leaderboard.input';
+import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
+import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case';
 import { FindUserInLeaderboardUseCase } from './use-cases/find-user-in-leaderboard.use-case';
 import { ListLeaderboardUseCase } from './use-cases/list-leaderboard.use-case';
-import { CountLeaderboardUseCase } from './use-cases/count-leaderboard.use-case';
-import { UpdateLeaderboardOutput } from './models/update-leaderboard.output';
-import { FindUserInLeaderboardOutput } from './models/find-user-in-leaderboard.output';
-import {
-  AtomicAsset,
-  GetAtomicAssetsUseCase,
-} from '@alien-worlds/atomicassets-api-common';
-import { LeaderboardApiConfig } from '../../../config';
-import {
-  MinigToolData,
-  UpdateLeaderboardUseCase,
-} from '@alien-worlds/leaderboard-api-common';
 
 /*imports*/
 
@@ -39,7 +34,7 @@ export class LeaderboardController {
     private getAtomicAssetsUseCase: GetAtomicAssetsUseCase,
     @inject('CONFIG')
     private config: LeaderboardApiConfig
-  ) {}
+  ) { }
 
   /*methods*/
 
@@ -83,7 +78,7 @@ export class LeaderboardController {
     const { items: updates } = input;
 
     if (updates.length === 0) {
-      return UpdateLeaderboardOutput.create(Result.withContent(UpdateStatus.Failure));
+      return UpdateLeaderboardOutput.create(Result.withContent(OperationStatus.Failure));
     }
 
     const assetIds = updates.reduce((list, update) => {

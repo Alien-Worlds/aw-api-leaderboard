@@ -1,13 +1,8 @@
-import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/api-core';
-import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.input';
+import { DailyLeaderboardRepository, Leaderboard, LeaderboardTimeframe, MonthlyLeaderboardRepository, WeeklyLeaderboardRepository } from '@alien-worlds/aw-api-common-leaderboard';
+import { Failure, inject, injectable, Result, UseCase } from '@alien-worlds/aw-core';
+
 import { UserLeaderboardNotFoundError } from '../errors/user-leaderboard-not-found.error';
-import {
-  DailyLeaderboardRepository,
-  Leaderboard,
-  LeaderboardTimeframe,
-  MonthlyLeaderboardRepository,
-  WeeklyLeaderboardRepository,
-} from '@alien-worlds/leaderboard-api-common';
+import { FindUserInLeaderboardInput } from '../models/find-user-in-leaderboard.input';
 
 /*imports*/
 /**
@@ -24,7 +19,7 @@ export class FindUserInLeaderboardUseCase implements UseCase<Leaderboard> {
     private weeklyLeaderboardRepository: WeeklyLeaderboardRepository,
     @inject(MonthlyLeaderboardRepository.Token)
     private monthlyLeaderboardRepository: MonthlyLeaderboardRepository
-  ) {}
+  ) { }
 
   /**
    * @async
