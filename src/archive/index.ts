@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { log } from '@alien-worlds/aw-core';
 import { Command } from 'commander';
 import { join } from 'path';
