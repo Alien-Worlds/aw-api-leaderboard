@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { Container } from '@alien-worlds/aw-core';
 import { join } from 'path';
 
@@ -5,8 +7,6 @@ import { LeaderboardApi } from './api';
 import { buildConfig } from './config';
 import { setupDependencies } from './endpoints';
 import { mountRoutes } from './routes';
-
-import 'reflect-metadata';
 
 export const start = async () => {
   const config = buildConfig(join(__dirname, '../package.json'));
