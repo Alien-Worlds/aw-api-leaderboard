@@ -22,10 +22,10 @@
     crypto "^1.0.1"
     eosjs "^22.1.0"
 
-"@alien-worlds/aw-api-common-leaderboard@^0.0.19":
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-leaderboard/-/aw-api-common-leaderboard-0.0.19.tgz#0f04d3884631fe9f962634c11ec37c7a816d5f9f"
-  integrity sha512-TGuU1h9qXE8T8NNdYX8ZGrI/CIzBUoYTsJOEDd5b7g2mW7CVie4gohpYkoTdI1U10QabfEKwvG7wfCybg2Wvtw==
+"@alien-worlds/aw-api-common-leaderboard@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-leaderboard/-/aw-api-common-leaderboard-0.0.21.tgz#9c9f3b21cec42685a1a1e6724b622f9804117ba7"
+  integrity sha512-3BO3rRTmz5VQ1LsBB48zi8SA4CjK3ge3qOmwKL9OGskEOzzQfmqkg9M6L7KNrrpmmQaRChaY2VmUyx4j3+QRpg==
   dependencies:
     "@alien-worlds/aw-api-common-atomicassets" "^0.0.7"
     "@alien-worlds/aw-contract-notify-world" "^0.0.1"
