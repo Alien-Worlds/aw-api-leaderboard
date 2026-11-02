@@ -6,15 +6,6 @@ import {
   parseLeaderboardToResult,
 } from './leaderboard.utils';
 
-/**
- * Emulates `it.failing` (not available in jest 27): passes while the bug exists
- * and fails once it is fixed, as a prompt to turn it into a regular `it`.
- */
-const itKnownBug = (name: string, fn: () => void) =>
-  it(`[known bug] ${name}`, () => {
-    expect(fn).toThrow();
-  });
-
 describe('isIsoDateFormat', () => {
   it('accepts a full ISO string', () => {
     expect(isIsoDateFormat('2024-03-15T10:20:30.000Z')).toBe(true);
@@ -30,8 +21,12 @@ describe('isIsoDateFormat', () => {
     expect(isIsoDateFormat(123)).toBe(false);
   });
 
-  itKnownBug('rejects strings with leading or trailing junk', () => {
+  it('rejects strings with leading or trailing junk', () => {
     expect(isIsoDateFormat('xx2024-03-15T10:20:30.000Zyy')).toBe(false);
+  });
+
+  it('rejects a separator other than a dot before the milliseconds', () => {
+    expect(isIsoDateFormat('2024-03-15T10:20:30x000Z')).toBe(false);
   });
 });
 
@@ -45,18 +40,20 @@ describe('createTimeRange', () => {
 
   afterEach(() => {
     jest.useRealTimers();
-    process.env.TZ = originalTz;
+    if (originalTz === undefined) {
+      delete process.env.TZ;
+    } else {
+      process.env.TZ = originalTz;
+    }
   });
 
   it('defaults to the whole current day', () => {
-    process.env.TZ = 'UTC';
     const { fromDate, toDate } = createTimeRange({});
     expect(fromDate.toISOString()).toBe('2024-03-15T00:00:00.000Z');
     expect(toDate.toISOString()).toBe('2024-03-15T23:59:59.000Z');
   });
 
   it('uses the whole day of `date`, ignoring fromDate and toDate', () => {
-    process.env.TZ = 'UTC';
     const { fromDate, toDate } = createTimeRange({
       date: '2024-02-10T08:00:00.000Z',
       fromDate: '2020-01-01T00:00:00.000Z',
@@ -67,7 +64,6 @@ describe('createTimeRange', () => {
   });
 
   it('accepts `date` as a Date', () => {
-    process.env.TZ = 'UTC';
     const { fromDate, toDate } = createTimeRange({
       date: new Date('2024-02-10T08:00:00.000Z'),
     });
@@ -85,36 +81,61 @@ describe('createTimeRange', () => {
   });
 
   it('snaps a date-only fromDate to the start of that day', () => {
-    process.env.TZ = 'UTC';
     const { fromDate } = createTimeRange({ fromDate: '2024-03-01' });
     expect(fromDate.toISOString()).toBe('2024-03-01T00:00:00.000Z');
   });
 
   it('snaps a date-only toDate to the end of that day', () => {
-    process.env.TZ = 'UTC';
     const { toDate } = createTimeRange({ toDate: '2024-03-20' });
     expect(toDate.toISOString()).toBe('2024-03-20T23:59:59.000Z');
   });
 
   it('zero-pads single digit months and days', () => {
-    process.env.TZ = 'UTC';
     const { fromDate, toDate } = createTimeRange({ date: '2024-01-05T10:00:00.000Z' });
     expect(fromDate.toISOString()).toBe('2024-01-05T00:00:00.000Z');
     expect(toDate.toISOString()).toBe('2024-01-05T23:59:59.000Z');
   });
 
-  itKnownBug('keeps an ISO toDate exactly when fromDate is not given', () => {
-    // the toDate branch tests isIsoDateFormat(options.fromDate) instead of toDate
+  it('keeps an ISO toDate exactly when fromDate is not given', () => {
     const { toDate } = createTimeRange({ toDate: '2024-03-20T10:00:00.000Z' });
     expect(toDate.toISOString()).toBe('2024-03-20T10:00:00.000Z');
   });
 
-  itKnownBug('picks the UTC day of `date` on a non-UTC host', () => {
-    // local getDate()/getMonth() are used, then 'Z' is appended
-    process.env.TZ = 'Australia/Sydney';
-    const { fromDate } = createTimeRange({ date: '2024-03-14T23:30:00.000Z' });
-    expect(fromDate.toISOString()).toBe('2024-03-14T00:00:00.000Z');
+  it('keeps an ISO toDate exactly when fromDate is a date-only string', () => {
+    const { fromDate, toDate } = createTimeRange({
+      fromDate: '2024-03-01',
+      toDate: '2024-03-20T10:00:00.000Z',
+    });
+    expect(fromDate.toISOString()).toBe('2024-03-01T00:00:00.000Z');
+    expect(toDate.toISOString()).toBe('2024-03-20T10:00:00.000Z');
   });
+
+  it('snaps a date-only toDate to the end of that day when fromDate is ISO', () => {
+    const { fromDate, toDate } = createTimeRange({
+      fromDate: '2024-03-01T05:06:07.000Z',
+      toDate: '2024-03-20',
+    });
+    expect(fromDate.toISOString()).toBe('2024-03-01T05:06:07.000Z');
+    expect(toDate.toISOString()).toBe('2024-03-20T23:59:59.000Z');
+  });
+
+  it.each(['Australia/Sydney', 'America/Los_Angeles', 'Pacific/Kiritimati'])(
+    'uses the UTC day regardless of the host timezone (%s)',
+    tz => {
+      process.env.TZ = tz;
+      const { fromDate, toDate } = createTimeRange({ date: '2024-03-14T23:30:00.000Z' });
+      expect(fromDate.toISOString()).toBe('2024-03-14T00:00:00.000Z');
+      expect(toDate.toISOString()).toBe('2024-03-14T23:59:59.000Z');
+
+      const defaults = createTimeRange({});
+      expect(defaults.fromDate.toISOString()).toBe('2024-03-15T00:00:00.000Z');
+      expect(defaults.toDate.toISOString()).toBe('2024-03-15T23:59:59.000Z');
+
+      const dateOnly = createTimeRange({ fromDate: '2024-03-10', toDate: '2024-03-12' });
+      expect(dateOnly.fromDate.toISOString()).toBe('2024-03-10T00:00:00.000Z');
+      expect(dateOnly.toDate.toISOString()).toBe('2024-03-12T23:59:59.000Z');
+    }
+  );
 });
 
 describe('parseLeaderboardToResult', () => {
@@ -142,21 +163,13 @@ describe('parseLeaderboardToResult', () => {
   };
 
   it('converts integer TLM values using the decimal precision', () => {
-    const result = parseLeaderboardToResult(
-      fakeLeaderboard(base),
-      'tlm_gains_total',
-      4
-    );
+    const result = parseLeaderboardToResult(fakeLeaderboard(base), 'tlm_gains_total', 4);
     expect(result.tlm_gains_total).toBe(12.3456);
     expect(result.tlm_gains_highest).toBe(0.5);
   });
 
   it('coerces numeric strings and rounds averages to the precision', () => {
-    const result = parseLeaderboardToResult(
-      fakeLeaderboard(base),
-      'tlm_gains_total',
-      2
-    );
+    const result = parseLeaderboardToResult(fakeLeaderboard(base), 'tlm_gains_total', 2);
     expect(result.total_charge_time).toBe(100);
     expect(result.avg_charge_time).toBe(1.23);
     expect(result.avg_nft_power).toBe(0.33);
@@ -166,20 +179,12 @@ describe('parseLeaderboardToResult', () => {
   });
 
   it('takes the position from the ranking of the requested sort', () => {
-    const result = parseLeaderboardToResult(
-      fakeLeaderboard(base),
-      'tlm_gains_total',
-      4
-    );
+    const result = parseLeaderboardToResult(fakeLeaderboard(base), 'tlm_gains_total', 4);
     expect(result.position).toBe(4);
   });
 
   it('uses -1 when there is no ranking for the sort', () => {
-    const result = parseLeaderboardToResult(
-      fakeLeaderboard(base),
-      'avg_mining_power',
-      4
-    );
+    const result = parseLeaderboardToResult(fakeLeaderboard(base), 'avg_mining_power', 4);
     expect(result.position).toBe(-1);
   });
 
