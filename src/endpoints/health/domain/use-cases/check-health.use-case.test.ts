@@ -19,10 +19,8 @@ describe('CheckHealthUseCase', () => {
     return { repo, useCase };
   };
 
-  const statusOf = (
-    databases: { name: string; status: string }[],
-    name: string
-  ) => databases.find(db => db.name === name).status;
+  const statusOf = (databases: { name: string; status: string }[], name: string) =>
+    databases.find(db => db.name === name).status;
 
   it('reports OK for both databases when both counts succeed', async () => {
     const { repo, useCase } = setup(Result.withContent(1), Result.withContent(2));
