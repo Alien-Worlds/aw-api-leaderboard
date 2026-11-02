@@ -18,7 +18,7 @@
   "scripts": {
     "test:unit": "jest --config=jest.config.unit.js",
     "clean": "rm -rf ./build",
-    "build": "yarn clean && tsc -b",
+    "build": "yarn clean && tsc -b tsconfig.build.json",
     "start": "node -r dotenv/config -r newrelic build/index.js",
     "archive": "node build/archive/index.js",
     "start:local": "yarn build && node -r dotenv/config -r newrelic build/index.js",

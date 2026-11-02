@@ -3,5 +3,6 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   testMatch: ['**/*.test.ts'],
+  setupFiles: ['reflect-metadata'],
   passWithNoTests: true,
 };
