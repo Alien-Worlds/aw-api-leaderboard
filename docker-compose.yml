@@ -3,8 +3,6 @@ services:
   api:
     build:
       context: .
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
     restart: on-failure
     command: [ 'sh', '-c', 'yarn start' ]
     depends_on:
@@ -17,10 +15,8 @@ services:
   cron:
     build:
       context: .
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
     restart: on-failure
-    command: [ 'sh', '-c', 'yarn cron' ]
+    command: [ 'sh', '-c', 'yarn archive' ]
     depends_on:
       - redis
       - db
