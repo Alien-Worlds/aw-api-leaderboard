@@ -1,6 +1,6 @@
 # BUILDER
 
-FROM node:17-alpine3.15 AS leaderboard-api-builder
+FROM node:24-alpine AS leaderboard-api-builder
 
 ARG GITHUB_TOKEN
 
@@ -20,7 +20,7 @@ RUN yarn build
 
 # PRODUCTION
 
-FROM node:17-alpine3.15 AS leaderboard-api
+FROM node:24-alpine AS leaderboard-api
 
 WORKDIR /var/www/api
 
