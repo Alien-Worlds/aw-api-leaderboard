@@ -1,4 +1,5 @@
 import { Leaderboard } from '@alien-worlds/aw-api-common-leaderboard';
+import { spawnSync } from 'child_process';
 
 import {
   createTimeRange,
@@ -30,9 +31,43 @@ describe('isIsoDateFormat', () => {
   });
 });
 
-describe('createTimeRange', () => {
-  const originalTz = process.env.TZ;
+/**
+ * Runs createTimeRange in a fresh Node process started with the given TZ.
+ * Changing process.env.TZ inside a Jest worker is unreliable: the first change
+ * applies and later ones are ignored, so a per-process TZ is the only honest way
+ * to exercise several timezones. The clock is fixed to 2024-03-15T12:00:00Z.
+ */
+const runInTimezone = (tz: string) => {
+  const script = `
+    const RealDate = Date;
+    const NOW = RealDate.parse('2024-03-15T12:00:00.000Z');
+    global.Date = class extends RealDate {
+      constructor(...args) { args.length ? super(...args) : super(NOW); }
+      static now() { return NOW; }
+    };
+    const { createTimeRange } = require(${JSON.stringify(
+      require.resolve('./leaderboard.utils')
+    )});
+    const iso = r => ({ from: r.fromDate.toISOString(), to: r.toDate.toISOString() });
+    console.log(JSON.stringify({
+      offset: new Date('2024-03-14T23:30:00.000Z').getTimezoneOffset(),
+      date: iso(createTimeRange({ date: '2024-03-14T23:30:00.000Z' })),
+      defaults: iso(createTimeRange({})),
+      dateOnly: iso(createTimeRange({ fromDate: '2024-03-10', toDate: '2024-03-12' })),
+    }));
+  `;
+  const result = spawnSync(
+    process.execPath,
+    ['-r', 'reflect-metadata', '-r', 'ts-node/register/transpile-only', '-e', script],
+    { env: { ...process.env, TZ: tz }, encoding: 'utf8' }
+  );
+  if (result.status !== 0) {
+    throw new Error(`child process failed: ${result.stderr}`);
+  }
+  return JSON.parse(result.stdout);
+};
 
+describe('createTimeRange', () => {
   beforeEach(() => {
     jest.useFakeTimers('modern');
     jest.setSystemTime(new Date('2024-03-15T12:00:00.000Z'));
@@ -40,11 +75,6 @@ describe('createTimeRange', () => {
 
   afterEach(() => {
     jest.useRealTimers();
-    if (originalTz === undefined) {
-      delete process.env.TZ;
-    } else {
-      process.env.TZ = originalTz;
-    }
   });
 
   it('defaults to the whole current day', () => {
@@ -119,22 +149,32 @@ describe('createTimeRange', () => {
     expect(toDate.toISOString()).toBe('2024-03-20T23:59:59.000Z');
   });
 
-  it.each(['Australia/Sydney', 'America/Los_Angeles', 'Pacific/Kiritimati'])(
+  it.each([
+    ['Australia/Sydney', -660],
+    ['America/Los_Angeles', 420],
+    ['Pacific/Kiritimati', -840],
+  ])(
     'uses the UTC day regardless of the host timezone (%s)',
-    tz => {
-      process.env.TZ = tz;
-      const { fromDate, toDate } = createTimeRange({ date: '2024-03-14T23:30:00.000Z' });
-      expect(fromDate.toISOString()).toBe('2024-03-14T00:00:00.000Z');
-      expect(toDate.toISOString()).toBe('2024-03-14T23:59:59.000Z');
+    (tz, expectedOffsetMinutes) => {
+      const out = runInTimezone(tz);
 
-      const defaults = createTimeRange({});
-      expect(defaults.fromDate.toISOString()).toBe('2024-03-15T00:00:00.000Z');
-      expect(defaults.toDate.toISOString()).toBe('2024-03-15T23:59:59.000Z');
+      // premise: the child really ran in that timezone, otherwise this would pass in UTC
+      expect(out.offset).toBe(expectedOffsetMinutes);
 
-      const dateOnly = createTimeRange({ fromDate: '2024-03-10', toDate: '2024-03-12' });
-      expect(dateOnly.fromDate.toISOString()).toBe('2024-03-10T00:00:00.000Z');
-      expect(dateOnly.toDate.toISOString()).toBe('2024-03-12T23:59:59.000Z');
-    }
+      expect(out.date).toEqual({
+        from: '2024-03-14T00:00:00.000Z',
+        to: '2024-03-14T23:59:59.000Z',
+      });
+      expect(out.defaults).toEqual({
+        from: '2024-03-15T00:00:00.000Z',
+        to: '2024-03-15T23:59:59.000Z',
+      });
+      expect(out.dateOnly).toEqual({
+        from: '2024-03-10T00:00:00.000Z',
+        to: '2024-03-12T23:59:59.000Z',
+      });
+    },
+    30000
   );
 });
 
