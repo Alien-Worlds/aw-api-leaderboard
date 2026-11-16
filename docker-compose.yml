@@ -17,6 +17,8 @@ services:
       context: .
     restart: on-failure
     command: [ 'sh', '-c', 'yarn archive' ]
+    healthcheck:
+      disable: true
     depends_on:
       - redis
       - db

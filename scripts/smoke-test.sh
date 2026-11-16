@@ -53,6 +53,9 @@ get ping | grep -q pong || fail "/ping did not answer pong"
 HEALTH=$(get health) || fail "/health request failed"
 echo "$HEALTH"
 echo "$HEALTH" | grep -q '"status":"OK"' || fail "/health status is not OK"
-echo "$HEALTH" | grep -q '"status":"ERROR"' && fail "a dependency reports ERROR"
+echo "$HEALTH" | docker exec -i "$API" node -e '
+    const health = JSON.parse(require("fs").readFileSync(0, "utf8"));
+    if (health.databases?.mongo !== "OK" || health.databases?.redis !== "OK") process.exit(1);
+' || fail "a dependency is missing or not OK"
 
 echo "Smoke test passed"
