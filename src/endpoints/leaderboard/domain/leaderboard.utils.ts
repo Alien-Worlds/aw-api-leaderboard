@@ -5,9 +5,18 @@ import { LeaderboardListOutputItem } from '../data/leaderboard.dtos';
 
 export const isIsoDateFormat = value => {
   return (
-    typeof value === 'string' && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(value)
+    typeof value === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
   );
 };
+
+const startOfUtcDay = (date: Date): Date =>
+  new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+
+const endOfUtcDay = (date: Date): Date =>
+  new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59)
+  );
 
 export const createTimeRange = (options: {
   date?: Date | string;
@@ -15,57 +24,31 @@ export const createTimeRange = (options: {
   toDate?: Date | string;
 }): { fromDate: Date; toDate: Date } => {
   const now = new Date();
-  const day = now.getDate();
-  const month = now.getMonth() + 1;
-  let fromDate = new Date(
-    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
-    }T00:00:00.000Z`
-  );
-  let toDate = new Date(
-    `${now.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
-    }T23:59:59.000Z`
-  );
+  let fromDate = startOfUtcDay(now);
+  let toDate = endOfUtcDay(now);
 
   if (options.date) {
     const dateRef =
       typeof options.date === 'string' ? new Date(options.date) : options.date;
-    const day = dateRef.getDate();
-    const month = dateRef.getMonth() + 1;
-    fromDate = new Date(
-      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
-      }T00:00:00.000Z`
-    );
-    toDate = new Date(
-      `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
-      }T23:59:59.000Z`
-    );
+    fromDate = startOfUtcDay(dateRef);
+    toDate = endOfUtcDay(dateRef);
   } else {
     if (options.fromDate && isIsoDateFormat(options.fromDate)) {
       fromDate = new Date(options.fromDate);
-    } else if (options.fromDate && isIsoDateFormat(options.fromDate) === false) {
+    } else if (options.fromDate) {
       const dateRef =
         typeof options.fromDate === 'string'
           ? new Date(options.fromDate)
           : options.fromDate;
-      const day = dateRef.getDate();
-      const month = dateRef.getMonth() + 1;
-      fromDate = new Date(
-        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
-        }T00:00:00.000Z`
-      );
+      fromDate = startOfUtcDay(dateRef);
     }
 
-    if (options.toDate && isIsoDateFormat(options.fromDate)) {
+    if (options.toDate && isIsoDateFormat(options.toDate)) {
       toDate = new Date(options.toDate);
-    } else if (options.toDate && isIsoDateFormat(options.fromDate) === false) {
+    } else if (options.toDate) {
       const dateRef =
         typeof options.toDate === 'string' ? new Date(options.toDate) : options.toDate;
-      const day = dateRef.getDate();
-      const month = dateRef.getMonth() + 1;
-      toDate = new Date(
-        `${dateRef.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day
-        }T23:59:59.000Z`
-      );
+      toDate = endOfUtcDay(dateRef);
     }
   }
 
