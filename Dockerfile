@@ -15,8 +15,11 @@ ADD docs /var/www/api/docs
 COPY package.json .npmrc .yarnrc tsconfig.json tsconfig.build.json yarn.lock /var/www/api/
 COPY .env-example /var/www/api/.env
 
-RUN yarn --production
+# build needs devDependencies (typescript), so install everything first and prune after.
+# --ignore-scripts: the package's own prepublish runs tsc/clean on install.
+RUN yarn install --frozen-lockfile --ignore-scripts
 RUN yarn build
+RUN yarn install --frozen-lockfile --production --ignore-scripts
 
 # PRODUCTION
 
