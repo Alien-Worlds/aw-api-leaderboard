@@ -23,9 +23,9 @@ fail()
     exit 1
 }
 
-docker pull -q mongo:7 >/dev/null && docker pull -q redis:7-alpine >/dev/null || exit 1
+docker pull -q mongo:6 >/dev/null && docker pull -q redis:7-alpine >/dev/null || exit 1
 docker network create "$NETWORK" >/dev/null || exit 1
-docker run -d --name "mongo-$SUFFIX" --network "$NETWORK" --network-alias mongo mongo:7 >/dev/null || exit 1
+docker run -d --name "mongo-$SUFFIX" --network "$NETWORK" --network-alias mongo mongo:6 >/dev/null || exit 1
 docker run -d --name "redis-$SUFFIX" --network "$NETWORK" --network-alias redis redis:7-alpine >/dev/null || exit 1
 
 docker run -d --name "$API" --network "$NETWORK" \
