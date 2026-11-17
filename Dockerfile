@@ -24,6 +24,9 @@ RUN yarn install --frozen-lockfile --production --ignore-scripts
 FROM node:24-alpine AS leaderboard-api
 
 ENV NODE_ENV=production
+# the app runs as the unprivileged node user, which cannot write the root-owned app
+# directory; log to stdout rather than a file (also what a container wants)
+ENV NEW_RELIC_LOG=stdout
 
 WORKDIR /var/www/api
 

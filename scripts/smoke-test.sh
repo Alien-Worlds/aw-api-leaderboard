@@ -45,7 +45,7 @@ done
 # the dependency check goes through the API itself, so run curl inside it
 get()
 {
-    docker exec "$API" wget -q -O - "$BASE/$1"
+    docker exec "$API" wget -q -T 60 -O - "$BASE/$1"
 }
 
 get ping | grep -q pong || fail "/ping did not answer pong"
