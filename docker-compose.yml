@@ -33,7 +33,7 @@ services:
       - '6379:6379'
 
   db:
-    image: mongo
+    image: mongo:6
     restart: always
     ports:
       - '27017:27017'
