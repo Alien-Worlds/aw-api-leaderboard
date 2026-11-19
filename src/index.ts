@@ -1,3 +1,4 @@
+import './disable-keepalive';
 import 'reflect-metadata';
 
 import { Container } from '@alien-worlds/aw-core';
