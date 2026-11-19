@@ -34,10 +34,25 @@ jobs:
       - run: yarn build
       - run: yarn test:unit
 
-      # Report only. Most findings are transitive through @alien-worlds/* packages.
-      - name: Dependency audit (non-blocking)
-        run: yarn audit --groups dependencies
-        continue-on-error: true
+      # Fails the build when a production dependency has a known moderate or worse
+      # vulnerability. Production dependencies are clean, so this guards against
+      # regressions, for example an older @alien-worlds/* release pulling a vulnerable
+      # version back in. Dev tooling is out of scope (--groups dependencies).
+      # yarn audit exits with a bitmask (1 info, 2 low, 4 moderate, 8 high, 16 critical),
+      # so info and low findings are reported without failing: some have no patched release.
+      - name: Dependency audit (production, moderate and above)
+        run: |
+          rc=0
+          out=$(yarn audit --groups dependencies 2>&1) || rc=$?
+          echo "$out"
+          if ! echo "$out" | grep -q 'vulnerabilities found'; then
+            echo "::error::yarn audit produced no result (registry unreachable?). Re-run the job."
+            exit 1
+          fi
+          if [ $((rc & 28)) -ne 0 ]; then
+            echo "::error::Production dependencies have moderate or worse vulnerabilities (yarn audit exit $rc)."
+            exit 1
+          fi
 
   image:
     name: Build and smoke test image
