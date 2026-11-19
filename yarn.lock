@@ -2,71 +2,48 @@
 # yarn lockfile v1
 
 
-"@alien-worlds/aw-antelope@^0.0.45":
-  version "0.0.45"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-antelope/-/aw-antelope-0.0.45.tgz#8cd06e67536c20ed59d89ea968bac3cb36150b85"
-  integrity sha512-lCiv0rEaY7VPnS8sN/dPYWtYH5V0uB/GjHFHXP+JTktm1ukwm5kvnYLaR9/safRL9IEfM4Bgq25Lw7grw2mpKQ==
+"@alien-worlds/aw-api-common-atomicassets@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-atomicassets/-/aw-api-common-atomicassets-0.0.9.tgz#25024d8fe039fa399d54105b0e53108a1a8e30fa"
+  integrity sha512-g/5do8AF4SCcsbzNM/KAaaJtqYn/7zZjB/QTq68EqeWlXzDAdtHRvDJeJs/wSvz4PmGWBtrPQNFNwRTj+le/kA==
   dependencies:
-    "@alien-worlds/aw-core" "^0.0.21"
-    "@alien-worlds/aw-storage-mongodb" "^0.0.16"
-    eosjs "^22.1.0"
+    "@alien-worlds/aw-core" "^0.0.22"
+    "@alien-worlds/aw-storage-mongodb" "^0.0.17"
 
-"@alien-worlds/aw-api-common-atomicassets@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-atomicassets/-/aw-api-common-atomicassets-0.0.7.tgz#8431b94cb74d5e1c173de4cac6d61222a3956190"
-  integrity sha512-d8SrZIA4h+YNV0WpIYUXdih8RMeH6Kdrbt+zHFCWv5+h47pkkK+eaDytJ3pk2oU+r7XT7y0UIcn9VMyGGvKvRQ==
+"@alien-worlds/aw-api-common-leaderboard@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-leaderboard/-/aw-api-common-leaderboard-0.0.23.tgz#f24549fa88a28974cb27def6e1b61d0f87fd4deb"
+  integrity sha512-LK7rHoBk31WUij0H1++fbV49bzU8sbQrw5jcBGy6Oiqo/IQopgXGzI6GuCGmxZMRMaKT7HegUAy4rn3EyVz98w==
   dependencies:
-    "@alien-worlds/aw-core" "^0.0.21"
-    "@alien-worlds/aw-storage-mongodb" "^0.0.16"
-    atomicassets "^1.5.1"
-    crypto "^1.0.1"
-    eosjs "^22.1.0"
+    "@alien-worlds/aw-api-common-atomicassets" "^0.0.9"
+    "@alien-worlds/aw-core" "^0.0.22"
+    "@alien-worlds/aw-storage-mongodb" "^0.0.17"
+    "@alien-worlds/aw-storage-redis" "^0.0.8"
+    nanoid "^3.3.20"
 
-"@alien-worlds/aw-api-common-leaderboard@^0.0.21":
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-api-common-leaderboard/-/aw-api-common-leaderboard-0.0.21.tgz#9c9f3b21cec42685a1a1e6724b622f9804117ba7"
-  integrity sha512-3BO3rRTmz5VQ1LsBB48zi8SA4CjK3ge3qOmwKL9OGskEOzzQfmqkg9M6L7KNrrpmmQaRChaY2VmUyx4j3+QRpg==
-  dependencies:
-    "@alien-worlds/aw-api-common-atomicassets" "^0.0.7"
-    "@alien-worlds/aw-contract-notify-world" "^0.0.1"
-    "@alien-worlds/aw-core" "^0.0.21"
-    "@alien-worlds/aw-storage-mongodb" "^0.0.16"
-    "@alien-worlds/aw-storage-redis" "^0.0.7"
-    atomicassets "^1.5.1"
-    crypto "^1.0.1"
-    eosjs "^22.1.0"
-    nanoid "3"
-
-"@alien-worlds/aw-contract-notify-world@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-contract-notify-world/-/aw-contract-notify-world-0.0.1.tgz#b1471df4cfe75bf845d1b7581f16a25dd0cd79c7"
-  integrity sha512-uVwl/IK7kfwzMX2R3LF8V65w7ZxxdeCJRyWcIlyapJ9HqBcEckm/w4VnMo0E8WgQlSP0ollHmvZDp179yLAMLw==
-  dependencies:
-    "@alien-worlds/aw-antelope" "^0.0.45"
-
-"@alien-worlds/aw-core@^0.0.21":
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-core/-/aw-core-0.0.21.tgz#f98d105adae0685a014a831c81eec56f1c691c7b"
-  integrity sha512-WP6ludtofCphRdZkdcke91wZv03BJGMGHWuW5RG7wjHfhc4u5X4bnojkIZ9lA9F5ihpMAzdmieH1xo6n/M3EkQ==
+"@alien-worlds/aw-core@^0.0.22":
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-core/-/aw-core-0.0.22.tgz#16d928955bebf7a59d404f9483dcb776e9f63d03"
+  integrity sha512-ntROVcl/ED9ZdDOYSOW/m4PbOq37CQ5CNMkQt7LpsN9xBovDFfG9TEWvaQeqcrzZ64pcrsBsivv3xeMwt6eeLA==
   dependencies:
     inversify "^6.0.1"
-    node-fetch "2.6.6"
+    node-fetch "2.7.0"
     reflect-metadata "^0.1.13"
 
-"@alien-worlds/aw-storage-mongodb@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-storage-mongodb/-/aw-storage-mongodb-0.0.16.tgz#5475a041b02517796348256b688319f46ac887cf"
-  integrity sha512-l0eqrtdb9OclW6Y7jSetf2FyfcrPs8deLDHL0AA4vfkfp5CfUlErJXxSoWabLvjjwohcNbQAu6dmw2yQyGrXAw==
+"@alien-worlds/aw-storage-mongodb@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-storage-mongodb/-/aw-storage-mongodb-0.0.17.tgz#088c0cef4ddafe4c4c1fcebf6f0f92db0671ac9b"
+  integrity sha512-6ul8fHfeOEwCqL577x7/bpO0l8f6sAHxxaCILlzUMqS04vNXXFvR0X285Hraqsl71nW01ZTmT6CtmWFaVZQprg==
   dependencies:
-    "@alien-worlds/aw-core" "^0.0.21"
-    mongodb "4.9.1"
+    "@alien-worlds/aw-core" "^0.0.22"
+    mongodb "^4.17.2"
 
-"@alien-worlds/aw-storage-redis@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-storage-redis/-/aw-storage-redis-0.0.7.tgz#cddfe3c340683fb0bfe3131a52efeabb7d0cf514"
-  integrity sha512-tCU4Q0bAxaSgYWLrMSJ0gexgTymOQWdq61p3w10kaA9lPZPhYqsUkTOGxZlHupIt39kwRGPD3tjn36E2UodyGQ==
+"@alien-worlds/aw-storage-redis@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@alien-worlds/aw-storage-redis/-/aw-storage-redis-0.0.8.tgz#7bd4386ddfc4e3db7f1d033eaf4e0ab40204bf71"
+  integrity sha512-C9GZueTb/U1A774U7Jz0B58DX5PMhFVCok+FkGQdWDwo9GgWOh8xERPsrjvZV5wqY+rD1w8zkJiFYZNr/tIxGw==
   dependencies:
-    "@alien-worlds/aw-core" "^0.0.21"
+    "@alien-worlds/aw-core" "^0.0.22"
     redis "^4.6.7"
 
 "@ampproject/remapping@^2.1.0":
@@ -1748,13 +1725,6 @@ asynckit@^0.4.0:
   resolved "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
-atomicassets@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/atomicassets/-/atomicassets-1.5.1.tgz#89579bd4009e5dba34a41eca63302e9786cc353d"
-  integrity sha512-KZI/NghU68t2jEykR9KI6CVoDeErcMiNYMLHz3F7mrkFWlTXVjiJ6tbT3y2VDaF/tcDqmLd0szNnVl1/QgTTNw==
-  dependencies:
-    big-integer "^1.6.51"
-
 babel-jest@^27.5.1:
   version "27.5.1"
   resolved "https://registry.npmjs.org/babel-jest/-/babel-jest-27.5.1.tgz"
@@ -1831,11 +1801,6 @@ baseline-browser-mapping@^2.11.37:
   resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.38.tgz#3f7be275be548fb58ebce2b15cd2d2533141e4b5"
   integrity sha512-rMgy5YW7x28SMfXHLlVZDBqlWzYZ0x2rVR/6FWrNBF0chjigARK1H6nM0hKA1Um3kPOlkQFVtjJs00d2N1ezuw==
 
-big-integer@^1.6.51:
-  version "1.6.51"
-  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.51.tgz#0df92a5d9880560d3ff2d5fd20245c889d130686"
-  integrity sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==
-
 bignumber.js@^9.0.0:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.1.1.tgz#c4df7dc496bd849d4c9464344c1aa74228b4dac6"
@@ -1849,16 +1814,6 @@ bl@^4.0.3:
     buffer "^5.5.0"
     inherits "^2.0.4"
     readable-stream "^3.4.0"
-
-bn.js@4.12.5, bn.js@^4.11.9:
-  version "4.12.5"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.12.5.tgz#74f119ffecd823168d188eae06d97ea40835c489"
-  integrity sha512-3aRg6/JxfffFD+OlOjOFR3Vo79l39ooBTFucxx+MT3dhCtzn3EmiUPQo+6/OZuI2jbXi3YKgmiTFBgChQMwIRQ==
-
-bn.js@5.2.0, bn.js@5.2.5:
-  version "5.2.5"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.5.tgz#e81ce41cf25e6f0cd1e05f20a9db8c18405e375f"
-  integrity sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==
 
 body-parser@^1.20.2, body-parser@~1.20.5:
   version "1.20.9"
@@ -1897,11 +1852,6 @@ braces@^3.0.2:
   integrity sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
   dependencies:
     fill-range "^7.0.1"
-
-brorand@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
-  integrity sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==
 
 browser-process-hrtime@^1.0.0:
   version "1.0.0"
@@ -2186,11 +2136,6 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-crypto@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/crypto/-/crypto-1.0.1.tgz#2af1b7cad8175d24c8a1b0778255794a21803037"
-  integrity sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==
-
 cssom@^0.4.4:
   version "0.4.4"
   resolved "https://registry.npmjs.org/cssom/-/cssom-0.4.4.tgz"
@@ -2350,19 +2295,6 @@ electron-to-chromium@^1.5.486:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.487.tgz#9a1e2861c50b08b0d2a4f3b6e3a37f9d72b00700"
   integrity sha512-qWotOhQYeYEj+DK4+Y+cfPj44qiC6ETIiWtJLfmDJydED2BJJ7loPA4SfBbbrMI6X/X3tryJgxnY9nxsO545Zw==
 
-elliptic@6.5.4, elliptic@6.6.1:
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.6.1.tgz#3b8ffb02670bf69e382c7f65bf524c97c5405c06"
-  integrity sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==
-  dependencies:
-    bn.js "^4.11.9"
-    brorand "^1.1.0"
-    hash.js "^1.0.0"
-    hmac-drbg "^1.0.1"
-    inherits "^2.0.4"
-    minimalistic-assert "^1.0.1"
-    minimalistic-crypto-utils "^1.0.1"
-
 emittery@^0.8.1:
   version "0.8.1"
   resolved "https://registry.npmjs.org/emittery/-/emittery-0.8.1.tgz"
@@ -2384,16 +2316,6 @@ end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   integrity sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==
   dependencies:
     once "^1.4.0"
-
-eosjs@^22.1.0:
-  version "22.1.0"
-  resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-22.1.0.tgz#7ac40e2f1f959fab70539c30ac8ae46c9038aa3c"
-  integrity sha512-Ka8KO7akC3RxNdSg/3dkGWuUWUQESTzSUzQljBdVP16UG548vmQoBqSGnZdnjlZyfcab8VOu2iEt+JjyfYc5+A==
-  dependencies:
-    bn.js "5.2.0"
-    elliptic "6.5.4"
-    hash.js "1.1.7"
-    pako "2.0.3"
 
 error-ex@^1.3.1:
   version "1.3.2"
@@ -2998,7 +2920,7 @@ has@^1.0.3:
   resolved "https://registry.yarnpkg.com/has/-/has-1.0.4.tgz#2eb2860e000011dae4f1406a86fe80e530fb2ec6"
   integrity sha512-qdSAmqLF6209RFj4VVItywPMbm3vWylknmB3nvNiUIs72xAimcM8nVYxYr7ncvZq5qzk9MKIZR8ijqD/1QuYjQ==
 
-hash.js@1.1.7, hash.js@^1.0.0, hash.js@^1.0.3, hash.js@^1.1.7:
+hash.js@^1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/hash.js/-/hash.js-1.1.7.tgz#0babca538e8d4ee4a0f8988d68866537a003cf42"
   integrity sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==
@@ -3012,15 +2934,6 @@ hasown@^2.0.2:
   integrity sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==
   dependencies:
     function-bind "^1.1.2"
-
-hmac-drbg@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
-  integrity sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==
-  dependencies:
-    hash.js "^1.0.3"
-    minimalistic-assert "^1.0.0"
-    minimalistic-crypto-utils "^1.0.1"
 
 html-encoding-sniffer@^2.0.1:
   version "2.0.1"
@@ -4069,15 +3982,10 @@ mimic-fn@^2.1.0:
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-2.1.0.tgz"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
-minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
+minimalistic-assert@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
   integrity sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==
-
-minimalistic-crypto-utils@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
-  integrity sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg==
 
 minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
@@ -4109,7 +4017,7 @@ mongodb-connection-string-url@^2.6.0:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"
 
-mongodb@4.17.2, mongodb@4.9.1:
+mongodb@^4.17.2:
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.17.2.tgz#237c0534e36a3449bd74c6bf6d32f87a1ca7200c"
   integrity sha512-mLV7SEiov2LHleRJPMPrK2PMyhXFZt2UQLC4VD4pnth3jMjYKHhtqfwwkkvS/NXuo/Fp3vbhaNcXrIDaLRb9Tg==
@@ -4146,7 +4054,7 @@ nan@^2.22.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.30.0.tgz#66d75ca6db19616b3f58a6229f06c806c05d4661"
   integrity sha512-P5mokDkSvCGBz6mZDD/2l+w9QoICRXdCyZ9ONGmTePr40oihJg3Kpn0YU3twKd6PJnwSlLBWNQeOT6yWEV2c4A==
 
-nanoid@3, nanoid@^3.3.20:
+nanoid@^3.3.20:
   version "3.3.20"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.20.tgz#dfd4444d85aa10111ef66ba85ed72e08ba0855d8"
   integrity sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==
@@ -4205,7 +4113,7 @@ node-cron@^4.2.1:
   resolved "https://registry.yarnpkg.com/node-cron/-/node-cron-4.6.0.tgz#5c854d4aeebade26cf6df79a795e8a4bae47583f"
   integrity sha512-Si/bzYiKRHOB8/a99T2+SDGN582ONDMSTlJr5oCkT6GtnqPjZ2s10eoQRYkW9ZHwjVxONL+W8Fb+qR0AHMQsdg==
 
-node-fetch@2.6.6, node-fetch@2.7.0:
+node-fetch@2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
@@ -4338,11 +4246,6 @@ p-try@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz"
   integrity sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==
-
-pako@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/pako/-/pako-2.0.3.tgz#cdf475e31b678565251406de9e759196a0ea7a43"
-  integrity sha512-WjR1hOeg+kki3ZIOjaf4b5WVcay1jaliKSYiEaB1XzwhMQZJxRdQRv0V31EKBYlxb4T7SK3hjfc/jxyU64BoSw==
 
 parent-module@^1.0.0:
   version "1.0.1"
