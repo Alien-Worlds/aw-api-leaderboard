@@ -1,6 +1,7 @@
 {
   "name": "@alien-worlds/aw-api-leaderboard",
   "version": "0.0.1",
+  "private": true,
   "description": "",
   "packageManager": "yarn@1.22.22",
   "engines": {
